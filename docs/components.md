@@ -16,14 +16,14 @@
 ## Exemplo
 
 ```js
-import { GameObject } from "../Root/GameObject.js";
+import { GameObject } from "../Core2D/index.js";
 import {
     ActionInputComponent,
     BoundsComponent,
     HealthComponent,
     TransformComponent,
     VelocityComponent,
-} from "../Root/Component.js";
+} from "../CoreCross/index.js";
 
 const player = new GameObject();
 
@@ -76,7 +76,7 @@ Um prefab data-driven poderia ficar assim:
 
 ## Exemplo Jogavel
 
-A demo `DemoAdventure2D` usa esse modelo de forma mais completa:
+A demo `Demos/DemoAdventure2D` usa esse modelo de forma mais completa:
 
 - `AdventurePlayer` combina `TransformComponent`, `BoundsComponent`, `HealthComponent`, `ActionInputComponent`, movimento top-down, ataque melee e renderer.
 - `Slime` combina `TransformComponent`, `BoundsComponent`, `HealthComponent`, `WanderComponent` e renderer.

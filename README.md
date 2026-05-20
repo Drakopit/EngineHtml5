@@ -40,6 +40,7 @@ http://localhost:8080/Main.html?demo=adventure2d
 http://localhost:8080/Main.html?demo=demo3d
 http://localhost:8080/Main.html?demo=solar3d
 http://localhost:8080/Main.html?demo=mini3d
+http://localhost:8080/Main.html?demo=online
 http://localhost:8080/Main.html?demo=immature
 ```
 
@@ -47,38 +48,34 @@ http://localhost:8080/Main.html?demo=immature
 
 | Demo | Entrada | Config | Descricao |
 | --- | --- | --- | --- |
-| Advanced | `DemoAdvanced/mainAdvanced.js` | `DemoAdvanced/advanced.config.json` | Plataforma/RPG 2D com manifests, fases, inventario, skill tree, hitboxes e HUD. |
-| Tactical RPG | `DemoTacticalRPG/mainTacticalRPG.js` | `DemoTacticalRPG/tactical.config.json` | Grid tatico com AStar, area de movimento, acao e batalha. |
-| Fighting 2D | `DemoFightingGame2D/mainFightingGame2D.js` | `DemoFightingGame2D/fighting.config.json` | Menu, arcade, versus, selecao de personagem, teclado e gamepad configuravel. |
-| Adventure 2D | `DemoAdventure2D/mainAdventure2D.js` | `DemoAdventure2D/adventure.config.json` | Top-down adventure componentizado com transicao de camera entre salas. |
-| Demo 3D | `Demo3D/mainDemo3D.js` | `Demo3D/demo3d.config.json` | Validacao da camada Render3D com WebGL2, luz, normal map e sombra. |
-| Sistema Solar 3D | `DemoSolarSystem/mainSolarSystem.js` | `DemoSolarSystem/solar.config.json` | Demo Render3D com shader procedural de planetas, luz solar e orbitas. |
-| MiniGame 3D | `DemoMiniGame3D/mainMiniGame3D.js` | `DemoMiniGame3D/mini3d.config.json` | Mini jogo 3D com modelo GLB, fisica, coleta, camera e iluminacao. |
-| Immature | `Demo/mainImmature.js` | `Demo/immature.config.json` | Exemplo simples de movimentacao e colisao. |
+| Advanced | `Demos/DemoAdvanced/mainAdvanced.js` | `Demos/DemoAdvanced/advanced.config.json` | Plataforma/RPG 2D com manifests, fases, inventario, skill tree, hitboxes e HUD. |
+| Tactical RPG | `Demos/DemoTacticalRPG/mainTacticalRPG.js` | `Demos/DemoTacticalRPG/tactical.config.json` | Grid tatico com AStar, area de movimento, acao e batalha. |
+| Fighting 2D | `Demos/DemoFightingGame2D/mainFightingGame2D.js` | `Demos/DemoFightingGame2D/fighting.config.json` | Menu, arcade, versus, selecao de personagem, teclado e gamepad configuravel. |
+| Adventure 2D | `Demos/DemoAdventure2D/mainAdventure2D.js` | `Demos/DemoAdventure2D/adventure.config.json` | Top-down adventure componentizado com transicao de camera entre salas. |
+| Demo 3D | `Demos/Demo3D/mainDemo3D.js` | `Demos/Demo3D/demo3d.config.json` | Validacao da camada Render3D com WebGL2, luz, normal map e sombra. |
+| Sistema Solar 3D | `Demos/DemoSolarSystem/mainSolarSystem.js` | `Demos/DemoSolarSystem/solar.config.json` | Demo Render3D com shader procedural de planetas, luz solar e orbitas. |
+| MiniGame 3D | `Demos/DemoMiniGame3D/mainMiniGame3D.js` | `Demos/DemoMiniGame3D/mini3d.config.json` | Mini jogo 3D com modelo GLB, fisica, coleta, camera e iluminacao. |
+| Online MMO | `Demos/DemoOnlineMMO/mainOnlineMMO.js` | `Demos/DemoOnlineMMO/online.config.json` | Sandbox 2D online com players e blocos sincronizados por WebSocket. |
+| Immature | `Demos/Demo/mainImmature.js` | `Demos/Demo/immature.config.json` | Exemplo simples de movimentacao e colisao. |
 
 ## Estrutura
 
 ```txt
 GameForgeJS/
-  Core2D/                Fachada do core 2D atual
-  Core3D/                Core 3D oficial: Level3D, modelos, fisica e exports Render3D
-  Root/                  Core, bootstrap, config, loop, assets, scene, component
-  Input/                 Teclado, mouse, touch, gamepad e ActionManager
-  Graphic/               Canvas/WebGL, sprites, animacao, modelos, luz e Render3D
-  Math/                  Vetores, colisao e utilitarios matematicos
-  Collision/             Hitbox/hurtbox/collisionbox 2D
-  Combat/                ComboController e suporte a combate
-  Effects/               Efeitos reutilizaveis como texto flutuante
-  Template/              Bases de Level/Menu/Level3D
-  UI/                    Controles de interface
+  CoreCross/             Bootstrap, loop, config, assets, audio, input, math, componentes e pathfinding compartilhados
+  Core2D/                Canvas 2D, GameObject, camera, cena, UI, colisao, combate, particulas e efeitos 2D
+  Core3D/                WebGL/Render3D, Level3D, modelos, shaders, janela, objetos e fisica 3D
+  CoreNetwork/           Cliente WebSocket, envelope de mensagens e sincronizacao leve de estado
   docs/                  Guias tecnicos
-  DemoAdvanced/          Demo plataforma/RPG data-driven
-  DemoFightingGame2D/    Demo de luta 2D
-  DemoAdventure2D/        Demo top-down adventure componentizada
-  DemoTacticalRPG/       Demo tatico
-  Demo3D/                Demo WebGL
-  DemoSolarSystem/       Demo de sistema solar em Render3D
-  DemoMiniGame3D/        Mini game 3D
+  Demos/                 Todas as demos jogaveis e tecnicas
+    DemoAdvanced/        Demo plataforma/RPG data-driven
+    DemoFightingGame2D/  Demo de luta 2D
+    DemoAdventure2D/     Demo top-down adventure componentizada
+    DemoTacticalRPG/     Demo tatico
+    Demo3D/              Demo WebGL
+    DemoSolarSystem/     Demo de sistema solar em Render3D
+    DemoMiniGame3D/      Mini game 3D
+    DemoOnlineMMO/       Sandbox online 2D via CoreNetwork
 ```
 
 ## Criando Um Projeto
@@ -100,7 +97,7 @@ MyGame/
 Entrada minima:
 
 ```js
-import { BootstrapGame } from "../Root/Bootstrap.js";
+import { BootstrapGame } from "../CoreCross/index.js";
 import { FirstLevel } from "./Levels/FirstLevel.js";
 
 BootstrapGame({
@@ -156,7 +153,7 @@ Assets sao carregados por `ResourceManifestLoader`:
 No AdvancedDemo, fases sao compostas por manifests menores. Configuracoes comuns ficam em:
 
 ```txt
-DemoAdvanced/Assets/Manifests/advanced/stage-default.json
+Demos/DemoAdvanced/Assets/Manifests/advanced/stage-default.json
 ```
 
 E a fase compoe defaults + partes especificas:
@@ -181,8 +178,8 @@ E a fase compoe defaults + partes especificas:
 `GameObject` ainda aceita o fluxo classico com `OnStart`, `OnUpdate`, `OnFixedUpdate`, `OnDrawn` e `OnGUI`, mas agora tambem pode receber componentes reutilizaveis.
 
 ```js
-import { GameObject } from "./Root/GameObject.js";
-import { BoundsComponent, HealthComponent, TransformComponent } from "./Root/Component.js";
+import { GameObject } from "./Core2D/index.js";
+import { BoundsComponent, HealthComponent, TransformComponent } from "./CoreCross/index.js";
 
 const entity = new GameObject();
 entity.AddComponent(new TransformComponent({ x: 80, y: 120 }));
@@ -213,6 +210,7 @@ O editor desktop pode abrir qualquer pasta, detectar configuracoes existentes ou
 
 - [Criando um projeto](docs/new-project.md)
 - [Configuracao de input por jogo](docs/input-config.md)
+- [CoreNetwork](docs/network.md)
 - [Cola de gamepad](GAMEPAD_COLA.md)
 - [Componentizacao](docs/components.md)
 - [Render3D](docs/render3d.md)

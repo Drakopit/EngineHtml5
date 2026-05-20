@@ -1,0 +1,60 @@
+{
+    "project": {
+        "name": "GameForgeJS Online MMO Demo",
+        "version": "1.0.0",
+        "author": "Camello"
+    },
+    "window": {
+        "title": "GameForgeJS - Online MMO Demo",
+        "backgroundColor": "#09111f",
+        "cursor": "crosshair"
+    },
+    "screen": {
+        "width": 800,
+        "height": 480,
+        "pixelArt": true,
+        "antialiasing": false,
+        "orientation": "landscape"
+    },
+    "network": {
+        "serverUrl": "auto",
+        "autoConnect": true,
+        "autoReconnect": true,
+        "syncRate": 15
+    },
+    "input": {
+        "gamepadProfile": "xbox",
+        "actionMappings": {
+            "LEFT": [
+                { "device": "keyboard", "input": "KeyA" },
+                { "device": "keyboard", "input": "ArrowLeft" },
+                { "device": "gamepad", "input": "LEFT_STICK_LEFT" },
+                { "device": "gamepad", "input": "DPAD_LEFT" }
+            ],
+            "RIGHT": [
+                { "device": "keyboard", "input": "KeyD" },
+                { "device": "keyboard", "input": "ArrowRight" },
+                { "device": "gamepad", "input": "LEFT_STICK_RIGHT" },
+                { "device": "gamepad", "input": "DPAD_RIGHT" }
+            ],
+            "JUMP": [
+                { "device": "keyboard", "input": "Space" },
+                { "device": "keyboard", "input": "KeyW" },
+                { "device": "keyboard", "input": "ArrowUp" },
+                { "device": "gamepad", "input": "A" }
+            ],
+            "MINE": [
+                { "device": "keyboard", "input": "KeyQ" },
+                { "device": "gamepad", "input": "X" }
+            ],
+            "PLACE": [
+                { "device": "keyboard", "input": "KeyE" },
+                { "device": "gamepad", "input": "B" }
+            ],
+            "NEXT_BLOCK": [
+                { "device": "keyboard", "input": "KeyR" },
+                { "device": "gamepad", "input": "Y" }
+            ]
+        }
+    }
+}

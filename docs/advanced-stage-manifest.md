@@ -1,6 +1,6 @@
 # Advanced Stage Manifest
 
-`DemoAdvanced/Assets/Manifests/advanced.level.json` e um indice de composicao. Ele junta manifests menores sem acoplar layout ao codigo do level.
+`Demos/DemoAdvanced/Assets/Manifests/advanced.level.json` e um indice de composicao. Ele junta manifests menores sem acoplar layout ao codigo do level.
 
 ## Organizacao
 
@@ -53,15 +53,15 @@ O player tambem carrega sistemas opcionais pelo manifest:
 - `player.skillTree`: pontos iniciais, nos, custo, requisitos e efeitos aplicados ao player.
 - `ui.progressHud`: posicao do resumo e do painel de inventario/skills.
 
-Os inputs ficam no `DemoAdvanced/advanced.config.json`: `INVENTORY` abre a bag e `SKILL_TREE` abre a arvore. Enquanto um painel esta aberto, a fase pausa as entidades de gameplay.
+Os inputs ficam no `Demos/DemoAdvanced/advanced.config.json`: `INVENTORY` abre a bag e `SKILL_TREE` abre a arvore. Enquanto um painel esta aberto, a fase pausa as entidades de gameplay.
 
 ## Camera Shake
 
-`advanced/effects.json` define `cameraShake.light`, `cameraShake.strong` e `cameraShake.playerDamage`. A implementacao fica em `Root/Camera.js`, entao outros levels 2D podem usar `camera.Shake(duration, intensity, frequency)`.
+`advanced/effects.json` define `cameraShake.light`, `cameraShake.strong` e `cameraShake.playerDamage`. A implementacao fica em `Core2D/Camera/Camera.js`, entao outros levels 2D podem usar `camera.Shake(duration, intensity, frequency)`.
 
 ## Snow Pack
 
-Os assets do Snow Pack sao registrados em `DemoAdvanced/resources.json` com nomes como:
+Os assets do Snow Pack sao registrados em `Demos/DemoAdvanced/resources.json` com nomes como:
 
 - `snow_sky`
 - `snow_mountain_01`
@@ -71,7 +71,7 @@ Os assets do Snow Pack sao registrados em `DemoAdvanced/resources.json` com nome
 - `snow_objects`
 - `snow_standards`
 
-O catalogo `DemoAdvanced/Assets/Manifests/snow.pack.json` tambem e um indice. Ele compoe:
+O catalogo `Demos/DemoAdvanced/Assets/Manifests/snow.pack.json` tambem e um indice. Ele compoe:
 
 - `snow/backgrounds.json`
 - `snow/terrain.json`

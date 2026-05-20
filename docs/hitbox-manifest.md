@@ -40,7 +40,7 @@ Carregamento:
 ```json
 {
   "jsons": [
-    { "name": "player_boxes", "path": "DemoAdvanced/Assets/Manifests/player.boxes.json" }
+    { "name": "player_boxes", "path": "Demos/DemoAdvanced/Assets/Manifests/player.boxes.json" }
   ]
 }
 ```

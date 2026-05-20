@@ -1,5 +1,5 @@
-import { AssetManager } from "../../Root/AssetManager.js";
-import { Geometry3D, Mesh, StandardMaterial } from "../../Graphic/Render3D/index.js";
+import { AssetManager } from "../../CoreCross/Assets/AssetManager.js";
+import { Geometry3D, Mesh, StandardMaterial } from "../Render3D/index.js";
 import { Model3D } from "./Model3D.js";
 
 export class ModelMeshFactory {

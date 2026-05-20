@@ -1,11 +1,11 @@
 # Render3D
 
-`Core3D` e `Graphic/Render3D` formam a nova camada 3D da GameForgeJS. Ela fica separada do core 2D atual e usa WebGL2 puro, sem `three.js`, `gl-matrix` ou CDN externa.
+`Core3D` concentra a camada 3D da GameForgeJS. Ela fica separada do core 2D atual e usa WebGL2 puro, sem `three.js`, `gl-matrix` ou CDN externa.
 
 ## Estrutura
 
 ```txt
-Graphic/Render3D/
+Core3D/Render3D/
   Camera/      PerspectiveCamera
   Core/        Color, Transform3D
   Light/       Ambient, Hemisphere, Directional, Point, Spot
@@ -16,9 +16,10 @@ Graphic/Render3D/
   Texture/     Texture
 
 Core3D/
-  Level3D      Base oficial para fases 3D
+  Level/       Level3D oficial e base 3D legada
   Model/       Model3D e ModelMeshFactory
   Physics/     Rigidbody3D, SphereCollider3D, BoxCollider3D, PhysicsWorld3D
+  Shaders/     Shaders GLSL legados
 ```
 
 ## Recursos Atuais
@@ -47,7 +48,7 @@ import {
     StandardMaterial,
     Texture,
     WebGL3DRenderer,
-} from "../Graphic/Render3D/index.js";
+} from "../Core3D/index.js";
 
 const renderer = new WebGL3DRenderer(canvas);
 const scene = new Scene3D();

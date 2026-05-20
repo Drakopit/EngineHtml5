@@ -1,4 +1,4 @@
-import { Transform3D } from "../../Graphic/Render3D/index.js";
+import { Transform3D } from "../Render3D/index.js";
 
 export class Model3D {
     constructor(meshes = []) {

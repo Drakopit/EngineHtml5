@@ -22,7 +22,7 @@ MyGame/
 ## Entrada
 
 ```js
-import { BootstrapGame } from "../Root/Bootstrap.js";
+import { BootstrapGame } from "../CoreCross/index.js";
 import { FirstLevel } from "./Levels/FirstLevel.js";
 
 BootstrapGame({
@@ -86,6 +86,7 @@ Para abrir direto:
 ```txt
 http://localhost:8080/Main.html?demo=advanced
 http://localhost:8080/Main.html?demo=fighting2d
+http://localhost:8080/Main.html?demo=online
 ```
 
 ## Servidor Local Opcional
