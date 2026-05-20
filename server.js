@@ -14,6 +14,24 @@ const ROOM_WORLD = Object.freeze({
     height: 18,
     tileSize: 32,
 });
+const PROTOCOL_VERSION = 1;
+const BINARY_MESSAGE = Object.freeze({
+    PLAYER_STATE: 1,
+    REMOTE_PLAYER_STATE: 2,
+});
+const PLAYER_FLAGS = Object.freeze({
+    GROUNDED: 1 << 0,
+    FACING_RIGHT: 1 << 1,
+});
+const FIXED_POINT = Object.freeze({
+    POSITION_SCALE: 4,
+    VELOCITY_SCALE: 8,
+});
+const PLAYER_SIZE = Object.freeze({
+    width: 22,
+    height: 42,
+});
+const PLAYER_COLORS = ["#5ec8ff", "#ffcf5e", "#9cff6d", "#ff7eab", "#c792ff", "#ff8a4c"];
 
 const MIME_TYPES = {
     ".html": "text/html; charset=utf-8",
@@ -110,13 +128,17 @@ function AttachNetworkServer(server) {
 
 function JoinNetworkRoom(socket, roomId) {
     const room = GetNetworkRoom(roomId);
+    const slot = room.nextSlot++;
     const client = {
         id: CreateId("player"),
+        slot,
         roomId,
         socket,
         buffer: Buffer.alloc(0),
+        profile: CreateDefaultProfile(slot),
         player: null,
     };
+    client.profile.id = client.id;
 
     room.clients.set(client.id, client);
     socket.on("data", chunk => HandleSocketData(client, chunk));
@@ -125,17 +147,22 @@ function JoinNetworkRoom(socket, roomId) {
 
     SendEnvelope(client, "room:welcome", {
         playerId: client.id,
+        playerSlot: client.slot,
         roomId,
+        player: client.profile,
         world: {
             ...ROOM_WORLD,
             blocks: [...room.blocks.values()],
         },
         players: [...room.clients.values()]
-            .filter(item => item.player)
-            .map(item => item.player),
+            .filter(item => item.id !== client.id)
+            .map(item => ({
+                ...item.profile,
+                ...(item.player ?? {}),
+            })),
     });
 
-    Broadcast(room, "player:joined", { id: client.id }, { except: client.id });
+    Broadcast(room, "player:joined", client.profile, { except: client.id });
 }
 
 function LeaveNetworkRoom(client) {
@@ -143,7 +170,7 @@ function LeaveNetworkRoom(client) {
     if (!room || !room.clients.has(client.id)) return;
 
     room.clients.delete(client.id);
-    Broadcast(room, "player:left", { id: client.id });
+    Broadcast(room, "player:left", { id: client.id, slot: client.slot });
 
     if (room.clients.size === 0) {
         networkRooms.delete(client.roomId);
@@ -154,6 +181,7 @@ function GetNetworkRoom(roomId) {
     if (!networkRooms.has(roomId)) {
         networkRooms.set(roomId, {
             id: roomId,
+            nextSlot: 1,
             clients: new Map(),
             blocks: CreateInitialBlocks(),
         });
@@ -179,6 +207,18 @@ function CreateInitialBlocks() {
     return blocks;
 }
 
+function CreateDefaultProfile(slot) {
+    const colorIndex = (slot - 1) % PLAYER_COLORS.length;
+    return {
+        id: null,
+        slot,
+        name: `Player ${slot}`,
+        colorIndex,
+        color: PLAYER_COLORS[colorIndex],
+        ...PLAYER_SIZE,
+    };
+}
+
 function HandleSocketData(client, chunk) {
     client.buffer = Buffer.concat([client.buffer, chunk]);
 
@@ -198,8 +238,14 @@ function HandleSocketData(client, chunk) {
             continue;
         }
 
-        if (frame.opcode !== 1) continue;
-        HandleNetworkMessage(client, frame.payload.toString("utf8"));
+        if (frame.opcode === 1) {
+            HandleNetworkMessage(client, frame.payload.toString("utf8"));
+            continue;
+        }
+
+        if (frame.opcode === 2) {
+            HandleNetworkBinaryMessage(client, frame.payload);
+        }
     }
 }
 
@@ -215,11 +261,27 @@ function HandleNetworkMessage(client, rawMessage) {
     const room = networkRooms.get(client.roomId);
     if (!room || !message?.type) return;
 
+    if (message.type === "player:profile") {
+        client.profile = NormalizeProfile(message.payload, client);
+        if (client.player) {
+            client.player = {
+                ...client.player,
+                ...client.profile,
+            };
+        }
+
+        Broadcast(room, "player:profile", client.profile, { except: client.id });
+        return;
+    }
+
     if (message.type === "player:update") {
         client.player = {
-            id: client.id,
-            updatedAt: Date.now(),
+            ...PLAYER_SIZE,
+            ...client.profile,
             ...message.payload,
+            id: client.id,
+            slot: client.slot,
+            updatedAt: Date.now(),
         };
         Broadcast(room, "player:update", client.player, { except: client.id });
         return;
@@ -245,6 +307,45 @@ function HandleNetworkMessage(client, rawMessage) {
             text: String(message.payload?.text ?? "").slice(0, 120),
         });
     }
+}
+
+function HandleNetworkBinaryMessage(client, payload) {
+    const state = DecodeClientPlayerState(payload);
+    if (!state) return;
+
+    const room = networkRooms.get(client.roomId);
+    if (!room) return;
+
+    client.player = {
+        ...PLAYER_SIZE,
+        ...client.profile,
+        ...state,
+        id: client.id,
+        slot: client.slot,
+        updatedAt: Date.now(),
+    };
+
+    BroadcastBinary(room, EncodeRemotePlayerState(client.player), { except: client.id });
+}
+
+function NormalizeProfile(payload, client) {
+    const fallback = client.profile ?? CreateDefaultProfile(client.slot);
+    const colorIndex = ClampNumber(Math.trunc(Number(payload?.colorIndex ?? fallback.colorIndex)), 0, PLAYER_COLORS.length - 1);
+    const name = String(payload?.name ?? fallback.name)
+        .replace(/\s+/g, " ")
+        .trim()
+        .slice(0, 18) || fallback.name;
+
+    return {
+        ...fallback,
+        id: client.id,
+        slot: client.slot,
+        name,
+        colorIndex,
+        color: PLAYER_COLORS[colorIndex],
+        width: ClampNumber(Math.trunc(Number(payload?.width ?? fallback.width)), 8, 96),
+        height: ClampNumber(Math.trunc(Number(payload?.height ?? fallback.height)), 8, 128),
+    };
 }
 
 function NormalizeBlock(payload) {
@@ -276,6 +377,12 @@ function Broadcast(room, type, payload, { except = null } = {}) {
     });
 }
 
+function BroadcastBinary(room, payload, { except = null } = {}) {
+    room.clients.forEach(client => {
+        if (client.id !== except) SendFrame(client.socket, payload, 2);
+    });
+}
+
 function SendEnvelope(client, type, payload) {
     SendFrame(client.socket, Buffer.from(JSON.stringify({
         type,
@@ -285,6 +392,55 @@ function SendEnvelope(client, type, payload) {
             sentAt: Date.now(),
         },
     })));
+}
+
+function DecodeClientPlayerState(payload) {
+    if (!Buffer.isBuffer(payload) || payload.length < 14) return null;
+    if (payload[0] !== PROTOCOL_VERSION || payload[1] !== BINARY_MESSAGE.PLAYER_STATE) return null;
+
+    const flags = payload.readUInt8(12);
+    return {
+        sequence: payload.readUInt16BE(2),
+        x: payload.readInt16BE(4) / FIXED_POINT.POSITION_SCALE,
+        y: payload.readInt16BE(6) / FIXED_POINT.POSITION_SCALE,
+        vx: payload.readInt16BE(8) / FIXED_POINT.VELOCITY_SCALE,
+        vy: payload.readInt16BE(10) / FIXED_POINT.VELOCITY_SCALE,
+        grounded: (flags & PLAYER_FLAGS.GROUNDED) !== 0,
+        facingRight: (flags & PLAYER_FLAGS.FACING_RIGHT) !== 0,
+        colorIndex: ClampNumber(payload.readUInt8(13), 0, PLAYER_COLORS.length - 1),
+    };
+}
+
+function EncodeRemotePlayerState(player) {
+    const payload = Buffer.alloc(16);
+    payload.writeUInt8(PROTOCOL_VERSION, 0);
+    payload.writeUInt8(BINARY_MESSAGE.REMOTE_PLAYER_STATE, 1);
+    payload.writeUInt16BE(Math.trunc(ClampNumber(player.sequence ?? 0, 0, 0xffff)), 2);
+    payload.writeUInt16BE(Math.trunc(ClampNumber(player.slot ?? 0, 0, 0xffff)), 4);
+    WriteFixedInt16(payload, 6, player.x, FIXED_POINT.POSITION_SCALE);
+    WriteFixedInt16(payload, 8, player.y, FIXED_POINT.POSITION_SCALE);
+    WriteFixedInt16(payload, 10, player.vx, FIXED_POINT.VELOCITY_SCALE);
+    WriteFixedInt16(payload, 12, player.vy, FIXED_POINT.VELOCITY_SCALE);
+    payload.writeUInt8(EncodePlayerFlags(player), 14);
+    payload.writeUInt8(Math.trunc(ClampNumber(player.colorIndex ?? 0, 0, PLAYER_COLORS.length - 1)), 15);
+    return payload;
+}
+
+function WriteFixedInt16(buffer, offset, value, scale) {
+    const numeric = Number.isFinite(Number(value)) ? Number(value) : 0;
+    buffer.writeInt16BE(ClampNumber(Math.round(numeric * scale), -32768, 32767), offset);
+}
+
+function EncodePlayerFlags(player) {
+    let flags = 0;
+    if (player.grounded) flags |= PLAYER_FLAGS.GROUNDED;
+    if (player.facingRight !== false) flags |= PLAYER_FLAGS.FACING_RIGHT;
+    return flags;
+}
+
+function ClampNumber(value, min, max) {
+    const numeric = Number.isFinite(Number(value)) ? Number(value) : min;
+    return Math.max(min, Math.min(max, numeric));
 }
 
 function ReadFrame(buffer) {

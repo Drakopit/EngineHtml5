@@ -18,8 +18,10 @@ export class NetworkClient extends EventEmitter {
         autoReconnect = false,
         reconnectDelay = 1000,
         maxReconnectDelay = 8000,
-        serializer = NetworkMessage.Serialize,
-        parser = NetworkMessage.Parse,
+        serializer = null,
+        parser = null,
+        codec = null,
+        binaryType = null,
     } = {}) {
         super();
         this.url = url;
@@ -27,8 +29,10 @@ export class NetworkClient extends EventEmitter {
         this.autoReconnect = autoReconnect;
         this.reconnectDelay = reconnectDelay;
         this.maxReconnectDelay = maxReconnectDelay;
-        this.serializer = serializer;
-        this.parser = parser;
+        this.codec = codec;
+        this.serializer = serializer ?? (codec ? message => codec.Encode(message) : message => NetworkMessage.Serialize(message));
+        this.parser = parser ?? (codec ? data => codec.Decode(data) : data => NetworkMessage.Parse(data));
+        this.binaryType = binaryType ?? codec?.binaryType ?? "arraybuffer";
         this.socket = null;
         this.state = NETWORK_CLIENT_STATE.IDLE;
         this.pendingRequests = new Map();
@@ -68,7 +72,7 @@ export class NetworkClient extends EventEmitter {
         this.socket = protocols
             ? new WebSocket(url, protocols)
             : new WebSocket(url);
-        this.socket.binaryType = "arraybuffer";
+        this.socket.binaryType = this.binaryType;
 
         this.socket.addEventListener("open", event => this.HandleOpen(event));
         this.socket.addEventListener("message", event => this.HandleMessage(event));

@@ -80,6 +80,20 @@ export class Collide2D {
             position.GetValue().y < rect.y + rect.height;
     }
 
+    static IntersectsRect(rectA, rectB) {
+        return rectA.x < rectB.x + rectB.width
+            && rectA.x + rectA.width > rectB.x
+            && rectA.y < rectB.y + rectB.height
+            && rectA.y + rectA.height > rectB.y;
+    }
+
+    static ContainsPoint(point, rect) {
+        return point.x >= rect.x
+            && point.x <= rect.x + rect.width
+            && point.y >= rect.y
+            && point.y <= rect.y + rect.height;
+    }
+
 
     /**
      * @doc Method

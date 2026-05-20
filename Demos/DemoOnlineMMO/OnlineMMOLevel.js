@@ -2,7 +2,8 @@ import { Config } from "../../CoreCross/Config.js";
 import { ActionManager } from "../../CoreCross/Input/ActionManager.js";
 import { Mouse } from "../../CoreCross/Input/Mouse.js";
 import { Level } from "../../CoreCross/Level/Level.js";
-import { NetworkClient } from "../../CoreNetwork/index.js";
+import { NetworkRoomClient } from "../../CoreNetwork/index.js";
+import { TileCollision2D } from "../../Core2D/Collision/TileCollision2D.js";
 import { Draw } from "../../Core2D/Graphics/Draw.js";
 import { Screen } from "../../Core2D/Window/Screen.js";
 
@@ -22,6 +23,10 @@ const BLOCK_COLORS = Object.freeze({
     wood: { top: "#b9824a", base: "#81522d", edge: "#5a351e" },
 });
 const PLAYER_COLORS = ["#5ec8ff", "#ffcf5e", "#9cff6d", "#ff7eab", "#c792ff", "#ff8a4c"];
+const STORAGE_KEYS = Object.freeze({
+    name: "gameforge.online.name",
+    color: "gameforge.online.color",
+});
 
 export class OnlineMMOLevel extends Level {
     constructor() {
@@ -29,13 +34,12 @@ export class OnlineMMOLevel extends Level {
         this.caption = "GameForgeJS - Online MMO Demo";
         this.TelaId = "OnlineMMODemo";
         this.blocks = new Map();
-        this.remotePlayers = new Map();
         this.world = { width: 90, height: 18, tileSize: 32 };
         this.cameraX = 0;
         this.cameraY = 0;
-        this.sendTimer = 0;
         this.connectionStatus = "offline";
         this.selectedBlockIndex = 0;
+        this.remotePlayerCache = [];
     }
 
     OnStart() {
@@ -50,10 +54,11 @@ export class OnlineMMOLevel extends Level {
     }
 
     CreateLocalPlayer() {
-        const colorIndex = Math.floor(Math.random() * PLAYER_COLORS.length);
+        const colorIndex = this.ResolveColorIndex();
         return {
             id: null,
-            name: `Player ${Math.floor(Math.random() * 900 + 100)}`,
+            slot: null,
+            name: this.ResolvePlayerName(),
             x: 120 + Math.random() * 160,
             y: 240,
             vx: 0,
@@ -62,6 +67,7 @@ export class OnlineMMOLevel extends Level {
             height: PLAYER.height,
             grounded: false,
             facingRight: true,
+            colorIndex,
             color: PLAYER_COLORS[colorIndex],
         };
     }
@@ -69,15 +75,20 @@ export class OnlineMMOLevel extends Level {
     Connect() {
         const params = new URLSearchParams(window.location.search);
         const room = params.get("room") || "meadow";
-        const configuredUrl = Config.data?.network?.serverUrl;
-        const url = configuredUrl && configuredUrl !== "auto"
-            ? configuredUrl
-            : `${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/gameforge-network?room=${encodeURIComponent(room)}`;
+        const url = this.ResolveNetworkUrl(room, params);
+        const networkConfig = Config.data?.network ?? {};
 
         this.room = room;
-        this.network = new NetworkClient({
+        this.network = new NetworkRoomClient({
             url,
-            autoReconnect: Config.data?.network?.autoReconnect ?? true,
+            roomId: room,
+            name: this.localPlayer.name,
+            colorIndex: this.localPlayer.colorIndex,
+            width: this.localPlayer.width,
+            height: this.localPlayer.height,
+            autoReconnect: networkConfig.autoReconnect ?? true,
+            syncRate: networkConfig.syncRate ?? 15,
+            interpolationDelay: networkConfig.interpolationDelay ?? 120,
         });
 
         this.network.on("open", () => {
@@ -90,15 +101,32 @@ export class OnlineMMOLevel extends Level {
         this.network.on("error", () => {
             this.connectionStatus = "offline";
         });
-        this.network.on("room:welcome", message => this.HandleWelcome(message.payload));
-        this.network.on("player:update", message => this.HandleRemotePlayer(message.payload));
-        this.network.on("player:left", message => this.remotePlayers.delete(message.payload.id));
-        this.network.on("world:block:set", message => this.ApplyBlock(message.payload));
+        this.network.on("room:welcome", payload => this.HandleWelcome(payload));
+        this.network.on("world:block:set", block => this.ApplyBlock(block));
         this.network.Connect();
+    }
+
+    ResolveNetworkUrl(room, params) {
+        const configuredUrl = params.get("server") || Config.data?.network?.serverUrl;
+        if (configuredUrl && configuredUrl !== "auto") {
+            return this.WithRoomParam(configuredUrl, room);
+        }
+
+        const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+        return `${protocol}://${window.location.host}/gameforge-network?room=${encodeURIComponent(room)}`;
+    }
+
+    WithRoomParam(serverUrl, room) {
+        const url = new URL(serverUrl, window.location.href);
+        if (url.protocol === "http:") url.protocol = "ws:";
+        if (url.protocol === "https:") url.protocol = "wss:";
+        if (!url.searchParams.has("room")) url.searchParams.set("room", room);
+        return url.toString();
     }
 
     HandleWelcome(payload) {
         this.localPlayer.id = payload.playerId;
+        this.localPlayer.slot = payload.playerSlot;
         this.world = {
             width: payload.world?.width ?? this.world.width,
             height: payload.world?.height ?? this.world.height,
@@ -106,16 +134,7 @@ export class OnlineMMOLevel extends Level {
         };
         this.blocks.clear();
         payload.world?.blocks?.forEach(block => this.ApplyBlock(block));
-        payload.players?.forEach(player => this.HandleRemotePlayer(player));
         this.SendPlayerUpdate(true);
-    }
-
-    HandleRemotePlayer(player) {
-        if (!player?.id || player.id === this.localPlayer.id) return;
-        this.remotePlayers.set(player.id, {
-            ...this.remotePlayers.get(player.id),
-            ...player,
-        });
     }
 
     OnUpdate(dt) {
@@ -123,7 +142,7 @@ export class OnlineMMOLevel extends Level {
         this.UpdateInput(delta);
         this.StepPlayer(this.localPlayer, delta);
         this.UpdateCamera();
-        this.UpdateNetwork(delta);
+        this.UpdateNetwork();
     }
 
     UpdateInput(delta) {
@@ -172,66 +191,22 @@ export class OnlineMMOLevel extends Level {
 
     StepPlayer(player, delta) {
         player.vy += PLAYER.gravity * delta;
-        player.x += player.vx * delta;
-        this.ResolveHorizontal(player);
+        TileCollision2D.Move(player, {
+            delta,
+            tileSize: this.world.tileSize,
+            worldWidth: this.world.width,
+            worldHeight: this.world.height,
+            getTile: (x, y) => this.GetBlock(x, y),
+            isSolid: block => this.IsSolidBlock(block),
+        });
 
-        player.y += player.vy * delta;
-        player.grounded = false;
-        this.ResolveVertical(player);
-
-        const maxX = (this.world.width * this.world.tileSize) - player.width;
-        player.x = Math.max(0, Math.min(maxX, player.x));
-        if (player.y > this.screen.Height + 300) {
+        const fallLimit = (this.world.height * this.world.tileSize) + 300;
+        if (player.y > fallLimit) {
             player.x = 120;
             player.y = 120;
+            player.vx = 0;
             player.vy = 0;
         }
-    }
-
-    ResolveHorizontal(player) {
-        const solids = this.GetOverlappingBlocks(player);
-        solids.forEach(block => {
-            const rect = this.BlockRect(block);
-            if (!this.IntersectsRect(player, rect)) return;
-
-            if (player.vx > 0) player.x = rect.x - player.width;
-            else if (player.vx < 0) player.x = rect.x + rect.width;
-        });
-    }
-
-    ResolveVertical(player) {
-        const solids = this.GetOverlappingBlocks(player);
-        solids.forEach(block => {
-            const rect = this.BlockRect(block);
-            if (!this.IntersectsRect(player, rect)) return;
-
-            if (player.vy > 0) {
-                player.y = rect.y - player.height;
-                player.vy = 0;
-                player.grounded = true;
-            } else if (player.vy < 0) {
-                player.y = rect.y + rect.height;
-                player.vy = 0;
-            }
-        });
-    }
-
-    GetOverlappingBlocks(rect) {
-        const tile = this.world.tileSize;
-        const minX = Math.floor(rect.x / tile) - 1;
-        const maxX = Math.floor((rect.x + rect.width) / tile) + 1;
-        const minY = Math.floor(rect.y / tile) - 1;
-        const maxY = Math.floor((rect.y + rect.height) / tile) + 1;
-        const blocks = [];
-
-        for (let y = minY; y <= maxY; y++) {
-            for (let x = minX; x <= maxX; x++) {
-                const block = this.blocks.get(this.BlockKey(x, y));
-                if (block && block.type !== "air") blocks.push(block);
-            }
-        }
-
-        return blocks;
     }
 
     UpdateCamera() {
@@ -241,44 +216,45 @@ export class OnlineMMOLevel extends Level {
         this.cameraX = Math.max(0, Math.min(worldWidth - this.screen.Width, this.cameraX));
     }
 
-    UpdateNetwork(delta) {
-        this.sendTimer -= delta;
-        if (this.sendTimer > 0) return;
-
-        const syncRate = Config.data?.network?.syncRate ?? 15;
-        this.sendTimer = 1 / Math.max(1, syncRate);
+    UpdateNetwork() {
         this.SendPlayerUpdate();
     }
 
     SendPlayerUpdate(force = false) {
         if (!this.network?.IsConnected) return;
 
-        this.network.Send("player:update", {
-            name: this.localPlayer.name,
-            x: Math.round(this.localPlayer.x * 100) / 100,
-            y: Math.round(this.localPlayer.y * 100) / 100,
-            vx: Math.round(this.localPlayer.vx * 100) / 100,
-            vy: Math.round(this.localPlayer.vy * 100) / 100,
-            width: this.localPlayer.width,
-            height: this.localPlayer.height,
+        if (force) {
+            this.network.SendPlayerProfile({
+                name: this.localPlayer.name,
+                colorIndex: this.localPlayer.colorIndex,
+                width: this.localPlayer.width,
+                height: this.localPlayer.height,
+            });
+        }
+
+        this.network.SendPlayerState({
+            x: this.localPlayer.x,
+            y: this.localPlayer.y,
+            vx: this.localPlayer.vx,
+            vy: this.localPlayer.vy,
             grounded: this.localPlayer.grounded,
             facingRight: this.localPlayer.facingRight,
-            color: this.localPlayer.color,
-            selectedBlock: BLOCK_TYPES[this.selectedBlockIndex],
-            force,
-        });
+            colorIndex: this.localPlayer.colorIndex,
+        }, { force });
     }
 
     SetBlock(x, y, type, sync = false) {
         const block = { x, y, type };
+        const currentType = this.GetBlock(x, y)?.type ?? "air";
+        if (currentType === block.type) return;
+
         this.ApplyBlock(block);
-        if (sync && this.network?.IsConnected) {
-            this.network.Send("world:block:set", block);
-        }
+        if (sync) this.network?.SetBlock(block);
     }
 
     ApplyBlock(block) {
         if (!Number.isFinite(block?.x) || !Number.isFinite(block?.y)) return;
+        if (block.x < 0 || block.y < 0 || block.x >= this.world.width || block.y >= this.world.height) return;
 
         const key = this.BlockKey(block.x, block.y);
         if (block.type === "air") {
@@ -293,6 +269,14 @@ export class OnlineMMOLevel extends Level {
         });
     }
 
+    GetBlock(x, y) {
+        return this.blocks.get(this.BlockKey(x, y));
+    }
+
+    IsSolidBlock(block) {
+        return Boolean(block) && block.type !== "air";
+    }
+
     GetCursorTile() {
         if (!this.screen?.Canvas) return null;
         const position = this.mouse.getPositionRelative(this.screen.Canvas);
@@ -305,6 +289,7 @@ export class OnlineMMOLevel extends Level {
 
     OnDrawn() {
         const ctx = this.screen.Context;
+        this.remotePlayerCache = this.network?.GetRemotePlayers() ?? [];
         this.DrawSky(ctx);
         this.DrawBlocks(ctx);
         this.DrawPlayers(ctx);
@@ -344,7 +329,7 @@ export class OnlineMMOLevel extends Level {
 
         for (let y = 0; y < this.world.height; y++) {
             for (let x = startX; x < endX; x++) {
-                const block = this.blocks.get(this.BlockKey(x, y));
+                const block = this.GetBlock(x, y);
                 if (!block) continue;
                 this.DrawBlock(ctx, block);
             }
@@ -366,7 +351,7 @@ export class OnlineMMOLevel extends Level {
     }
 
     DrawPlayers(ctx) {
-        [...this.remotePlayers.values()].forEach(player => this.DrawPlayer(ctx, player, false));
+        this.remotePlayerCache.forEach(player => this.DrawPlayer(ctx, player, false));
         this.DrawPlayer(ctx, this.localPlayer, true);
     }
 
@@ -381,7 +366,7 @@ export class OnlineMMOLevel extends Level {
         ctx.ellipse(x + width / 2, y + height + 3, width * 0.58, 5, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.fillStyle = player.color ?? "#5ec8ff";
+        ctx.fillStyle = player.color ?? PLAYER_COLORS[player.colorIndex] ?? "#5ec8ff";
         ctx.fillRect(x, y + 10, width, height - 10);
         ctx.fillStyle = isLocal ? "#fff7b7" : "#dce8ff";
         ctx.fillRect(x + 3, y, width - 6, 15);
@@ -406,37 +391,85 @@ export class OnlineMMOLevel extends Level {
     }
 
     DrawHud(ctx) {
-        const playerCount = this.remotePlayers.size + 1;
+        const playerCount = this.remotePlayerCache.length + 1;
         const selectedBlock = BLOCK_TYPES[this.selectedBlockIndex];
         ctx.fillStyle = "rgba(6, 12, 22, 0.72)";
-        ctx.fillRect(12, 12, 256, 58);
+        ctx.fillRect(12, 12, 328, 58);
         ctx.fillStyle = this.connectionStatus === "online" ? "#9cff6d" : "#ff7e7e";
         ctx.font = "14px Arial";
         ctx.textAlign = "left";
-        ctx.fillText(`Sala ${this.room} | ${this.connectionStatus}`, 24, 34);
+        ctx.fillText(`${this.localPlayer.name} | Sala ${this.room} | ${this.connectionStatus}`, 24, 34);
         ctx.fillStyle = "#dce8ff";
-        ctx.fillText(`Players ${playerCount} | Bloco ${selectedBlock}`, 24, 56);
-    }
-
-    BlockRect(block) {
-        const tile = this.world.tileSize;
-        return {
-            x: block.x * tile,
-            y: block.y * tile,
-            width: tile,
-            height: tile,
-        };
+        ctx.fillText(`Players ${playerCount} | Bloco ${selectedBlock} | ${this.NetworkServerLabel()}`, 24, 56);
     }
 
     IntersectsPlayer(tileX, tileY, player) {
-        return this.IntersectsRect(player, this.BlockRect({ x: tileX, y: tileY }));
+        return TileCollision2D.IntersectsTile(player, tileX, tileY, this.world.tileSize);
     }
 
-    IntersectsRect(a, b) {
-        return a.x < b.x + b.width
-            && a.x + a.width > b.x
-            && a.y < b.y + b.height
-            && a.y + a.height > b.y;
+    ResolvePlayerName() {
+        const params = new URLSearchParams(window.location.search);
+        const fromUrl = params.get("name") || params.get("user") || params.get("username");
+        const storedName = this.ReadStorage(STORAGE_KEYS.name);
+        const generated = `Player ${Math.floor(Math.random() * 900 + 100)}`;
+        let name = fromUrl || storedName;
+
+        if (!name && typeof window.prompt === "function") {
+            name = window.prompt("Nome de usuario", generated);
+        }
+
+        name = this.NormalizeName(name || generated);
+        this.WriteStorage(STORAGE_KEYS.name, name);
+        return name;
+    }
+
+    ResolveColorIndex() {
+        const params = new URLSearchParams(window.location.search);
+        const urlColor = params.get("color");
+        const storedColor = this.ReadStorage(STORAGE_KEYS.color);
+        const fromUrl = urlColor ? Number(urlColor) : NaN;
+        const fromStorage = storedColor ? Number(storedColor) : NaN;
+        const colorIndex = Number.isFinite(fromUrl)
+            ? fromUrl
+            : Number.isFinite(fromStorage)
+                ? fromStorage
+                : Math.floor(Math.random() * PLAYER_COLORS.length);
+        const normalized = Math.max(0, Math.min(PLAYER_COLORS.length - 1, Math.trunc(colorIndex)));
+        this.WriteStorage(STORAGE_KEYS.color, String(normalized));
+        return normalized;
+    }
+
+    NormalizeName(name) {
+        return String(name || "Player")
+            .replace(/\s+/g, " ")
+            .trim()
+            .slice(0, 18) || "Player";
+    }
+
+    ReadStorage(key) {
+        try {
+            return window.localStorage?.getItem(key) ?? "";
+        } catch {
+            return "";
+        }
+    }
+
+    WriteStorage(key, value) {
+        try {
+            window.localStorage?.setItem(key, value);
+        } catch {
+            // Storage can be disabled in private windows or embedded previews.
+        }
+    }
+
+    NetworkServerLabel() {
+        try {
+            const url = new URL(this.network?.url ?? "", window.location.href);
+            const label = url.host === window.location.host ? "local" : url.host;
+            return label.length > 22 ? `${label.slice(0, 19)}...` : label;
+        } catch {
+            return "rede";
+        }
     }
 
     BlockKey(x, y) {

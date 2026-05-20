@@ -55,7 +55,7 @@ http://localhost:8080/Main.html?demo=immature
 | Demo 3D | `Demos/Demo3D/mainDemo3D.js` | `Demos/Demo3D/demo3d.config.json` | Validacao da camada Render3D com WebGL2, luz, normal map e sombra. |
 | Sistema Solar 3D | `Demos/DemoSolarSystem/mainSolarSystem.js` | `Demos/DemoSolarSystem/solar.config.json` | Demo Render3D com shader procedural de planetas, luz solar e orbitas. |
 | MiniGame 3D | `Demos/DemoMiniGame3D/mainMiniGame3D.js` | `Demos/DemoMiniGame3D/mini3d.config.json` | Mini jogo 3D com modelo GLB, fisica, coleta, camera e iluminacao. |
-| Online MMO | `Demos/DemoOnlineMMO/mainOnlineMMO.js` | `Demos/DemoOnlineMMO/online.config.json` | Sandbox 2D online com players e blocos sincronizados por WebSocket. |
+| Online MMO | `Demos/DemoOnlineMMO/mainOnlineMMO.js` | `Demos/DemoOnlineMMO/online.config.json` | Sandbox 2D online com nome de usuario, colisao 2D compartilhada e estado de players em protocolo binario hibrido. |
 | Immature | `Demos/Demo/mainImmature.js` | `Demos/Demo/immature.config.json` | Exemplo simples de movimentacao e colisao. |
 
 ## Estrutura
@@ -65,7 +65,7 @@ GameForgeJS/
   CoreCross/             Bootstrap, loop, config, assets, audio, input, math, componentes e pathfinding compartilhados
   Core2D/                Canvas 2D, GameObject, camera, cena, UI, colisao, combate, particulas e efeitos 2D
   Core3D/                WebGL/Render3D, Level3D, modelos, shaders, janela, objetos e fisica 3D
-  CoreNetwork/           Cliente WebSocket, envelope de mensagens e sincronizacao leve de estado
+  CoreNetwork/           Cliente WebSocket, codecs, protocolo, salas, interpolacao e sincronizacao leve de estado
   docs/                  Guias tecnicos
   Demos/                 Todas as demos jogaveis e tecnicas
     DemoAdvanced/        Demo plataforma/RPG data-driven

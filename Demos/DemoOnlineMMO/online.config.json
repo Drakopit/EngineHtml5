@@ -20,7 +20,9 @@
         "serverUrl": "auto",
         "autoConnect": true,
         "autoReconnect": true,
-        "syncRate": 15
+        "syncRate": 12,
+        "interpolationDelay": 120,
+        "protocol": "hybrid-binary"
     },
     "input": {
         "gamepadProfile": "xbox",

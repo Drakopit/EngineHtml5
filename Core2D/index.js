@@ -4,6 +4,7 @@ export { Camera } from "./Camera/Camera.js";
 export { BoxController2D } from "./Collision/BoxController2D.js";
 export { BoxManifest2D } from "./Collision/BoxManifest2D.js";
 export { CombatResolver2D } from "./Collision/CombatResolver2D.js";
+export { TileCollision2D } from "./Collision/TileCollision2D.js";
 export { ComboController } from "./Combat/ComboController.js";
 export { FloatingText } from "./Effects/FloatingText.js";
 export { Animator } from "./Graphics/Animator.js";
