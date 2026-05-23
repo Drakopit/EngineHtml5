@@ -91,10 +91,11 @@ export class Fighter2D {
         this.name = config.name;
         this.image = config.image;
         this.tint = config.tint;
+        this.stats = config.stats || { speedMult: 1, damageMult: 1, hpMult: 1 };
         this.controlledByPlayer = config.controlledByPlayer;
         this.input = config.input;
         this.opponent = null;
-        this.maxHp = FIGHTER.maxHp;
+        this.maxHp = Math.floor(FIGHTER.maxHp * this.stats.hpMult);
         this.roundWins = 0;
         this.humanOverrideTimer = 0;
         this.cpuThinkTimer = 0;
@@ -110,6 +111,7 @@ export class Fighter2D {
         this.vy = 0;
         this.facingRight = facingRight;
         this.hp = this.maxHp;
+        this.displayHp = this.maxHp;
         this.meter = 0;
         this.state = "idle";
         this.stateTimer = 0;
@@ -126,6 +128,13 @@ export class Fighter2D {
         };
         this.cpuThinkTimer = 0;
         this.cpuPlan = this.EmptyInput();
+        this.comboCount = 0;
+        this.comboTimer = 0;
+        this.dashTimer = 0;
+        this.dashTapTimerLeft = 0;
+        this.dashTapTimerRight = 0;
+        this.lastInputLeft = false;
+        this.lastInputRight = false;
     }
 
     EmptyInput() {
@@ -148,9 +157,17 @@ export class Fighter2D {
 
         this.invulnerableTimer = Math.max(0, this.invulnerableTimer - delta);
         this.stateTimer = Math.max(0, this.stateTimer - delta);
+        this.comboTimer = Math.max(0, this.comboTimer - delta);
+        if (this.comboTimer <= 0) this.comboCount = 0;
+
+        if (this.displayHp > this.hp) {
+            this.displayHp = Math.max(this.hp, this.displayHp - delta * 40);
+        } else if (this.displayHp < this.hp) {
+            this.displayHp = this.hp;
+        }
 
         if (this.IsActionLocked()) {
-            this.UpdateLockedState(delta);
+            this.UpdateLockedState(delta, input);
         } else {
             this.UpdateGroundControl(delta, input);
         }
@@ -175,11 +192,35 @@ export class Fighter2D {
         if (input.up && this.IsGrounded()) {
             this.vy = FIGHTER.jumpStrength;
             this.ChangeState("jump");
+            this.dashTimer = 0;
+            return;
         }
+
+        // Double tap detection for dashing
+        if (input.left && !this.lastInputLeft) {
+            if (this.dashTapTimerLeft > 0) {
+                this.dashTimer = 0.4;
+                this.facingRight = false;
+            }
+            this.dashTapTimerLeft = 0.25;
+        }
+        if (input.right && !this.lastInputRight) {
+            if (this.dashTapTimerRight > 0) {
+                this.dashTimer = 0.4;
+                this.facingRight = true;
+            }
+            this.dashTapTimerRight = 0.25;
+        }
+        this.lastInputLeft = input.left;
+        this.lastInputRight = input.right;
+        this.dashTapTimerLeft = Math.max(0, this.dashTapTimerLeft - delta);
+        this.dashTapTimerRight = Math.max(0, this.dashTapTimerRight - delta);
+        this.dashTimer = Math.max(0, this.dashTimer - delta);
 
         const horizontal = (input.right ? 1 : 0) - (input.left ? 1 : 0);
         if (horizontal !== 0) {
-            this.vx = horizontal * FIGHTER.walkSpeed;
+            const speed = (this.dashTimer > 0 ? FIGHTER.walkSpeed * 2.2 : FIGHTER.walkSpeed) * this.stats.speedMult;
+            this.vx = horizontal * speed;
             if (this.IsGrounded()) this.ChangeState("walk");
             return;
         }
@@ -188,9 +229,20 @@ export class Fighter2D {
         if (this.IsGrounded()) this.ChangeState("idle");
     }
 
-    UpdateLockedState(delta) {
+    UpdateLockedState(delta, input) {
         if (this.state === "hurt") {
             this.vx *= 0.9;
+        }
+
+        if (this.hitOnce && this.CanCancel()) {
+            if (input.heavy && this.currentAttackName === "light") {
+                this.StartAttack("heavy");
+                return;
+            }
+            if (input.special && (this.currentAttackName === "light" || this.currentAttackName === "heavy")) {
+                this.StartAttack("special");
+                return;
+            }
         }
 
         if (this.stateTimer <= 0 && this.state !== "ko") {
@@ -262,6 +314,7 @@ export class Fighter2D {
         this.stateTimer = attack.duration;
         this.vx = this.vx * 0.35 + (this.facingRight ? 1 : -1) * (attack.lunge ?? 0);
         if (attack.meterCost) this.meter -= attack.meterCost;
+        this.dashTimer = 0; // Cancel dash on attack
         this.ChangeState(name);
     }
 
@@ -340,6 +393,13 @@ export class Fighter2D {
 
         const elapsed = attack.duration - this.stateTimer;
         return elapsed >= attack.activeStart && elapsed <= attack.activeEnd;
+    }
+
+    CanCancel() {
+        const attack = this.GetCurrentAttack();
+        if (!attack) return false;
+        const elapsed = attack.duration - this.stateTimer;
+        return elapsed >= attack.activeEnd; // Can cancel during recovery frames
     }
 
     GetCurrentAttack() {

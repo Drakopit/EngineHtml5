@@ -14,6 +14,8 @@ export class CelestialBodyMaterial extends Material {
         cloudStrength = 0.35,
         atmosphereStrength = 0.55,
         emissiveStrength = 0,
+        albedoMap = null,
+        normalMap = null,
     } = {}) {
         super({ name, transparent: false });
         this.type = "celestial";
@@ -27,5 +29,7 @@ export class CelestialBodyMaterial extends Material {
         this.cloudStrength = cloudStrength;
         this.atmosphereStrength = atmosphereStrength;
         this.emissiveStrength = emissiveStrength;
+        this.albedoMap = albedoMap;
+        this.normalMap = normalMap;
     }
 }

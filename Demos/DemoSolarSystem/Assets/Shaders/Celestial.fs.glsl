@@ -1,28 +1,4 @@
-export const CELESTIAL_VERTEX_SHADER = `#version 300 es
-precision highp float;
-
-layout(location = 0) in vec3 aPosition;
-layout(location = 1) in vec3 aNormal;
-layout(location = 2) in vec2 aUv;
-
-uniform mat4 uModel;
-uniform mat4 uView;
-uniform mat4 uProjection;
-uniform mat4 uNormalMatrix;
-
-out vec3 vWorldPosition;
-out vec3 vNormal;
-out vec2 vUv;
-
-void main() {
-    vec4 worldPosition = uModel * vec4(aPosition, 1.0);
-    vWorldPosition = worldPosition.xyz;
-    vNormal = normalize(mat3(uNormalMatrix) * aNormal);
-    vUv = aUv;
-    gl_Position = uProjection * uView * worldPosition;
-}`;
-
-export const CELESTIAL_FRAGMENT_SHADER = `#version 300 es
+#version 300 es
 precision highp float;
 
 in vec3 vWorldPosition;
@@ -44,6 +20,9 @@ uniform float uCloudStrength;
 uniform float uAtmosphereStrength;
 uniform float uEmissiveStrength;
 uniform float uTime;
+
+uniform sampler2D uAlbedoMap;
+uniform int uHasAlbedoMap;
 
 float hash(vec2 p) {
     p = fract(p * vec2(123.34, 456.21));
@@ -92,7 +71,14 @@ void main() {
     float clouds = smoothstep(0.4, 0.9, fbm(movingUv * 12.0 + q * 2.0 + vec2(uTime * 0.015)));
     
     float mask = clamp(terrain * 0.7 + bands * 0.3, 0.0, 1.0);
-    vec3 surface = mix(uBaseColor, uSecondaryColor, mask);
+    
+    // Blend procedural with texture map if available
+    vec3 surface;
+    if (uHasAlbedoMap == 1) {
+        surface = texture(uAlbedoMap, vUv).rgb;
+    } else {
+        surface = mix(uBaseColor, uSecondaryColor, mask);
+    }
     
     // Add realistic atmospheric scattering / clouds
     surface = mix(surface, vec3(1.0, 0.98, 0.95), clouds * uCloudStrength);
@@ -128,4 +114,4 @@ void main() {
     }
 
     outColor = vec4(lit, 1.0);
-}`;
+}

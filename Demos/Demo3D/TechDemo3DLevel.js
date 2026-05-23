@@ -30,14 +30,8 @@ export class TechDemo3DLevel extends Level3D {
         this.screen3D = new Screen3D("gameCanvas3D", width, height);
         this.ui = new ScreenUI("gameCanvasUI", width, height);
 
-        this.screen3D.Canvas.style.position = "absolute";
-        this.screen3D.Canvas.style.left = "0px";
-        this.screen3D.Canvas.style.top = "0px";
-        this.screen3D.Canvas.style.zIndex = "1";
-        this.ui.Screen.Canvas.style.position = "absolute";
-        this.ui.Screen.Canvas.style.left = "0px";
-        this.ui.Screen.Canvas.style.top = "0px";
-        this.ui.Screen.Canvas.style.zIndex = "2";
+        this.#setUpCanvas3D();
+        this.#setUpCanvasUI();
 
         this.renderer = new WebGL3DRenderer(this.screen3D.Canvas, {
             clearColor: [0.035, 0.045, 0.065, 1],
@@ -82,6 +76,20 @@ export class TechDemo3DLevel extends Level3D {
 
         this.BuildScene();
         super.OnStart();
+    }
+
+    #setUpCanvasUI() {
+        this.ui.Screen.Canvas.style.position = "absolute";
+        this.ui.Screen.Canvas.style.left = "0px";
+        this.ui.Screen.Canvas.style.top = "0px";
+        this.ui.Screen.Canvas.style.zIndex = "2";
+    }
+
+    #setUpCanvas3D() {
+        this.screen3D.Canvas.style.position = "absolute";
+        this.screen3D.Canvas.style.left = "0px";
+        this.screen3D.Canvas.style.top = "0px";
+        this.screen3D.Canvas.style.zIndex = "1";
     }
 
     BuildScene() {
@@ -168,6 +176,7 @@ export class TechDemo3DLevel extends Level3D {
 
         const draw = this.ui.Draw;
 
+        // this.#drawTextUI(draw);
         draw.Color = "#9FE7FF";
         draw.FontSize = "22px";
         draw.DrawText("Render3D: WebGL2 + luz + normal map + sombra", 20, 38);
@@ -175,6 +184,13 @@ export class TechDemo3DLevel extends Level3D {
         draw.FontSize = "15px";
         draw.DrawText(`FPS: ${this.FPS}`, 20, 64);
         draw.DrawText("Camada 2D/UI continua por cima do canvas 3D.", 20, 88);
+    }
+
+    #drawTextUI(color, fontSize, text, x, y) {
+        draw.Color = color;
+        draw.FontSize = fontSize;
+        draw.DrawText(text, x, y);
+        draw.Color = "#FFFFFF";
     }
 
     OnExit() {

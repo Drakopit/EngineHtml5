@@ -11,6 +11,7 @@ export const FIGHTING_GAME_CHARACTERS = Object.freeze([
         title: "Velocidade",
         asset: "fight_char_blue",
         tint: "#52A8FF",
+        stats: { speedMult: 1.15, damageMult: 0.85, hpMult: 0.9 },
     },
     {
         id: "shade",
@@ -18,6 +19,7 @@ export const FIGHTING_GAME_CHARACTERS = Object.freeze([
         title: "Agilidade",
         asset: "fight_char_no_armor",
         tint: "#75D7FF",
+        stats: { speedMult: 1.05, damageMult: 0.95, hpMult: 0.95 },
     },
     {
         id: "aurum",
@@ -25,6 +27,7 @@ export const FIGHTING_GAME_CHARACTERS = Object.freeze([
         title: "Impacto",
         asset: "fight_char_gold",
         tint: "#F4D26A",
+        stats: { speedMult: 0.9, damageMult: 1.15, hpMult: 1.05 },
     },
     {
         id: "aegis",
@@ -32,6 +35,7 @@ export const FIGHTING_GAME_CHARACTERS = Object.freeze([
         title: "Defesa",
         asset: "fight_char_silver",
         tint: "#D7E2F1",
+        stats: { speedMult: 0.85, damageMult: 1.0, hpMult: 1.15 },
     },
 ]);
 

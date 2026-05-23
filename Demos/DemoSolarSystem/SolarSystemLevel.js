@@ -1,4 +1,5 @@
 import { ActionManager } from "../../CoreCross/Input/ActionManager.js";
+import { AssetManager } from "../../CoreCross/Assets/AssetManager.js";
 import {
     AmbientLight,
     CelestialBodyMaterial,
@@ -11,14 +12,14 @@ import {
 } from "../../Core3D/index.js";
 
 const PLANETS = Object.freeze([
-    { name: "Mercurio", radius: 0.24, orbit: 3.4, speed: 1.9, rotation: 0.9, colors: [[0.58, 0.54, 0.49], [0.26, 0.24, 0.23]], seed: 2 },
-    { name: "Venus", radius: 0.42, orbit: 4.7, speed: 1.35, rotation: 0.55, colors: [[0.92, 0.68, 0.35], [0.55, 0.36, 0.18]], seed: 7 },
-    { name: "Terra", radius: 0.48, orbit: 6.4, speed: 1.0, rotation: 1.6, colors: [[0.16, 0.38, 0.78], [0.18, 0.58, 0.28]], atmosphere: [0.35, 0.64, 1.0], cloud: 0.46, seed: 11 },
-    { name: "Marte", radius: 0.36, orbit: 8.1, speed: 0.8, rotation: 1.25, colors: [[0.74, 0.28, 0.16], [0.38, 0.15, 0.09]], atmosphere: [0.95, 0.35, 0.2], seed: 17 },
-    { name: "Jupiter", radius: 1.05, orbit: 11.2, speed: 0.42, rotation: 2.1, colors: [[0.76, 0.55, 0.34], [0.96, 0.84, 0.62]], cloud: 0.2, seed: 23 },
-    { name: "Saturno", radius: 0.88, orbit: 14.3, speed: 0.32, rotation: 1.85, colors: [[0.86, 0.72, 0.46], [0.54, 0.42, 0.25]], ring: true, seed: 29 },
-    { name: "Urano", radius: 0.62, orbit: 17.0, speed: 0.25, rotation: 1.1, colors: [[0.46, 0.85, 0.88], [0.2, 0.48, 0.58]], atmosphere: [0.48, 0.95, 1.0], seed: 31 },
-    { name: "Netuno", radius: 0.6, orbit: 19.2, speed: 0.2, rotation: 1.0, colors: [[0.18, 0.28, 0.88], [0.08, 0.12, 0.38]], atmosphere: [0.22, 0.46, 1.0], seed: 37 },
+    { name: "Mercurio", radius: 0.07, orbit: 4.5, speed: 1.24, rotation: 0.9, inclination: 0.12, tilt: 0, colors: [[0.58, 0.54, 0.49], [0.26, 0.24, 0.23]], seed: 2 },
+    { name: "Venus", radius: 0.19, orbit: 8.0, speed: 0.48, rotation: 0.55, inclination: 0.06, tilt: 3.08, colors: [[0.92, 0.68, 0.35], [0.55, 0.36, 0.18]], seed: 7 },
+    { name: "Terra", radius: 0.20, orbit: 12.0, speed: 0.3, rotation: 1.6, inclination: 0, tilt: 0.41, colors: [[0.16, 0.38, 0.78], [0.18, 0.58, 0.28]], atmosphere: [0.35, 0.64, 1.0], cloud: 0.46, seed: 11, textureMap: "earth_diffuse" },
+    { name: "Marte", radius: 0.11, orbit: 18.0, speed: 0.16, rotation: 1.25, inclination: 0.03, tilt: 0.43, colors: [[0.74, 0.28, 0.16], [0.38, 0.15, 0.09]], atmosphere: [0.95, 0.35, 0.2], seed: 17 },
+    { name: "Jupiter", radius: 2.2, orbit: 42.0, speed: 0.025, rotation: 2.1, inclination: 0.02, tilt: 0.05, colors: [[0.76, 0.55, 0.34], [0.96, 0.84, 0.62]], cloud: 0.2, seed: 23 },
+    { name: "Saturno", radius: 1.8, orbit: 75.0, speed: 0.010, rotation: 1.85, inclination: 0.04, tilt: 0.46, colors: [[0.86, 0.72, 0.46], [0.54, 0.42, 0.25]], ring: true, seed: 29 },
+    { name: "Urano", radius: 0.8, orbit: 130.0, speed: 0.003, rotation: 1.1, inclination: 0.01, tilt: 1.70, colors: [[0.46, 0.85, 0.88], [0.2, 0.48, 0.58]], atmosphere: [0.48, 0.95, 1.0], seed: 31 },
+    { name: "Netuno", radius: 0.77, orbit: 190.0, speed: 0.0015, rotation: 1.0, inclination: 0.03, tilt: 0.49, colors: [[0.18, 0.28, 0.88], [0.08, 0.12, 0.38]], atmosphere: [0.22, 0.46, 1.0], seed: 37 },
 ]);
 
 export class SolarSystemLevel extends Level3D {
@@ -41,7 +42,7 @@ export class SolarSystemLevel extends Level3D {
             fov: 58,
             aspect: this.width / this.height,
             near: 0.1,
-            far: 160,
+            far: 1000,
             position: [0, 16, 31],
             target: [0, 0, 0],
         });
@@ -76,7 +77,7 @@ export class SolarSystemLevel extends Level3D {
             }),
             { name: "Sun", castShadow: false, receiveShadow: false },
         );
-        this.sun.transform.SetScale(2.05);
+        this.sun.transform.SetScale(5.5);
         this.scene.Add(this.sun);
     }
 
@@ -88,31 +89,36 @@ export class SolarSystemLevel extends Level3D {
                 baseColor: data.colors[0],
                 secondaryColor: data.colors[1],
                 atmosphereColor: data.atmosphere ?? data.colors[0],
-                cloudStrength: data.cloud ?? 0.22,
-                atmosphereStrength: data.atmosphere ? 0.62 : 0.28,
-                roughness: 0.7,
+                nightColor: [data.colors[0][0] * 0.1, data.colors[0][1] * 0.1, data.colors[0][2] * 0.1],
+                cloudStrength: data.cloud ?? 0.0,
+                atmosphereStrength: data.atmosphere ? 0.7 : 0.0,
                 seed: data.seed,
+                albedoMap: data.textureMap ? AssetManager.instance?.GetImage(data.textureMap) : null,
             }),
             { name: data.name, castShadow: true, receiveShadow: true },
         );
         mesh.transform.SetScale(data.radius);
+        mesh.transform.rotation.z = data.tilt ?? 0;
         this.scene.Add(mesh);
 
+        const orbitThickness = data.orbit > 50 ? 0.3 : 0.05;
         const orbit = Mesh.FromGeometry(
-            PrimitiveMesh.Ring(data.orbit - 0.01, data.orbit + 0.01, { segments: 160 }),
-            new UnlitMaterial({ color: [0.32, 0.42, 0.58, 0.34], transparent: true }),
+            PrimitiveMesh.Ring(data.orbit - orbitThickness, data.orbit + orbitThickness, { segments: 240 }),
+            new UnlitMaterial({ color: [0.32, 0.42, 0.58, 0.24], transparent: true }),
             { name: `${data.name}Orbit`, castShadow: false, receiveShadow: false },
         );
+        orbit.transform.rotation.x = data.inclination ?? 0;
         this.scene.Add(orbit);
 
         let ring = null;
         if (data.ring) {
             ring = Mesh.FromGeometry(
-                PrimitiveMesh.Ring(1.25, 1.95, { segments: 160 }),
+                PrimitiveMesh.Ring(1.4, 2.2, { segments: 160 }),
                 new UnlitMaterial({ color: [0.82, 0.72, 0.52, 0.65], transparent: true }),
                 { name: "SaturnRings", castShadow: false, receiveShadow: false },
             );
-            ring.transform.rotation.x = Math.PI * 0.12;
+            ring.transform.SetScale(data.radius);
+            ring.transform.rotation.z = data.tilt ?? 0;
             this.scene.Add(ring);
         }
 
@@ -137,8 +143,8 @@ export class SolarSystemLevel extends Level3D {
 
     CreateStarfield() {
         this.stars = [];
-        for (let i = 0; i < 120; i++) {
-            const radius = 56 + Math.random() * 38;
+        for (let i = 0; i < 300; i++) {
+            const radius = 250 + Math.random() * 150;
             const theta = Math.random() * Math.PI * 2;
             const phi = Math.acos(Math.random() * 2 - 1);
             const size = 0.018 + Math.random() * 0.04;
@@ -164,17 +170,24 @@ export class SolarSystemLevel extends Level3D {
 
         if (ActionManager.IsAction("LEFT")) this.cameraYaw -= delta * 0.75;
         if (ActionManager.IsAction("RIGHT")) this.cameraYaw += delta * 0.75;
-        if (ActionManager.IsAction("UP")) this.cameraDistance = Math.max(18, this.cameraDistance - delta * 10);
-        if (ActionManager.IsAction("DOWN")) this.cameraDistance = Math.min(48, this.cameraDistance + delta * 10);
+        if (ActionManager.IsAction("UP")) this.cameraDistance = Math.max(8, this.cameraDistance - delta * this.cameraDistance * 0.8);
+        if (ActionManager.IsAction("DOWN")) this.cameraDistance = Math.min(320, this.cameraDistance + delta * this.cameraDistance * 0.8);
         if (ActionManager.IsActionDown("CANCEL")) this.Back = true;
 
         this.sun.transform.rotation.y += delta * 0.2;
 
         this.planets.forEach(planet => {
-            planet.angle += delta * planet.speed * 0.32;
-            const x = Math.cos(planet.angle) * planet.orbit;
-            const z = Math.sin(planet.angle) * planet.orbit;
-            planet.mesh.transform.SetPosition(x, 0, z);
+            planet.angle += delta * planet.speed;
+            const inc = planet.inclination ?? 0;
+            const r = planet.orbit;
+            const x = Math.cos(planet.angle) * r;
+            const zPlane = Math.sin(planet.angle) * r;
+            
+            // Apply inclination to Y axis
+            const y = -zPlane * Math.sin(inc);
+            const z = zPlane * Math.cos(inc);
+            
+            planet.mesh.transform.SetPosition(x, y, z);
             planet.mesh.transform.rotation.y += delta * planet.rotation;
 
             if (planet.ring) {

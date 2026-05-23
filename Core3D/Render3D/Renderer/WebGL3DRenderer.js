@@ -5,6 +5,7 @@ import { STANDARD_FRAGMENT_SHADER, STANDARD_VERTEX_SHADER } from "../Shader/Stan
 import { UNLIT_FRAGMENT_SHADER, UNLIT_VERTEX_SHADER } from "../Shader/UnlitShader.js";
 import { SHADOW_FRAGMENT_SHADER, SHADOW_VERTEX_SHADER } from "../Shader/ShadowShader.js";
 import { CELESTIAL_FRAGMENT_SHADER, CELESTIAL_VERTEX_SHADER } from "../Shader/CelestialShader.js";
+import { AssetManager } from "../../../CoreCross/Assets/AssetManager.js";
 
 const ATTRIBUTE = Object.freeze({
     position: 0,
@@ -37,10 +38,13 @@ export class WebGL3DRenderer {
         this.shadowCache = new WeakMap();
         this.lightViewProjection = Mat4.create();
 
+        const customCelestialVs = AssetManager.instance?.shaders?.["celestial_vs"];
+        const customCelestialFs = AssetManager.instance?.shaders?.["celestial_fs"];
+
         this.standardShader = new Shader(this.gl, STANDARD_VERTEX_SHADER, STANDARD_FRAGMENT_SHADER, "StandardShader");
         this.unlitShader = new Shader(this.gl, UNLIT_VERTEX_SHADER, UNLIT_FRAGMENT_SHADER, "UnlitShader");
         this.shadowShader = new Shader(this.gl, SHADOW_VERTEX_SHADER, SHADOW_FRAGMENT_SHADER, "ShadowShader");
-        this.celestialShader = new Shader(this.gl, CELESTIAL_VERTEX_SHADER, CELESTIAL_FRAGMENT_SHADER, "CelestialShader");
+        this.celestialShader = new Shader(this.gl, customCelestialVs || CELESTIAL_VERTEX_SHADER, customCelestialFs || CELESTIAL_FRAGMENT_SHADER, "CelestialShader");
 
         this.#configureState();
         this.#createFallbackTextures();
@@ -218,6 +222,7 @@ export class WebGL3DRenderer {
         this.#set1f(shader, "uAtmosphereStrength", material.atmosphereStrength ?? 0.55);
         this.#set1f(shader, "uEmissiveStrength", material.emissiveStrength ?? 0);
         this.#set1f(shader, "uTime", performance.now() / 1000);
+        this.#bindTexture(shader, 0, "uAlbedoMap", "uHasAlbedoMap", material.albedoMap, this.whiteTexture);
     }
 
     #bindLights(shader, scene, shadowState) {

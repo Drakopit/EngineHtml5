@@ -51,6 +51,7 @@ export class FightingGame2DLevel extends Level {
         this.shakeIntensity = 0;
         this.fighters = [];
         this.arcadeComplete = false;
+        this.hitSparks = [];
     }
 
     OnStart() {
@@ -81,6 +82,7 @@ export class FightingGame2DLevel extends Level {
             name: playerOneCharacter.name,
             image: AssetManager.instance.GetImage(playerOneCharacter.asset),
             tint: playerOneCharacter.tint,
+            stats: playerOneCharacter.stats,
             x: 272,
             groundY: ARENA.groundY,
             facingRight: true,
@@ -93,6 +95,7 @@ export class FightingGame2DLevel extends Level {
             name: playerTwoCharacter.name,
             image: AssetManager.instance.GetImage(playerTwoCharacter.asset),
             tint: playerTwoCharacter.tint,
+            stats: playerTwoCharacter.stats,
             x: 688,
             groundY: ARENA.groundY,
             facingRight: false,
@@ -124,6 +127,11 @@ export class FightingGame2DLevel extends Level {
     OnUpdate(dt) {
         const delta = Math.min(dt ?? 0.016, 0.05);
         this.UpdateShake(delta);
+
+        this.hitSparks = this.hitSparks.filter(spark => {
+            spark.timer -= delta;
+            return spark.timer > 0;
+        });
 
         const menuControls = GetFightingControls().menu;
         if (keyboardDown(menuControls.cancel) || anyGamepadButtonDown(menuControls.gamepad?.cancel)) {
@@ -308,7 +316,11 @@ export class FightingGame2DLevel extends Level {
 
         const attack = attacker.GetCurrentAttack();
         const blocked = defender.IsBlocking(attacker);
-        const damage = blocked ? Math.ceil(attack.damage * 0.25) : attack.damage;
+        
+        // Apply character damage multipliers
+        const baseDamage = blocked ? Math.ceil(attack.damage * 0.25) : attack.damage;
+        const damage = Math.ceil(baseDamage * attacker.stats.damageMult);
+        
         const hitStop = blocked ? 0.035 : attack.hitStop;
         const knockback = blocked ? attack.knockback * 0.35 : attack.knockback;
 
@@ -321,6 +333,26 @@ export class FightingGame2DLevel extends Level {
         });
 
         attacker.OnHit(attack.meterGain);
+        
+        if (!blocked) {
+            attacker.comboCount += 1;
+            attacker.comboTimer = 2.5; // Combo window
+        } else {
+            attacker.comboCount = 0;
+        }
+
+        const cx = (Math.max(attackBox.x, hurtBox.x) + Math.min(attackBox.x + attackBox.width, hurtBox.x + hurtBox.width)) / 2;
+        const cy = (Math.max(attackBox.y, hurtBox.y) + Math.min(attackBox.y + attackBox.height, hurtBox.y + hurtBox.height)) / 2;
+        
+        this.hitSparks.push({
+            x: cx,
+            y: cy,
+            timer: 0.25,
+            maxTimer: 0.25,
+            color: blocked ? "#75D7FF" : "#FFD54F",
+            isBlocked: blocked,
+        });
+
         Engine.HitStop(hitStop);
         this.Shake(blocked ? 2.5 : attack.shake);
     }
@@ -395,6 +427,7 @@ export class FightingGame2DLevel extends Level {
 
         this.DrawArena(ctx);
         this.DrawFighters(ctx);
+        this.DrawHitSparks(ctx);
         ctx.restore();
 
         this.DrawHud(ctx);
@@ -492,15 +525,23 @@ export class FightingGame2DLevel extends Level {
         const height = 22;
         const barX = alignRight ? x - width : x;
         const hpPercent = Math.max(0, fighter.hp / fighter.maxHp);
+        const displayHpPercent = Math.max(0, fighter.displayHp / fighter.maxHp);
         const meterPercent = Math.max(0, Math.min(1, fighter.meter / 100));
 
+        // Background
         ctx.fillStyle = "rgba(0, 0, 0, 0.62)";
         ctx.fillRect(barX - 4, y - 4, width + 8, height + 24);
 
         ctx.fillStyle = "#2A0E16";
         ctx.fillRect(barX, y, width, height);
 
-        ctx.fillStyle = hpPercent > 0.45 ? "#54D66D" : hpPercent > 0.22 ? "#F2C84B" : "#EF5350";
+        // Display HP (Red shadow)
+        ctx.fillStyle = "#EF5350";
+        const displayHpWidth = width * displayHpPercent;
+        ctx.fillRect(alignRight ? barX + width - displayHpWidth : barX, y, displayHpWidth, height);
+
+        // Actual HP
+        ctx.fillStyle = hpPercent > 0.45 ? "#54D66D" : hpPercent > 0.22 ? "#F2C84B" : "#FF9800";
         const hpWidth = width * hpPercent;
         ctx.fillRect(alignRight ? barX + width - hpWidth : barX, y, hpWidth, height);
 
@@ -519,7 +560,62 @@ export class FightingGame2DLevel extends Level {
         ctx.fillStyle = "#FFFFFF";
         ctx.textAlign = alignRight ? "right" : "left";
         ctx.fillText(fighter.name, alignRight ? x : x, y - 9);
+
+        // Combo Counter
+        if (fighter.comboCount > 1) {
+            const comboX = alignRight ? x - width - 60 : x + width + 60;
+            const comboY = y + 50;
+            ctx.textAlign = alignRight ? "right" : "left";
+            
+            const pulse = 1 + Math.sin(fighter.comboTimer * 10) * 0.1;
+            ctx.save();
+            ctx.translate(comboX, comboY);
+            ctx.scale(pulse, pulse);
+            
+            ctx.font = "900 32px Arial";
+            ctx.fillStyle = "#FFD54F";
+            ctx.strokeStyle = "#D84315";
+            ctx.lineWidth = 4;
+            ctx.strokeText(fighter.comboCount, 0, 0);
+            ctx.fillText(fighter.comboCount, 0, 0);
+
+            ctx.font = "700 16px Arial";
+            ctx.fillStyle = "#FFFFFF";
+            ctx.strokeStyle = "#000000";
+            ctx.lineWidth = 3;
+            ctx.strokeText("HITS", 0, 20);
+            ctx.fillText("HITS", 0, 20);
+            ctx.restore();
+        }
+
         ctx.textAlign = "left";
+    }
+
+    DrawHitSparks(ctx) {
+        this.hitSparks.forEach(spark => {
+            const progress = spark.timer / spark.maxTimer;
+            const radius = spark.isBlocked ? 20 * (1 - progress) + 5 : 35 * (1 - progress) + 10;
+            
+            ctx.save();
+            ctx.globalAlpha = progress;
+            ctx.fillStyle = spark.color;
+            ctx.beginPath();
+            ctx.arc(spark.x, spark.y, radius, 0, Math.PI * 2);
+            ctx.fill();
+            
+            if (!spark.isBlocked) {
+                ctx.strokeStyle = "#FFFFFF";
+                ctx.lineWidth = 4 * progress;
+                ctx.beginPath();
+                ctx.moveTo(spark.x - radius * 1.5, spark.y);
+                ctx.lineTo(spark.x + radius * 1.5, spark.y);
+                ctx.moveTo(spark.x, spark.y - radius * 1.5);
+                ctx.lineTo(spark.x, spark.y + radius * 1.5);
+                ctx.stroke();
+            }
+            
+            ctx.restore();
+        });
     }
 
     DrawRoundWins(ctx, fighter, x, y) {
