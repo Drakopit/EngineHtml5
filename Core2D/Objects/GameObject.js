@@ -12,7 +12,7 @@
 
 import { Sprite } from "../Graphics/Sprite.js";
 import { Vector2D } from "../../CoreCross/Math/Vector2D.js";
-import { Collide2D } from "../Math/Collide2D.js";
+import { Collide2D } from "../Collision/Collide2D.js";
 import { Base } from "../../CoreCross/Base.js";
 import { Util } from "../../CoreCross/Utils.js";
 import { DEBUG } from "../../CoreCross/Engine.js";

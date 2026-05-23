@@ -1,5 +1,5 @@
-import { Base } from "../../CoreCross/Base.js";
-import { Screen3D as ScreenWebGL } from "../Window/Screen3D.js";
+import { Base } from "../../../CoreCross/Base.js";
+import { Screen3D as ScreenWebGL } from "../../Window/Screen3D.js";
 
 export class Level3D extends Base {
     constructor() {

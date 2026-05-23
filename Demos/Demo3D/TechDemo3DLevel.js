@@ -1,4 +1,4 @@
-import { Level3D } from "../../Core3D/Level/LegacyLevel3D.js";
+import { Level3D } from "../../Core3D/Legacy/Level/LegacyLevel3D.js";
 import { ScreenUI } from "../../Core2D/Window/ScreenUI.js";
 import { Screen3D } from "../../Core3D/Window/Screen3D.js";
 import { AssetManager } from "../../CoreCross/Assets/AssetManager.js";

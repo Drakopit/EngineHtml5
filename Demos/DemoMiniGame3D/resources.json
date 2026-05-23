@@ -13,12 +13,12 @@
         { "name": "sfx_laser",  "path": "Demos/DemoAdvanced/Assets/SFX/Blow 1V2.wav" }
     ],
     "shaders": [
-        { "name": "vertexShader",       "path": "Core3D/Shaders/VertexShader.glsl"},
-        { "name": "fragmentShader",     "path": "Core3D/Shaders/FragmentShader.glsl"},
-        { "name": "MeshFragmentShader", "path": "Core3D/Shaders/MeshFragmentShader.glsl" },
-        { "name": "MeshVertexShader",   "path": "Core3D/Shaders/MeshVertexShader.glsl" },
-        { "name": "SkyFragmentShader",  "path": "Core3D/Shaders/SkyBoxFragmentShader.glsl" },
-        { "name": "SkyVertexShader",    "path": "Core3D/Shaders/SkyBoxVertexShader.glsl" }
+        { "name": "vertexShader",       "path": "Core3D/Legacy/Shaders/VertexShader.glsl"},
+        { "name": "fragmentShader",     "path": "Core3D/Legacy/Shaders/FragmentShader.glsl"},
+        { "name": "MeshFragmentShader", "path": "Core3D/Legacy/Shaders/MeshFragmentShader.glsl" },
+        { "name": "MeshVertexShader",   "path": "Core3D/Legacy/Shaders/MeshVertexShader.glsl" },
+        { "name": "SkyFragmentShader",  "path": "Core3D/Legacy/Shaders/SkyBoxFragmentShader.glsl" },
+        { "name": "SkyVertexShader",    "path": "Core3D/Legacy/Shaders/SkyBoxVertexShader.glsl" }
     ],
     "models": [
         {"name": "character", "path": "Demos/DemoMiniGame3D/Assets/Models/character.glb"}

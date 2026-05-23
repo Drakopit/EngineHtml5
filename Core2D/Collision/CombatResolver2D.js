@@ -1,4 +1,4 @@
-import { Collide2D } from "../Math/Collide2D.js";
+import { Collide2D } from "./Collide2D.js";
 
 export class CombatResolver2D {
     static Resolve(attackerBoxes, defenderBoxesList, options = {}) {

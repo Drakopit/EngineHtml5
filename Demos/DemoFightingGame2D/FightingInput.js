@@ -1,5 +1,5 @@
 import { Input } from "../../CoreCross/Input/Input.js";
-import { GamePad } from "../../CoreCross/Input/GamePad.js";
+import { GamePad } from "../../CoreCross/Input/Gamepad.js";
 import { GamepadAlias } from "../../CoreCross/Input/GamepadAlias.js";
 import { Config } from "../../CoreCross/Config.js";
 

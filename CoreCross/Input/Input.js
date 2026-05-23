@@ -1,4 +1,4 @@
-import { GamePad } from "./GamePad.js";
+import { GamePad } from "./Gamepad.js";
 import { Mouse } from "./Mouse.js";
 import { Touch } from "./Touch.js";
 import { Engine } from "../Engine.js";

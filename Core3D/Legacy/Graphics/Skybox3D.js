@@ -1,6 +1,6 @@
-import { Mat4 } from '../../CoreCross/Math/Mat4.js';
+import { Mat4 } from '../../../CoreCross/Math/Mat4.js';
 import { Shapes3D } from "./Shape3D.js"; // <-- Importamos a classe pai
-import { AssetManager } from '../../CoreCross/Assets/AssetManager.js';
+import { AssetManager } from '../../../CoreCross/Assets/AssetManager.js';
 
 export class Skybox3D extends Shapes3D { // <-- Herança aplicada (Clean Architecture)
     constructor(screen, image) {

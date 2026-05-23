@@ -17,7 +17,7 @@ export { Config } from "./Config.js";
 export { Engine, LevelHandler, DEBUG } from "./Engine.js";
 export { EventEmitter } from "./EventEmitter.js";
 export { ActionManager } from "./Input/ActionManager.js";
-export { GamePad } from "./Input/GamePad.js";
+export { GamePad } from "./Input/Gamepad.js";
 export { GamepadAlias } from "./Input/GamepadAlias.js";
 export { Input } from "./Input/Input.js";
 export { CharCode, KeyCode } from "./Input/KeyCode.js";

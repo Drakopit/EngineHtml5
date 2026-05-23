@@ -5,7 +5,7 @@ const crypto = require("crypto");
 
 const REQUESTED_PORT = Number(process.env.PORT) || 8080;
 const MAX_PORT_ATTEMPTS = 20;
-const ROOT_DIR = __dirname;
+const ROOT_DIR = path.join(__dirname, "..");
 const DEFAULT_FILE = "Main.html";
 const NETWORK_PATH = "/gameforge-network";
 const WS_MAGIC = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";

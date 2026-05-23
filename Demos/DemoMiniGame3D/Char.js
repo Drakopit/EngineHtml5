@@ -1,5 +1,5 @@
 import { GameObject3D } from "../../Core3D/Objects/GameObject3D.js";
-import { Mesh3D } from "../../Core3D/Graphics/Mesh3D.js";
+import { Mesh3D } from "../../Core3D/Legacy/Graphics/Mesh3D.js";
 import { AssetManager } from "../../CoreCross/Assets/AssetManager.js";
 
 export class Char extends GameObject3D {

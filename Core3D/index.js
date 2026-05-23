@@ -1,11 +1,11 @@
 export { Level3D } from "./Level/Level3D.js";
-export { Level3D as LegacyLevel3D } from "./Level/LegacyLevel3D.js";
+export { Level3D as LegacyLevel3D } from "./Legacy/Level/LegacyLevel3D.js";
 export { Camera3D } from "./Camera/Camera3D.js";
 export { GameObject3D, Transform3D as LegacyTransform3D } from "./Objects/GameObject3D.js";
-export { DirectionalLight3D } from "./Graphics/Light3D.js";
-export { Mesh3D } from "./Graphics/Mesh3D.js";
-export { Shapes3D } from "./Graphics/Shape3D.js";
-export { Skybox3D } from "./Graphics/Skybox3D.js";
+export { DirectionalLight3D } from "./Legacy/Graphics/Light3D.js";
+export { Mesh3D } from "./Legacy/Graphics/Mesh3D.js";
+export { Shapes3D } from "./Legacy/Graphics/Shape3D.js";
+export { Skybox3D } from "./Legacy/Graphics/Skybox3D.js";
 export { ModelLoader } from "./Assets/ModelLoader.js";
 export { OBJLoader } from "./Assets/OBJLoader.js";
 export { Screen3D } from "./Window/Screen3D.js";

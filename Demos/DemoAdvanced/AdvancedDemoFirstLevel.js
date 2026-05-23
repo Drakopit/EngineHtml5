@@ -1,7 +1,7 @@
 import { Level } from "../../CoreCross/Level/Level.js";
 import { Draw } from "../../Core2D/Graphics/Draw.js";
 import { AssetManager } from "../../CoreCross/Assets/AssetManager.js";
-import { Collide2D } from "../../Core2D/Math/Collide2D.js";
+import { Collide2D } from "../../Core2D/Collision/Collide2D.js";
 import { Vector2D } from "../../CoreCross/Math/Vector2D.js";
 import { Engine } from "../../CoreCross/Engine.js";
 import { Logger } from "../../CoreCross/Logger.js";

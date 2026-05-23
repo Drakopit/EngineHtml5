@@ -2,7 +2,7 @@ import { Level } from "../../CoreCross/Level/Level.js";
 import { Player } from "./Player.js";
 import { Coin } from "./Coin.js";
 import { Draw } from "../../Core2D/Graphics/Draw.js";
-import { Collide2D } from "../../Core2D/Math/Collide2D.js";
+import { Collide2D } from "../../Core2D/Collision/Collide2D.js";
 import { Screen } from "../../Core2D/Window/Screen.js";
 
 export class TechDemoLevel extends Level {

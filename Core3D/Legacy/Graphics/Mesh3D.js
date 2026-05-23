@@ -3,8 +3,8 @@
 //    Recebe qualquer ParsedModel e envia para a GPU
 // ============================================================
 
-import { Mat4 } from '../../CoreCross/Math/Mat4.js';
-import { AssetManager } from '../../CoreCross/Assets/AssetManager.js';
+import { Mat4 } from '../../../CoreCross/Math/Mat4.js';
+import { AssetManager } from '../../../CoreCross/Assets/AssetManager.js';
 
 export class Mesh3D {
 	/**

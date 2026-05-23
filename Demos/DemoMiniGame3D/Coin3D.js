@@ -1,5 +1,5 @@
 import { GameObject3D } from "../../Core3D/Objects/GameObject3D.js";
-import { Shapes3D } from "../../Core3D/Graphics/Shape3D.js";
+import { Shapes3D } from "../../Core3D/Legacy/Graphics/Shape3D.js";
 import { AssetManager } from "../../CoreCross/Assets/AssetManager.js";
 
 export class Coin3D extends GameObject3D {

@@ -1,5 +1,5 @@
 import { Input } from "./Input.js";
-import { GamePad } from "./GamePad.js";
+import { GamePad } from "./Gamepad.js";
 import { GamepadAlias } from "./GamepadAlias.js";
 import { Config } from "../Config.js";
 
