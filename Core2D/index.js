@@ -20,6 +20,7 @@ export { Particle } from "./Particle/Particle.js";
 export { ParticleSystem } from "./Particle/ParticleSystem.js";
 export { Scene } from "./Scene/Scene.js";
 export { Button } from "./UI/Button.js";
+export { ChatWindow } from "./UI/ChatWindow.js";
 export { Label } from "./UI/Label.js";
 export { NineSlice } from "./UI/NineSlice.js";
 export { TextBox } from "./UI/TextBox.js";

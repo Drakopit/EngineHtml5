@@ -17,12 +17,10 @@
         "orientation": "landscape"
     },
     "network": {
-        "serverUrl": "auto",
+        "serverUrl": "local",
         "autoConnect": true,
         "autoReconnect": true,
-        "syncRate": 12,
-        "interpolationDelay": 120,
-        "protocol": "hybrid-binary"
+        "syncRate": 12
     },
     "input": {
         "gamepadProfile": "xbox",

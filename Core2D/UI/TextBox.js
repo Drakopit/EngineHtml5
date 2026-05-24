@@ -16,12 +16,17 @@ import { Rectangle } from "../Graphics/Rectangle.js";
 export class TextBox {
     constructor(screen) {
         this.screen = screen;
-        this.color = "#FFFFFF";
+        this.color = "#DCE8FF";
+        this.backgroundColor = "rgba(5, 12, 22, 0.92)";
+        this.borderColor = "rgba(190, 213, 237, 0.46)";
+        this.activeBorderColor = "#F4D26A";
         this.draw = new Draw(screen);
-        this.mouse = new Mouse();
+        this.mouse = Mouse.instance ?? new Mouse();
         this.rect = new Rectangle(0, 0, 100, 20);
         this.text = '';
         this.isActive = false;
+        this.placeholder = "";
+        this.maxLength = 120;
     }
 
     /**
@@ -57,7 +62,20 @@ export class TextBox {
      * @returns {void}
      */
     SetText(text) {
-        this.text = text;
+        this.text = String(text ?? "").slice(0, this.maxLength);
+    }
+
+    SetActive(active = true) {
+        this.isActive = Boolean(active);
+    }
+
+    SetPlaceholder(text) {
+        this.placeholder = String(text ?? "");
+    }
+
+    SetMaxLength(maxLength) {
+        this.maxLength = Math.max(1, Math.trunc(maxLength));
+        this.text = this.text.slice(0, this.maxLength);
     }
 
     /**
@@ -83,7 +101,7 @@ export class TextBox {
         if (this.isActive) {
             if (event.key === "Backspace") {
                 this.text = this.text.slice(0, -1);
-            } else if (event.key.length === 1) {
+            } else if (event.key.length === 1 && this.text.length < this.maxLength) {
                 this.text += event.key;
             }
         }
@@ -97,7 +115,13 @@ export class TextBox {
      * @returns {void}
      */
     Click() {
-        this.isActive = this.mouse.ClickDown(this.rect);
+        if (!this.mouse.buttonsDown?.[0]) return false;
+        const point = this.mouse.getPositionRelative(this.screen.Canvas);
+        this.isActive = point.x >= this.rect.x
+            && point.x <= this.rect.x + this.rect.width
+            && point.y >= this.rect.y
+            && point.y <= this.rect.y + this.rect.height;
+        return this.isActive;
     }
 
     /**
@@ -108,11 +132,19 @@ export class TextBox {
      * @returns {void}
      */
     DrawCursor() {
-        this.draw.Color = this.color;
-        this.draw.Style = 1;
-        this.draw.DrawRect(this.rect.x + 1, this.rect.y + 1, this.rect.width - 1, this.rect.height - 1);
-        this.draw.Style = 0;
+        const ctx = this.screen.Context;
+        ctx.save();
+        this.draw.Color = this.backgroundColor;
+        this.draw.Style = this.draw.TYPES.FILLED;
         this.draw.DrawRect(this.rect.x, this.rect.y, this.rect.width, this.rect.height);
-        this.draw.DrawText(this.rect.x + 5, this.rect.y + this.rect.height / 2, this.text);
+        this.draw.Color = this.isActive ? this.activeBorderColor : this.borderColor;
+        this.draw.Style = this.draw.TYPES.STROKED;
+        this.draw.DrawRect(this.rect.x + 0.5, this.rect.y + 0.5, this.rect.width - 1, this.rect.height - 1);
+        this.draw.Style = this.draw.TYPES.FILLED;
+        this.draw.Color = this.text ? this.color : "rgba(220, 232, 255, 0.44)";
+        this.draw.FontSize = "13px";
+        ctx.textBaseline = "middle";
+        this.draw.DrawText(this.text || this.placeholder, this.rect.x + 8, this.rect.y + this.rect.height / 2, this.rect.width - 16);
+        ctx.restore();
     }
 }

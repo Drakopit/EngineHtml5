@@ -36,7 +36,7 @@ const demos = Object.freeze({
     },
     online: {
         label: "Online MMO Demo",
-        description: "Sandbox 2D online com players e blocos sincronizados por WebSocket.",
+        description: "Sandbox 2D online com sala local entre abas, players sincronizados e chat em UI da engine.",
         path: "../Demos/DemoOnlineMMO/mainOnlineMMO.js",
     },
     immature: {

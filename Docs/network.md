@@ -1,112 +1,80 @@
 # CoreNetwork
 
-`CoreNetwork` e a camada de rede nativa da GameForgeJS. Ela usa `WebSocket` do navegador, eventos e codecs plugaveis, sem dependencias externas e sem impor um servidor especifico.
+`CoreNetwork` fornece recursos online reutilizaveis sem definir o jogo e sem transformar o servidor local em backend.
 
-A filosofia e manter o jogo simples por cima e deixar os detalhes de transporte em camadas:
+## Responsabilidades
 
-- `NetworkClient`: conexao WebSocket, reconnect, eventos e requests.
-- `NetworkRoomClient`: sala, perfil de jogador, snapshots remotos e helpers para estado/blocos/chat.
-- `BinaryNetworkCodec`: pacotes frequentes em bytes/fixed-point, como posicao e velocidade de player.
-- `JsonNetworkCodec`: mensagens raras e legiveis, como perfil, chat, welcome e alteracao de bloco.
-- `NetworkSnapshotBuffer`: interpolacao de snapshots para suavizar outros jogadores.
+- `GameNetwork`: API simples de sala, peers e mensagens.
+- `LocalNetworkAdapter`: conecta abas/janelas da mesma origem usando `BroadcastChannel`, ideal para a demo e prototipos.
+- `WebSocketClientAdapter`: conecta a um relay WebSocket externo e opcional.
+- `OnlinePlayerManager`: registra peers e suaviza estado remoto.
+- `OnlineEntitySync`: envia estado de uma entidade em taxa controlada quando ele muda.
+- `ChatManager`: envia mensagens e gera avisos de entrada/saida.
 
-O `server.js` de desenvolvimento tambem oferece uma sala WebSocket em `/gameforge-network`. Para testar com duas instancias:
+`Tools/server.js` serve arquivos e libera CORS apenas. Ele nao gerencia peers, chat, salas ou estado de jogo.
 
-```txt
-http://localhost:8080/Main.html?demo=online
-http://localhost:8080/Main.html?demo=online
-```
+O chat visual da demo usa `Core2D/UI/ChatWindow.js`, composto com o `TextBox` da engine e desenhado no canvas. Nenhum painel HTML externo e criado.
 
-Use `?room=nome-da-sala` para separar mundos:
+## Demo Online
 
-```txt
-http://localhost:8080/Main.html?demo=online&room=terra
-```
-
-Use `?name=Camello` para entrar com nome direto, ou deixe a demo perguntar e salvar no `localStorage`:
+Inicie o servidor de arquivos e abra duas abas:
 
 ```txt
-http://localhost:8080/Main.html?demo=online&room=terra&name=Camello
+http://localhost:8080/Main.html?demo=online&room=terra&name=Ana
+http://localhost:8080/Main.html?demo=online&room=terra&name=Beto
 ```
 
-Para conectar em um servidor externo, informe `serverUrl` no config da demo ou passe `?server=` na URL. Use `wss://` em producao com HTTPS:
+A sala padrao usa `LocalNetworkAdapter`, portanto funciona sem backend MMO. No chat canvas, `/name NovoNome` altera o nome do jogador.
 
-```json
-{
-  "network": {
-    "serverUrl": "wss://meu-dominio.com/gameforge-network",
-    "syncRate": 12,
-    "interpolationDelay": 120
-  }
-}
+O mapa, blocos, aparencia e regras ficam em `Demos/DemoOnlineMMO`, incluindo `data/OnlineWorldData.js`. Eventos de bloco sao mensagens que a propria demo escolhe interpretar.
+
+## API Simples
+
+```js
+import {
+    ChatManager,
+    GameNetwork,
+    LocalNetworkAdapter,
+    OnlinePlayerManager,
+} from "../CoreNetwork/index.js";
+
+const network = new GameNetwork({
+    adapter: new LocalNetworkAdapter({ roomId: "main" }),
+    roomId: "main",
+    peer: { name: "Player" },
+});
+const players = new OnlinePlayerManager(network);
+const chat = new ChatManager(network);
+
+network.onConnected(() => console.log("Connected"));
+chat.onMessageReceived(message => console.log(message.playerName, message.text));
+
+network.connect();
+network.sendPlayerState({ x: player.x, y: player.y });
+chat.sendMessage("Hello!");
 ```
+
+## Relay Externo
+
+Para jogar entre computadores, forneca um relay externo e substitua somente o adaptador:
+
+```js
+import { GameNetwork, WebSocketClientAdapter } from "../CoreNetwork/index.js";
+
+const network = new GameNetwork({
+    adapter: new WebSocketClientAdapter({
+        url: "wss://example.com/relay",
+        roomId: "main",
+    }),
+    roomId: "main",
+    peer: { name: "Player" },
+});
+```
+
+Na demo, tambem e possivel usar:
 
 ```txt
-http://localhost:8080/Main.html?demo=online&room=terra&server=wss%3A%2F%2Fmeu-dominio.com%2Fgameforge-network
+http://localhost:8080/Main.html?demo=online&server=wss%3A%2F%2Fexample.com%2Frelay
 ```
 
-## Cliente
-
-```js
-import { NetworkClient } from "../CoreNetwork/index.js";
-
-const network = new NetworkClient({
-    url: "ws://localhost:3000",
-    autoReconnect: true,
-});
-
-network.on("open", () => {
-    network.Send("player:join", { name: "Player" });
-});
-
-network.on("world:update", message => {
-    console.log(message.payload);
-});
-
-network.Connect();
-```
-
-Para jogos por sala, prefira `NetworkRoomClient`:
-
-```js
-import { NetworkRoomClient } from "../CoreNetwork/index.js";
-
-const room = new NetworkRoomClient({
-    url: "wss://meu-dominio.com/gameforge-network?room=terra",
-    name: "Camello",
-    syncRate: 12,
-});
-
-room.on("room:welcome", welcome => {
-    console.log(welcome.roomId);
-});
-
-room.Connect();
-
-function updateNetwork() {
-    room.SendPlayerState({ x: player.x, y: player.y, vx: player.vx, vy: player.vy });
-}
-```
-
-Tambem e possivel criar pelo bloco `network` do `gameforge.config.json`:
-
-```js
-const network = NetworkClient.FromConfig();
-```
-
-## Estado
-
-`NetworkStateSync` faz snapshots pequenos de objetos rastreados. O jogo decide autoridade, reconciliacao e validacao no servidor.
-
-```js
-import { NetworkClient, NetworkStateSync } from "../CoreNetwork/index.js";
-
-const network = NetworkClient.FromConfig();
-const sync = new NetworkStateSync({
-    client: network,
-    tickRate: 20,
-});
-
-sync.TrackObject("player", player.transform, ["position", "rotation"]);
-sync.Start();
-```
+Esse relay nao faz parte de `Tools/server.js`: ele apenas deve encaminhar envelopes entre clientes da mesma sala. Regras, mapa, colisao e UI continuam pertencendo ao jogo.

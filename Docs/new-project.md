@@ -95,4 +95,4 @@ http://localhost:8080/Main.html?demo=online
 npm run start
 ```
 
-O comando usa apenas `server.js` para servir arquivos locais e evitar CORS. A engine em si continua independente de Node.js.
+O comando usa apenas `Tools/server.js` para servir arquivos locais e evitar CORS. A engine em si continua independente de Node.js.
