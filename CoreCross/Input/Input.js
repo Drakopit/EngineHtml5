@@ -1,7 +1,9 @@
 import { GamePad } from "./Gamepad.js";
+import { GamepadAlias } from "./GamepadAlias.js";
 import { Mouse } from "./Mouse.js";
 import { Touch } from "./Touch.js";
 import { Engine } from "../Engine.js";
+import { Config } from "../Config.js";
 
 /**
  * @doc Class Input
@@ -128,5 +130,80 @@ export class Input {
      */
     static GetKeyUp(key) {
         return Input.instance?.keysUp[key] === true;
+    }
+
+    static IsGamepadConnected(padIndex = 0) {
+        return Input.instance?.gamepad?.IsConnected(padIndex) ?? false;
+    }
+
+    static GetConnectedGamepadIndices() {
+        return Input.instance?.gamepad?.GetConnectedIndices() ?? [];
+    }
+
+    static GetGamepadButton(padIndex = 0, input) {
+        const buttonIndex = GamepadAlias.ResolveButtonIndex(input, Input.GamepadAliasOptions());
+        return buttonIndex !== null && (Input.instance?.gamepad?.GetButton(buttonIndex, padIndex) ?? false);
+    }
+
+    static GetGamepadButtonDown(padIndex = 0, input) {
+        const buttonIndex = GamepadAlias.ResolveButtonIndex(input, Input.GamepadAliasOptions());
+        return buttonIndex !== null && (Input.instance?.gamepad?.GetButtonDown(buttonIndex, padIndex) ?? false);
+    }
+
+    static GetGamepadButtonUp(padIndex = 0, input) {
+        const buttonIndex = GamepadAlias.ResolveButtonIndex(input, Input.GamepadAliasOptions());
+        return buttonIndex !== null && (Input.instance?.gamepad?.GetButtonUp(buttonIndex, padIndex) ?? false);
+    }
+
+    static GetGamepadAxis(padIndex = 0, input) {
+        const axisIndex = GamepadAlias.ResolveAxisIndex(input, Input.GamepadAliasOptions());
+        return axisIndex === null ? 0 : (Input.instance?.gamepad?.GetAxis(axisIndex, padIndex) ?? 0);
+    }
+
+    static GetGamepadAxisDown(padIndex = 0, input, threshold = 0.5) {
+        const axis = GamepadAlias.ResolveAxis(input, Input.GamepadAliasOptions());
+        return Boolean(axis) && (Input.instance?.gamepad?.GetAxisDown(
+            axis.index,
+            axis.direction,
+            padIndex,
+            threshold,
+        ) ?? false);
+    }
+
+    static GetGamepadAxisUp(padIndex = 0, input, threshold = 0.5) {
+        const axis = GamepadAlias.ResolveAxis(input, Input.GamepadAliasOptions());
+        return Boolean(axis) && (Input.instance?.gamepad?.GetAxisUp(
+            axis.index,
+            axis.direction,
+            padIndex,
+            threshold,
+        ) ?? false);
+    }
+
+    static Keyboard(input) {
+        return { device: "keyboard", input };
+    }
+
+    static GamepadButton(input, padIndex = null) {
+        return {
+            device: "gamepad",
+            input,
+            ...(Number.isInteger(padIndex) ? { padIndex } : {}),
+        };
+    }
+
+    static GamepadAxis(input, direction = "positive", padIndex = null) {
+        return {
+            device: "gamepad",
+            input: { axis: input, direction: GamepadAlias.NormalizeDirection(direction) },
+            ...(Number.isInteger(padIndex) ? { padIndex } : {}),
+        };
+    }
+
+    static GamepadAliasOptions() {
+        return {
+            profile: Config.data?.input?.gamepadProfile,
+            aliases: Config.data?.input?.gamepadAliases,
+        };
     }
 }

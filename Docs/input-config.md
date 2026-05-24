@@ -40,6 +40,33 @@ BootstrapGame({
 });
 ```
 
+## Input E Polling De Gamepad
+
+`Input` consulta `navigator.getGamepads()` em todo `PreUpdate` da engine. Assim, um controle conectado antes do jogo iniciar tambem aparece sem precisar ser reconectado, e desconexoes sao removidas do estado atual. Em navegadores que so liberam o controle apos interacao, basta pressionar um botao uma vez.
+
+```js
+if (Input.IsGamepadConnected(0)) {
+    const jump = Input.GetGamepadButtonDown(0, "A");
+    const horizontal = Input.GetGamepadAxis(0, "LeftX");
+}
+```
+
+O teclado continua com `Input.GetKey`, `Input.GetKeyDown` e `Input.GetKeyUp`. Para gameplay, prefira a camada de acoes; `GetActionValue` mantem a intensidade de um eixo analogico:
+
+```js
+const horizontal = ActionManager.GetActionValue("RIGHT") - ActionManager.GetActionValue("LEFT");
+```
+
+Mapeamentos tambem podem ser declarados por codigo quando um jogo precisar configura-los dinamicamente:
+
+```js
+ActionManager.MapAction("MOVE_LEFT", [
+    Input.Keyboard("KeyA"),
+    Input.GamepadButton("DPAD_LEFT"),
+    Input.GamepadAxis("LeftX", -1),
+]);
+```
+
 ## Perfis
 
 `input.gamepadProfile` muda o significado dos nomes curtos `A`, `B`, `X` e `Y`:

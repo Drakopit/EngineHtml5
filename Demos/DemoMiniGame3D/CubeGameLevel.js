@@ -1,4 +1,5 @@
 import { ActionManager } from "../../CoreCross/Input/ActionManager.js";
+import { Input } from "../../CoreCross/Input/Input.js";
 import { AssetManager } from "../../CoreCross/Assets/AssetManager.js";
 import {
     AmbientLight,
@@ -48,6 +49,9 @@ export class CubeGameLevel extends Level3D {
         this.collectedCoins = 0;
         this.gameState = "PLAYING";
         this.time = 0;
+        this.cameraYaw = 0;
+        this.cameraTarget = [0, 0.55, -6];
+        this.cameraReady = false;
     }
 
     BuildScene() {
@@ -86,8 +90,10 @@ export class CubeGameLevel extends Level3D {
         }));
 
         this.CreateFloor();
+        this.CreateArenaBounds();
         this.CreatePlayer();
         this.CreateCoins();
+        this.UpdateCamera(1);
     }
 
     CreateFloor() {
@@ -142,7 +148,7 @@ export class CubeGameLevel extends Level3D {
 
         this.playerBody = new Rigidbody3D({
             mass: 1,
-            damping: 0.84,
+            damping: 0.94,
             bounciness: 0,
         });
         this.physics.AddBody({
@@ -153,6 +159,28 @@ export class CubeGameLevel extends Level3D {
         });
         this.playerRadius = 0.46;
         this.playerFacing = Math.PI;
+    }
+
+    CreateArenaBounds() {
+        const width = ARENA.maxX - ARENA.minX;
+        const depth = ARENA.maxZ - ARENA.minZ;
+        const rails = [
+            [0, -0.34, ARENA.minZ, width + 0.18, 0.22, 0.10],
+            [0, -0.34, ARENA.maxZ, width + 0.18, 0.22, 0.10],
+            [ARENA.minX, -0.34, (ARENA.minZ + ARENA.maxZ) / 2, 0.10, 0.22, depth],
+            [ARENA.maxX, -0.34, (ARENA.minZ + ARENA.maxZ) / 2, 0.10, 0.22, depth],
+        ];
+        const material = new UnlitMaterial({ name: "ArenaEdge", color: [0.25, 0.68, 1, 1] });
+
+        rails.forEach(([x, y, z, scaleX, scaleY, scaleZ], index) => {
+            const rail = Mesh.FromGeometry(
+                PrimitiveMesh.Cube(),
+                material,
+                { name: `ArenaEdge_${index}`, castShadow: false, receiveShadow: false },
+            );
+            rail.transform.SetPosition(x, y, z).SetScale(scaleX, scaleY, scaleZ);
+            this.scene.Add(rail);
+        });
     }
 
     CreateCoins() {
@@ -187,36 +215,54 @@ export class CubeGameLevel extends Level3D {
 
         if (this.gameState === "WON") {
             if (ActionManager.IsActionDown("ATTACK")) this.ResetGame();
-            this.UpdateCamera();
+            this.UpdateCamera(dt || 0.016);
             return;
         }
 
-        this.time += dt || 0.016;
-        this.UpdatePlayerInput(dt || 0.016);
-        super.OnUpdate(dt);
+        const delta = Math.min(dt || 0.016, 0.05);
+        this.time += delta;
+        this.UpdatePlayerInput(delta);
+        super.OnUpdate(delta);
+        this.RecoverPlayerIfNeeded();
         this.playerModel.ApplyTransform();
-        this.UpdateCoins(dt || 0.016);
+        this.UpdateCoins(delta);
         this.CheckCoinCollision();
-        this.UpdateCamera();
+        this.UpdateCamera(delta);
     }
 
     UpdatePlayerInput(dt) {
-        const turn = Number(ActionManager.IsAction("RIGHT")) - Number(ActionManager.IsAction("LEFT"));
-        const move = Number(ActionManager.IsAction("UP") || ActionManager.IsAction("FORWARD"))
-            - Number(ActionManager.IsAction("DOWN") || ActionManager.IsAction("BACK"));
-        const speed = 4.8;
+        const horizontal = ActionManager.GetActionValue("RIGHT") - ActionManager.GetActionValue("LEFT");
+        const forward = ActionManager.GetActionValue("FORWARD") - ActionManager.GetActionValue("BACK");
+        const length = Math.hypot(horizontal, forward);
+        const normalizedX = length > 1 ? horizontal / length : horizontal;
+        const normalizedForward = length > 1 ? forward / length : forward;
+        const sin = Math.sin(this.cameraYaw);
+        const cos = Math.cos(this.cameraYaw);
+        const directionX = normalizedX * cos - normalizedForward * sin;
+        const directionZ = -normalizedX * sin - normalizedForward * cos;
+        const speed = ActionManager.IsAction("BOOST") ? 6.6 : 5.2;
+        const smoothing = 1 - Math.exp(-14 * dt);
 
-        this.playerFacing -= turn * 2.9 * dt;
-        this.playerModel.transform.rotation.y = this.playerFacing;
+        this.playerBody.velocity[0] += (directionX * speed - this.playerBody.velocity[0]) * smoothing;
+        this.playerBody.velocity[2] += (directionZ * speed - this.playerBody.velocity[2]) * smoothing;
 
-        const directionX = Math.sin(this.playerFacing);
-        const directionZ = Math.cos(this.playerFacing);
-        this.playerBody.velocity[0] = directionX * move * speed;
-        this.playerBody.velocity[2] = directionZ * move * speed;
+        if (length > 0.06) {
+            const targetFacing = Math.atan2(directionX, directionZ);
+            this.playerFacing = lerpAngle(this.playerFacing, targetFacing, 1 - Math.exp(-16 * dt));
+            this.playerModel.transform.rotation.y = this.playerFacing;
+        }
 
-        if (ActionManager.IsActionDown("ATTACK") && this.playerBody.grounded) {
+        if (ActionManager.IsActionDown("JUMP") && this.playerBody.grounded) {
             this.playerBody.velocity[1] = 5.4;
         }
+    }
+
+    RecoverPlayerIfNeeded() {
+        const position = this.playerModel.transform.position;
+        const invalid = position.some(value => !Number.isFinite(value));
+        if (!invalid && position[1] >= -3) return;
+
+        this.ResetPlayerPosition();
     }
 
     UpdateCoins(dt) {
@@ -253,9 +299,8 @@ export class CubeGameLevel extends Level3D {
         this.score = 0;
         this.collectedCoins = 0;
         this.gameState = "PLAYING";
-        this.playerFacing = Math.PI;
-        this.playerModel.SetPosition(0, 0.08, -6.0).SetRotation(0, this.playerFacing, 0);
-        this.playerBody.velocity = [0, 0, 0];
+        this.time = 0;
+        this.ResetPlayerPosition();
 
         this.coins.forEach((coin, index) => {
             const [x, z] = COIN_SPAWNS[index];
@@ -265,16 +310,40 @@ export class CubeGameLevel extends Level3D {
         });
     }
 
-    UpdateCamera() {
+    ResetPlayerPosition() {
+        this.playerFacing = Math.PI;
+        this.playerModel.SetPosition(0, 0.08, -6.0).SetRotation(0, this.playerFacing, 0);
+        this.playerBody.velocity = [0, 0, 0];
+    }
+
+    UpdateCamera(dt) {
         if (!this.camera || !this.playerModel) return;
 
+        const cameraTurn = ActionManager.GetActionValue("CAMERA_RIGHT")
+            - ActionManager.GetActionValue("CAMERA_LEFT");
+        this.cameraYaw += cameraTurn * 2.25 * dt;
+
         const playerPosition = this.playerModel.transform.position;
-        this.camera.position = [
+        const desiredTarget = [
             playerPosition[0],
-            playerPosition[1] + 4.3,
-            playerPosition[2] + 6.5,
+            playerPosition[1] + 0.52,
+            playerPosition[2],
         ];
-        this.camera.LookAt([playerPosition[0], playerPosition[1] + 0.45, playerPosition[2] - 0.9]);
+        const follow = this.cameraReady ? 1 - Math.exp(-8 * dt) : 1;
+        this.cameraTarget = this.cameraTarget.map((value, index) => (
+            value + (desiredTarget[index] - value) * follow
+        ));
+        const desiredPosition = [
+            this.cameraTarget[0] + Math.sin(this.cameraYaw) * 6.5,
+            this.cameraTarget[1] + 4.25,
+            this.cameraTarget[2] + Math.cos(this.cameraYaw) * 6.5,
+        ];
+        const cameraPosition = this.camera.position.map((value, index) => (
+            value + (desiredPosition[index] - value) * follow
+        ));
+
+        this.camera.SetPosition(...cameraPosition).LookAt(this.cameraTarget);
+        this.cameraReady = true;
     }
 
     OnGUI() {
@@ -286,7 +355,7 @@ export class CubeGameLevel extends Level3D {
         ctx.save();
         ctx.globalAlpha = 0.46;
         draw.Color = "#05070D";
-        draw.DrawRect(12, 12, 210, 76);
+        draw.DrawRect(12, 12, 292, 96);
         ctx.restore();
 
         draw.SetTextAlign("left");
@@ -297,10 +366,23 @@ export class CubeGameLevel extends Level3D {
         draw.Color = "#FFFFFF";
         draw.FontSize = "16px";
         draw.DrawText(`Score: ${this.score}`, 22, 66);
+        draw.FontSize = "13px";
+        const controllerConnected = Input.GetConnectedGamepadIndices().length > 0;
+        draw.Color = controllerConnected ? "#8DFFB7" : "#DDE7FF";
+        const controllerState = controllerConnected
+            ? "Controle: conectado"
+            : "Controle: pressione um botao para ativar";
+        draw.DrawText(controllerState, 22, 91);
 
+        ctx.save();
+        ctx.globalAlpha = 0.42;
+        draw.Color = "#05070D";
+        draw.DrawRect(12, 418, 696, 49);
+        ctx.restore();
         draw.Color = "#DDE7FF";
-        draw.FontSize = "14px";
-        draw.DrawText("W/S ou setas: mover | A/D: girar | Space/A: pular | Esc/B: menu", 18, 456);
+        draw.FontSize = "13px";
+        draw.DrawText("WASD/setas ou stick esquerdo: mover  |  Space/A: pular  |  Esc/B: menu", 18, 439);
+        draw.DrawText("Q/E ou stick direito: girar camera  |  Shift/RT: acelerar", 18, 458);
 
         if (this.gameState === "WON") {
             ctx.save();
@@ -319,4 +401,9 @@ export class CubeGameLevel extends Level3D {
             draw.SetTextAlign("left");
         }
     }
+}
+
+function lerpAngle(current, target, amount) {
+    const difference = Math.atan2(Math.sin(target - current), Math.cos(target - current));
+    return current + difference * amount;
 }

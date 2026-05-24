@@ -1,7 +1,5 @@
 import { Input } from "./Input.js";
-import { GamePad } from "./Gamepad.js";
 import { GamepadAlias } from "./GamepadAlias.js";
-import { Config } from "../Config.js";
 
 export class ActionManager {
     static mappings = {};
@@ -10,70 +8,93 @@ export class ActionManager {
         this.mappings = configMappings || {};
     }
 
+    static MapAction(actionName, rules = []) {
+        this.mappings[actionName] = rules;
+        return this;
+    }
+
     static IsActionDown(actionName) {
-        const rules = this.mappings[actionName];
-        if (!rules) return false;
+        return this.GetRules(actionName).some(rule => {
+            if (rule.device === "keyboard") return Input.GetKeyDown(rule.input);
+            if (rule.device === "gamepad") return this.IsGamepadInputDown(rule.input, rule.padIndex);
+            return false;
+        });
+    }
 
-        for (const rule of rules) {
-            if (rule.device === "keyboard" && Input.GetKeyDown(rule.input)) return true;
-            if (rule.device === "gamepad" && this.IsGamepadInputDown(rule.input)) return true;
-        }
-
-        return false;
+    static IsActionUp(actionName) {
+        return this.GetRules(actionName).some(rule => {
+            if (rule.device === "keyboard") return Input.GetKeyUp(rule.input);
+            if (rule.device === "gamepad") return this.IsGamepadInputUp(rule.input, rule.padIndex);
+            return false;
+        });
     }
 
     static IsAction(actionName) {
-        const rules = this.mappings[actionName];
-        if (!rules) return false;
-
-        for (const rule of rules) {
-            if (rule.device === "keyboard" && Input.GetKey(rule.input)) return true;
-            if (rule.device === "gamepad" && this.IsGamepadInputHeld(rule.input)) return true;
-        }
-
-        return false;
+        return this.GetActionValue(actionName) > 0.5;
     }
 
-    static IsGamepadInputDown(input) {
-        const pad = GamePad.instance;
-        if (!pad) return false;
+    static GetActionValue(actionName) {
+        let value = 0;
 
-        const resolved = this.ResolveGamepadInput(input);
-        for (const padIndex in pad.gamepads) {
-            const buttonIndex = GamepadAlias.ResolveButtonIndex(resolved);
-            if (buttonIndex !== null && pad.GetButtonDown(buttonIndex, padIndex)) return true;
+        this.GetRules(actionName).forEach(rule => {
+            if (rule.device === "keyboard" && Input.GetKey(rule.input)) {
+                value = 1;
+            }
 
-            const axis = GamepadAlias.ResolveAxis(resolved);
-            if (axis && pad.GetAxisDown(axis.index, axis.direction, padIndex)) return true;
-        }
+            if (rule.device === "gamepad") {
+                value = Math.max(value, this.GetGamepadInputValue(rule.input, rule.padIndex));
+            }
+        });
 
-        return false;
+        return value;
     }
 
-    static IsGamepadInputHeld(input) {
-        const pad = GamePad.instance;
-        if (!pad) return false;
-
+    static IsGamepadInputDown(input, padIndex = null) {
         const resolved = this.ResolveGamepadInput(input);
-        for (const padIndex in pad.gamepads) {
-            const buttonIndex = GamepadAlias.ResolveButtonIndex(resolved);
-            if (buttonIndex !== null && pad.GetButton(buttonIndex, padIndex)) return true;
+        return this.GetPadIndices(padIndex).some(index => {
+            if (Input.GetGamepadButtonDown(index, resolved)) return true;
+            return Input.GetGamepadAxisDown(index, resolved);
+        });
+    }
 
-            const axis = GamepadAlias.ResolveAxis(resolved);
-            if (!axis) continue;
+    static IsGamepadInputUp(input, padIndex = null) {
+        const resolved = this.ResolveGamepadInput(input);
+        return this.GetPadIndices(padIndex).some(index => {
+            if (Input.GetGamepadButtonUp(index, resolved)) return true;
+            return Input.GetGamepadAxisUp(index, resolved);
+        });
+    }
 
-            const value = pad.GetAxis(axis.index, padIndex);
-            if (axis.direction === "positive" && value > 0.5) return true;
-            if (axis.direction === "negative" && value < -0.5) return true;
-        }
+    static GetGamepadInputValue(input, padIndex = null) {
+        const resolved = this.ResolveGamepadInput(input);
+        const buttonIndex = GamepadAlias.ResolveButtonIndex(resolved, Input.GamepadAliasOptions());
+        const axis = GamepadAlias.ResolveAxis(resolved, Input.GamepadAliasOptions());
+        let value = 0;
 
-        return false;
+        this.GetPadIndices(padIndex).forEach(index => {
+            if (buttonIndex !== null && Input.GetGamepadButton(index, buttonIndex)) {
+                value = 1;
+            }
+
+            if (axis) {
+                const axisValue = Input.GetGamepadAxis(index, axis.index);
+                const directionalValue = axis.direction === "positive" ? axisValue : -axisValue;
+                value = Math.max(value, Math.max(0, directionalValue));
+            }
+        });
+
+        return value;
+    }
+
+    static GetRules(actionName) {
+        return Array.isArray(this.mappings[actionName]) ? this.mappings[actionName] : [];
+    }
+
+    static GetPadIndices(padIndex = null) {
+        return Number.isInteger(padIndex) ? [padIndex] : Input.GetConnectedGamepadIndices();
     }
 
     static ResolveGamepadInput(input) {
-        return GamepadAlias.Resolve(input, {
-            profile: Config.data?.input?.gamepadProfile,
-            aliases: Config.data?.input?.gamepadAliases,
-        });
+        return GamepadAlias.Resolve(input, Input.GamepadAliasOptions());
     }
 }

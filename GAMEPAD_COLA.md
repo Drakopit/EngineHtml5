@@ -80,6 +80,23 @@ Use estes quando quiser remover ambiguidade entre marcas:
 | `RIGHT_STICK_RIGHT` | `axis_2_positive` |
 | `RIGHT_STICK_UP` | `axis_3_negative` |
 | `RIGHT_STICK_DOWN` | `axis_3_positive` |
+| `LeftX` / `LEFT_X` | `axis_0` |
+| `LeftY` / `LEFT_Y` | `axis_1` |
+| `RightX` / `RIGHT_X` | `axis_2` |
+| `RightY` / `RIGHT_Y` | `axis_3` |
+
+## API Direta Da Engine
+
+O `Input` faz polling do navegador a cada frame, inclusive para controles ligados antes do jogo iniciar. Alguns navegadores ocultam um controle ate o primeiro botao ser pressionado; isso ativa o controle sem desconectar cabos.
+
+```js
+Input.IsGamepadConnected(0);
+Input.GetGamepadButton(0, "A");
+Input.GetGamepadButtonDown(0, "A");
+Input.GetGamepadButtonUp(0, "A");
+Input.GetGamepadAxis(0, "LeftX");
+Input.GetGamepadAxis(0, "LeftY");
+```
 
 ## Extend Por Jogo
 

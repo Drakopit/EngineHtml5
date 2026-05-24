@@ -31,6 +31,14 @@ export class GamepadAlias {
         RIGHT_STICK_LEFT: "axis_2_negative",
         RIGHT_STICK_DOWN: "axis_3_positive",
         RIGHT_STICK_UP: "axis_3_negative",
+        LEFT_X: "axis_0",
+        LEFTX: "axis_0",
+        LEFT_Y: "axis_1",
+        LEFTY: "axis_1",
+        RIGHT_X: "axis_2",
+        RIGHTX: "axis_2",
+        RIGHT_Y: "axis_3",
+        RIGHTY: "axis_3",
     });
 
     static PROFILES = Object.freeze({
@@ -136,11 +144,21 @@ export class GamepadAlias {
 
     static ResolveAxis(input, options = {}) {
         if (input && typeof input === "object" && !Array.isArray(input)) {
-            if (Number.isInteger(input.index) && typeof input.direction === "string") {
+            if (Number.isInteger(input.index) && input.direction !== undefined) {
                 return {
                     index: input.index,
-                    direction: input.direction.toLowerCase(),
+                    direction: this.NormalizeDirection(input.direction),
                 };
+            }
+
+            if (input.axis !== undefined && input.direction !== undefined) {
+                const index = this.ResolveAxisIndex(input.axis, options);
+                if (index !== null) {
+                    return {
+                        index,
+                        direction: this.NormalizeDirection(input.direction),
+                    };
+                }
             }
         }
 
@@ -153,8 +171,22 @@ export class GamepadAlias {
             : null;
     }
 
+    static ResolveAxisIndex(input, options = {}) {
+        if (typeof input === "number") return Number.isInteger(input) ? input : null;
+        if (input && typeof input === "object" && !Array.isArray(input)) {
+            if (Number.isInteger(input.index)) return input.index;
+            if (input.axis !== undefined) return this.ResolveAxisIndex(input.axis, options);
+        }
+
+        const resolved = this.Resolve(input, options);
+        if (typeof resolved !== "string") return null;
+
+        const match = /^axis_(\d+)(?:_(?:positive|negative))?$/i.exec(resolved);
+        return match ? Number(match[1]) : null;
+    }
+
     static IsNativeToken(input) {
-        return /^button_\d+$/i.test(input) || /^axis_\d+_(positive|negative)$/i.test(input);
+        return /^button_\d+$/i.test(input) || /^axis_\d+(?:_(positive|negative))?$/i.test(input);
     }
 
     static NormalizeNativeToken(input) {
@@ -168,6 +200,13 @@ export class GamepadAlias {
     static NormalizeProfile(profile) {
         const key = String(profile ?? "xbox").trim().toLowerCase();
         return this.PROFILES[key] ? key : "xbox";
+    }
+
+    static NormalizeDirection(direction) {
+        const value = String(direction).trim().toLowerCase();
+        return value === "negative" || value === "left" || value === "up" || Number(direction) < 0
+            ? "negative"
+            : "positive";
     }
 
     static NormalizeAliasMap(aliases = {}) {
