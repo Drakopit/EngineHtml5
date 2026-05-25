@@ -238,14 +238,11 @@ Demos/DemoHello3D/
 
 ### 2. Create Or Export A Scene
 
-Open:
+Run `../GameForgeJsEditor` with `npm run dev`, then select `Scene Editor 3D`
+in the desktop application.
 
-```txt
-http://localhost:8080/Tools/SceneEditor3D/index.html
-```
-
-Create platforms, change their transforms and materials, then select
-`Export JSON`. Place the exported document at:
+Create platforms, change their transforms and materials, then select `Save As`
+and write the document at:
 
 ```txt
 Demos/DemoHello3D/Assets/Manifests/first.scene.json

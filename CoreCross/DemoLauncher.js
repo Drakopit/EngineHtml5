@@ -87,13 +87,9 @@ function renderAdminMode(message = "") {
             <section class="admin-hero">
                 <div>
                     <p class="admin-kicker">GameForgeJS Admin</p>
-                    <h1>Escolha uma demo ou ferramenta</h1>
+                    <h1>Escolha uma demo</h1>
                     <p class="admin-copy">Use esta tela para validar demos sem alterar codigo. Links diretos com <code>?demo=advanced</code> continuam funcionando.</p>
                 </div>
-                <a class="admin-tool" href="Tools/SceneEditor3D/index.html">
-                    <span>Scene Editor 3D</span>
-                    <small>Criar cenas Render3D em JSON</small>
-                </a>
             </section>
             ${message ? `<p class="admin-message">${escapeHtml(message)}</p>` : ""}
             <section class="admin-grid">

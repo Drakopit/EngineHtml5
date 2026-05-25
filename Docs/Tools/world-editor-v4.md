@@ -1,9 +1,9 @@
 # WorldEditor / WorldMaker
 
-O WorldEditor nao faz mais parte do runtime da GameForgeJS. Ele agora vive como ferramenta desktop separada em:
+O WorldEditor e o Scene Editor 3D nao fazem mais parte do runtime da GameForgeJS. Eles vivem no aplicativo desktop separado:
 
 ```txt
-C:\Projects\GameForgeJsEditor
+../GameForgeJsEditor
 ```
 
 Isso mantem a proposta da GameForgeJS: o framework/runtime continua em JavaScript puro e sem dependencias externas. Ferramentas de autoria podem usar Tauri/Rust, .NET, C++ ou outra tecnologia.
@@ -11,7 +11,7 @@ Isso mantem a proposta da GameForgeJS: o framework/runtime continua em JavaScrip
 ## Como Rodar
 
 ```sh
-cd C:\Projects\GameForgeJsEditor
+cd ../GameForgeJsEditor
 npm run dev
 ```
 
@@ -37,6 +37,7 @@ No app desktop, clique em `Escolher pasta` e selecione qualquer pasta. O editor 
 - Criar inimigo usando o sprite selecionado.
 - Editar JSON ativo manualmente.
 - Salvar os JSONs editados de volta na pasta escolhida.
+- Alternar para o Scene Editor 3D, que abre e salva manifests `.scene.json` diretamente.
 
 ## Separacao
 

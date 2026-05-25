@@ -110,7 +110,7 @@ loop();
 
 ## Cenas Por Manifest
 
-O editor em `Tools/SceneEditor3D/index.html` exporta um documento com camera, luzes e objetos primitivos. Em um `Level3D`, ele pode ser usado assim:
+O Scene Editor 3D do aplicativo desktop externo `../GameForgeJsEditor` abre e salva documentos com camera, luzes e objetos primitivos. Em um `Level3D`, ele pode ser usado assim:
 
 ```js
 import { AssetManager } from "../CoreCross/index.js";

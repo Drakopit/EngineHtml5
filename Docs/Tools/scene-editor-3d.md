@@ -1,24 +1,21 @@
 # Scene Editor 3D
 
-`Tools/SceneEditor3D/index.html` is a lightweight external authoring tool for
-GameForgeJS `Render3D` scenes. It is separate from game demos: the editor may
-use regular HTML controls, while gameplay UI remains inside GameForgeJS UI.
+The Scene Editor 3D is a desktop authoring tool for GameForgeJS `Render3D`
+scenes. It lives inside the sibling `GameForgeJsEditor` Tauri/Rust
+application, so the runtime does not contain an authoring application or
+editor dependencies.
 
 ## Run
 
-Start the local static server:
-
 ```sh
-npm run start
+cd ../GameForgeJsEditor
+npm install
+npm run dev
 ```
 
-Open:
-
-```txt
-http://localhost:8080/Tools/SceneEditor3D/index.html
-```
-
-The Admin Mode page also links to the tool.
+In the desktop app, select `Scene Editor 3D`. Its Render3D modules are bundled
+from GameForgeJS when the editor is built; running the engine web server is not
+required for authoring.
 
 ## Features
 
@@ -28,11 +25,12 @@ The Admin Mode page also links to the tool.
 - Inspector for name, primitive, transform, albedo, roughness, metallic and shadows.
 - Background and sunlight settings.
 - Orbit camera and frame-selected command.
-- Import and export of `.scene.json` documents.
+- Native open, save and save-as operations for `.scene.json` documents.
+- Browser import/export fallback while previewing the frontend without Tauri.
 
 This is a focused first editor, not a complete Unity replacement. Future
-layers can add asset browsing, model placement, gizmos, colliders, prefab
-composition and direct save integration.
+layers can add asset browsing, model placement, gizmos, colliders and prefab
+composition.
 
 ## Runtime Contract
 
