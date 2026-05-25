@@ -6,7 +6,7 @@ import { Logger } from "../../CoreCross/Logger.js";
 export class MiniGame3DMenu extends Menu {
     OnStart() {
         super.OnStart();
-        this.caption = "Menu Principal - MiniGame 3D";
+        this.caption = "Sky Trail 3D";
         this.options = ["Iniciar Jogo", "Sair"];
     }
 

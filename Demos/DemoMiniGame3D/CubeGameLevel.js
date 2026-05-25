@@ -13,122 +13,129 @@ import {
     PointLight,
     PrimitiveMesh,
     Rigidbody3D,
+    Skybox,
     SphereCollider3D,
     StandardMaterial,
     Texture,
     UnlitMaterial,
 } from "../../Core3D/index.js";
+import {
+    COINS,
+    COURSE_BOUNDS,
+    GOAL,
+    PLATFORMS,
+    PLAYER_START,
+} from "./data/SkyTrailCourse.js";
 
-const ARENA = {
-    minX: -4.2,
-    maxX: 4.2,
-    minZ: -12.2,
-    maxZ: -3.0,
-};
-
-const COIN_SPAWNS = [
-    [-3.25, -10.75],
-    [3.25, -10.15],
-    [-3.30, -4.35],
-    [3.15, -5.10],
-    [0.00, -8.20],
-];
+const FALL_LIMIT = -4.5;
 
 export class CubeGameLevel extends Level3D {
     constructor() {
         super({
             width: 720,
             height: 480,
-            clearColor: [0.04, 0.055, 0.08, 1],
+            clearColor: [0.32, 0.62, 0.9, 1],
             usePhysics: true,
         });
         this.TelaId = "CubeGame";
-        this.caption = "GameForgeJS - 3D Mini Game";
-        this.goalCoins = COIN_SPAWNS.length;
+        this.caption = "GameForgeJS - Sky Trail 3D";
+        this.goalCoins = COINS.length;
         this.score = 0;
+        this.falls = 0;
         this.collectedCoins = 0;
+        this.goalUnlocked = false;
         this.gameState = "PLAYING";
         this.time = 0;
         this.cameraYaw = 0;
-        this.cameraTarget = [0, 0.55, -6];
+        this.cameraTarget = [...PLAYER_START];
         this.cameraReady = false;
     }
 
     BuildScene() {
         this.physics.gravity = [0, -16, 0];
-        this.physics.bounds = ARENA;
+        this.physics.bounds = COURSE_BOUNDS;
 
         this.camera = new PerspectiveCamera({
-            fov: 52,
+            fov: 56,
             aspect: this.width / this.height,
             near: 0.1,
-            far: 80,
-            position: [0, 4.7, 4.4],
-            target: [0, 0, -7.4],
+            far: 140,
+            position: [0, 5.0, 8.0],
+            target: [0, 0, -2],
         });
         this.scene.Add(this.camera);
 
-        this.scene.Add(new AmbientLight({ color: [0.85, 0.92, 1.0], intensity: 0.1 }));
+        const skyImage = AssetManager.instance.GetImage("sky_cross");
+        if (skyImage) this.scene.Add(Skybox.FromImage(skyImage, { name: "SunnySky" }));
+
+        this.scene.Add(new AmbientLight({ color: [0.95, 0.98, 1.0], intensity: 0.13 }));
         this.scene.Add(new HemisphereLight({
-            skyColor: [0.55, 0.72, 1.0],
-            groundColor: [0.18, 0.2, 0.16],
-            intensity: 0.42,
+            skyColor: [0.62, 0.8, 1.0],
+            groundColor: [0.2, 0.3, 0.17],
+            intensity: 0.48,
         }));
         this.scene.Add(new DirectionalLight({
-            direction: [-0.45, -1.0, -0.35],
-            color: [1.0, 0.94, 0.78],
-            intensity: 1.7,
+            direction: [-0.44, -1.0, -0.3],
+            color: [1.0, 0.95, 0.8],
+            intensity: 1.72,
             castShadow: true,
             shadowMapSize: 1024,
-            shadowDistance: 18,
+            shadowDistance: 30,
         }));
         this.scene.Add(new PointLight({
-            position: [0, 2.2, -7.5],
-            color: [0.42, 0.72, 1.0],
-            intensity: 0.85,
-            range: 7,
+            position: [GOAL.trigger[0], GOAL.trigger[1] + 1.3, GOAL.trigger[2]],
+            color: [0.38, 1, 0.52],
+            intensity: 1.1,
+            range: 5,
         }));
 
-        this.CreateFloor();
-        this.CreateArenaBounds();
+        this.CreatePlatforms();
+        this.UpdatePlatforms();
         this.CreatePlayer();
         this.CreateCoins();
+        this.CreateGoal();
         this.UpdateCamera(1);
     }
 
-    CreateFloor() {
+    CreatePlatforms() {
         const assets = AssetManager.instance;
-        const floorTexture = assets.HasImage("grid_albedo")
+        const albedoMap = assets.HasImage("grid_albedo")
             ? Texture.FromImage(assets.GetImage("grid_albedo"))
             : Texture.FromImage(assets.GetImage("textura_chao"));
-        const normalTexture = assets.HasImage("grid_normal")
+        const normalMap = assets.HasImage("grid_normal")
             ? Texture.FromImage(assets.GetImage("grid_normal"))
             : null;
-        const width = ARENA.maxX - ARENA.minX;
-        const depth = ARENA.maxZ - ARENA.minZ;
 
-        this.floor = Mesh.FromGeometry(
-            PrimitiveMesh.Plane(width, depth, { subdivisions: 8 }),
-            new StandardMaterial({
-                name: "MiniGameFloor",
-                albedoMap: floorTexture,
-                normalMap: normalTexture,
-                roughness: 0.88,
-            }),
-            { name: "ArenaFloor", castShadow: false, receiveShadow: true },
-        );
-        this.floor.transform.SetPosition(
-            (ARENA.minX + ARENA.maxX) / 2,
-            -0.5,
-            (ARENA.minZ + ARENA.maxZ) / 2,
-        );
-        this.scene.Add(this.floor);
-
-        this.physics.AddBody({
-            object: this.floor,
-            collider: new BoxCollider3D({ size: [width, 0.2, depth], offset: [0, -0.02, 0] }),
-            tag: "floor",
+        this.platforms = PLATFORMS.map(definition => {
+            const material = new StandardMaterial({
+                name: `PlatformMaterial_${definition.id}`,
+                albedoMap,
+                normalMap,
+                albedoColor: definition.color,
+                roughness: 0.82,
+            });
+            const mesh = Mesh.FromGeometry(
+                PrimitiveMesh.Cube(),
+                material,
+                { name: `Platform_${definition.id}`, castShadow: true, receiveShadow: true },
+            );
+            mesh.transform.SetPosition(...definition.position).SetScale(...definition.size);
+            this.scene.Add(mesh);
+            const body = this.physics.AddBody({
+                object: mesh,
+                collider: new BoxCollider3D({ size: definition.size }),
+                tag: "platform",
+            });
+            return {
+                definition,
+                mesh,
+                material,
+                body,
+                active: true,
+                delta: [0, 0, 0],
+            };
         });
+        this.platformById = new Map(this.platforms.map(platform => [platform.definition.id, platform]));
     }
 
     CreatePlayer() {
@@ -141,7 +148,7 @@ export class CubeGameLevel extends Level3D {
 
         this.playerModel = ModelMeshFactory.FromAsset("character", { material, name: "PlayerCharacter" });
         this.playerModel
-            .SetPosition(0, 0.08, -6.0)
+            .SetPosition(...PLAYER_START)
             .SetScale(0.72)
             .SetRotation(0, Math.PI, 0)
             .AddTo(this.scene);
@@ -157,30 +164,7 @@ export class CubeGameLevel extends Level3D {
             collider: new SphereCollider3D({ radius: 0.38, offset: [0, 0.38, 0] }),
             tag: "player",
         });
-        this.playerRadius = 0.46;
         this.playerFacing = Math.PI;
-    }
-
-    CreateArenaBounds() {
-        const width = ARENA.maxX - ARENA.minX;
-        const depth = ARENA.maxZ - ARENA.minZ;
-        const rails = [
-            [0, -0.34, ARENA.minZ, width + 0.18, 0.22, 0.10],
-            [0, -0.34, ARENA.maxZ, width + 0.18, 0.22, 0.10],
-            [ARENA.minX, -0.34, (ARENA.minZ + ARENA.maxZ) / 2, 0.10, 0.22, depth],
-            [ARENA.maxX, -0.34, (ARENA.minZ + ARENA.maxZ) / 2, 0.10, 0.22, depth],
-        ];
-        const material = new UnlitMaterial({ name: "ArenaEdge", color: [0.25, 0.68, 1, 1] });
-
-        rails.forEach(([x, y, z, scaleX, scaleY, scaleZ], index) => {
-            const rail = Mesh.FromGeometry(
-                PrimitiveMesh.Cube(),
-                material,
-                { name: `ArenaEdge_${index}`, castShadow: false, receiveShadow: false },
-            );
-            rail.transform.SetPosition(x, y, z).SetScale(scaleX, scaleY, scaleZ);
-            this.scene.Add(rail);
-        });
     }
 
     CreateCoins() {
@@ -188,23 +172,73 @@ export class CubeGameLevel extends Level3D {
             ? Texture.FromImage(AssetManager.instance.GetImage("textura_coin"))
             : null;
 
-        this.coins = COIN_SPAWNS.map(([x, z], index) => {
-            const coin = Mesh.FromGeometry(
+        this.coins = COINS.map((definition, index) => {
+            const mesh = Mesh.FromGeometry(
                 PrimitiveMesh.Sphere(0.22, { widthSegments: 24, heightSegments: 12 }),
                 new StandardMaterial({
                     name: `CoinMaterial_${index}`,
                     albedoMap: coinTexture,
-                    albedoColor: [1.0, 0.78, 0.22, 1],
-                    roughness: 0.22,
-                    metallic: 0.15,
-                    emissiveColor: [0.16, 0.09, 0.01],
+                    albedoColor: [1.0, 0.78, 0.18, 1],
+                    roughness: 0.2,
+                    metallic: 0.18,
+                    emissiveColor: [0.18, 0.1, 0.01],
                 }),
                 { name: `Coin_${index}`, castShadow: true, receiveShadow: false },
             );
-            coin.transform.SetPosition(x, 0.04, z);
-            this.scene.Add(coin);
-            return { mesh: coin, active: true, value: 10, radius: 0.28, baseY: 0.04 };
+            mesh.transform.SetPosition(...this.GetAttachmentPosition(definition));
+            this.scene.Add(mesh);
+            return {
+                definition,
+                mesh,
+                active: true,
+                value: definition.value,
+                radius: 0.22,
+            };
         });
+    }
+
+    CreateGoal() {
+        this.goalRingMaterial = new UnlitMaterial({ name: "GoalRing", color: [1, 0.48, 0.2, 1] });
+        this.goalFlagMaterial = new UnlitMaterial({ name: "GoalFlag", color: [1, 0.42, 0.22, 1] });
+        this.goalBeaconMaterial = new StandardMaterial({
+            name: "GoalBeacon",
+            albedoColor: [1, 0.48, 0.2, 1],
+            emissiveColor: [0.3, 0.05, 0.01],
+            roughness: 0.28,
+        });
+
+        const pole = Mesh.FromGeometry(
+            PrimitiveMesh.Cube(),
+            new StandardMaterial({ name: "GoalPole", albedoColor: [0.92, 0.96, 1, 1], metallic: 0.3 }),
+            { name: "GoalPole", castShadow: true, receiveShadow: true },
+        );
+        pole.transform.SetPosition(...GOAL.pole).SetScale(0.07, 3.1, 0.07);
+        this.scene.Add(pole);
+
+        this.goalFlag = Mesh.FromGeometry(
+            PrimitiveMesh.Cube(),
+            this.goalFlagMaterial,
+            { name: "GoalFlag", castShadow: false, receiveShadow: false },
+        );
+        this.goalFlag.transform.SetPosition(...GOAL.flag).SetScale(0.92, 0.48, 0.055);
+        this.scene.Add(this.goalFlag);
+
+        this.goalRing = Mesh.FromGeometry(
+            PrimitiveMesh.Ring(0.38, 0.55, { segments: 48 }),
+            this.goalRingMaterial,
+            { name: "GoalRing", castShadow: false, receiveShadow: false },
+        );
+        this.goalRing.transform.SetPosition(GOAL.trigger[0], GOAL.trigger[1] + 0.03, GOAL.trigger[2]);
+        this.scene.Add(this.goalRing);
+
+        this.goalBeacon = Mesh.FromGeometry(
+            PrimitiveMesh.Sphere(0.18, { widthSegments: 20, heightSegments: 10 }),
+            this.goalBeaconMaterial,
+            { name: "GoalBeacon", castShadow: false, receiveShadow: false },
+        );
+        this.goalBeacon.transform.SetPosition(GOAL.trigger[0], GOAL.trigger[1] + 0.32, GOAL.trigger[2]);
+        this.scene.Add(this.goalBeacon);
+        this.SetGoalUnlocked(false);
     }
 
     OnUpdate(dt) {
@@ -213,21 +247,74 @@ export class CubeGameLevel extends Level3D {
             return;
         }
 
+        const delta = Math.min(dt || 0.016, 0.05);
+        this.time += delta;
+        this.UpdatePlatforms();
+
         if (this.gameState === "WON") {
             if (ActionManager.IsActionDown("ATTACK")) this.ResetGame();
-            this.UpdateCamera(dt || 0.016);
+            this.UpdateGoal(delta);
+            this.UpdateCamera(delta);
             return;
         }
 
-        const delta = Math.min(dt || 0.016, 0.05);
-        this.time += delta;
+        this.CarryPlayerOnPlatform();
         this.UpdatePlayerInput(delta);
         super.OnUpdate(delta);
         this.RecoverPlayerIfNeeded();
         this.playerModel.ApplyTransform();
         this.UpdateCoins(delta);
         this.CheckCoinCollision();
+        this.UpdateGoal(delta);
+        this.CheckGoalCollision();
         this.UpdateCamera(delta);
+    }
+
+    UpdatePlatforms() {
+        this.platforms.forEach(platform => {
+            const previous = [...platform.mesh.transform.position];
+            const position = [...platform.definition.position];
+            const motion = platform.definition.motion;
+            if (motion) {
+                const axis = { x: 0, y: 1, z: 2 }[motion.axis];
+                position[axis] += Math.sin(this.time * motion.speed + motion.phase) * motion.amplitude;
+            }
+
+            platform.mesh.transform.SetPosition(...position);
+            platform.delta = position.map((value, index) => value - previous[index]);
+            this.UpdatePlatformAvailability(platform);
+        });
+    }
+
+    UpdatePlatformAvailability(platform) {
+        const blink = platform.definition.blink;
+        if (!blink) return;
+
+        const cycle = (this.time + blink.phase) % blink.period;
+        const active = cycle < blink.solidDuration;
+        const warning = active && cycle > blink.solidDuration - blink.warningDuration;
+        platform.active = active;
+        platform.body.enabled = active;
+        platform.mesh.visible = active;
+        platform.material.albedoColor = warning
+            ? [1, 0.16, 0.12, 1]
+            : [...platform.definition.color];
+    }
+
+    CarryPlayerOnPlatform() {
+        if (!this.playerBody.grounded || !this.playerBody.groundBody) return;
+
+        const platform = this.platforms.find(candidate => candidate.body === this.playerBody.groundBody);
+        if (!platform?.active) return;
+
+        platform.delta.forEach((movement, index) => {
+            this.playerModel.transform.position[index] += movement;
+        });
+    }
+
+    GetAttachmentPosition(definition) {
+        const platformPosition = this.platformById.get(definition.platformId)?.mesh.transform.position ?? [0, 0, 0];
+        return platformPosition.map((value, index) => value + definition.offset[index]);
     }
 
     UpdatePlayerInput(dt) {
@@ -240,7 +327,7 @@ export class CubeGameLevel extends Level3D {
         const cos = Math.cos(this.cameraYaw);
         const directionX = normalizedX * cos - normalizedForward * sin;
         const directionZ = -normalizedX * sin - normalizedForward * cos;
-        const speed = ActionManager.IsAction("BOOST") ? 6.6 : 5.2;
+        const speed = ActionManager.IsAction("BOOST") ? 7.0 : 5.45;
         const smoothing = 1 - Math.exp(-14 * dt);
 
         this.playerBody.velocity[0] += (directionX * speed - this.playerBody.velocity[0]) * smoothing;
@@ -253,15 +340,17 @@ export class CubeGameLevel extends Level3D {
         }
 
         if (ActionManager.IsActionDown("JUMP") && this.playerBody.grounded) {
-            this.playerBody.velocity[1] = 5.4;
+            this.playerBody.velocity[1] = 6.15;
         }
     }
 
     RecoverPlayerIfNeeded() {
         const position = this.playerModel.transform.position;
         const invalid = position.some(value => !Number.isFinite(value));
-        if (!invalid && position[1] >= -3) return;
+        if (!invalid && position[1] >= FALL_LIMIT) return;
 
+        this.falls++;
+        this.score = Math.max(0, this.score - 5);
         this.ResetPlayerPosition();
     }
 
@@ -269,51 +358,95 @@ export class CubeGameLevel extends Level3D {
         this.coins.forEach((coin, index) => {
             if (!coin.active) return;
 
-            coin.mesh.transform.position[1] = coin.baseY + Math.sin(this.time * 4 + index) * 0.08;
-            coin.mesh.transform.rotation.y += dt * 3.2;
+            const platform = this.platformById.get(coin.definition.platformId);
+            const position = this.GetAttachmentPosition(coin.definition);
+            coin.mesh.visible = platform?.active !== false;
+            coin.mesh.transform.position[0] = position[0];
+            coin.mesh.transform.position[1] = position[1] + Math.sin(this.time * 4.2 + index) * 0.08;
+            coin.mesh.transform.position[2] = position[2];
+            coin.mesh.transform.rotation.y += dt * 3.4;
         });
     }
 
     CheckCoinCollision() {
-        const playerPosition = this.playerModel.transform.position;
+        const position = this.playerModel.transform.position;
+        const playerCenter = [position[0], position[1] + 0.38, position[2]];
 
         this.coins.forEach(coin => {
-            if (!coin.active) return;
+            if (!coin.active || !coin.mesh.visible) return;
 
             const coinPosition = coin.mesh.transform.position;
-            const distance = Math.hypot(coinPosition[0] - playerPosition[0], coinPosition[2] - playerPosition[2]);
-            if (distance <= this.playerRadius + coin.radius) {
-                coin.active = false;
-                coin.mesh.visible = false;
-                this.score += coin.value;
-                this.collectedCoins++;
-            }
+            const distance = Math.hypot(
+                coinPosition[0] - playerCenter[0],
+                coinPosition[1] - playerCenter[1],
+                coinPosition[2] - playerCenter[2],
+            );
+            if (distance > 0.72) return;
+
+            coin.active = false;
+            coin.mesh.visible = false;
+            this.score += coin.value;
+            this.collectedCoins++;
         });
 
-        if (this.collectedCoins >= this.goalCoins) {
-            this.gameState = "WON";
+        if (!this.goalUnlocked && this.collectedCoins >= this.goalCoins) {
+            this.SetGoalUnlocked(true);
         }
+    }
+
+    CheckGoalCollision() {
+        if (!this.goalUnlocked) return;
+
+        const position = this.playerModel.transform.position;
+        const distance = Math.hypot(
+            position[0] - GOAL.trigger[0],
+            position[1] - GOAL.trigger[1],
+            position[2] - GOAL.trigger[2],
+        );
+        if (distance > GOAL.radius) return;
+
+        this.gameState = "WON";
+        this.score += 100;
+        this.playerBody.velocity = [0, 0, 0];
+    }
+
+    SetGoalUnlocked(unlocked) {
+        this.goalUnlocked = unlocked;
+        this.goalRingMaterial.albedoColor = unlocked ? [0.2, 1, 0.44, 1] : [1, 0.43, 0.2, 1];
+        this.goalFlagMaterial.albedoColor = unlocked ? [0.18, 0.95, 0.42, 1] : [1, 0.36, 0.16, 1];
+        this.goalBeaconMaterial.albedoColor = unlocked ? [0.28, 1, 0.45, 1] : [1, 0.45, 0.15, 1];
+        this.goalBeaconMaterial.emissiveColor = unlocked ? [0.08, 0.38, 0.13] : [0.28, 0.06, 0.01];
+    }
+
+    UpdateGoal() {
+        const pulse = 1 + Math.sin(this.time * 4) * 0.09;
+        this.goalRing.transform.SetScale(pulse, 1, pulse);
+        this.goalBeacon.transform.position[1] = GOAL.trigger[1] + 0.32 + Math.sin(this.time * 3.5) * 0.08;
     }
 
     ResetGame() {
         this.score = 0;
+        this.falls = 0;
         this.collectedCoins = 0;
         this.gameState = "PLAYING";
         this.time = 0;
+        this.cameraYaw = 0;
+        this.SetGoalUnlocked(false);
+        this.UpdatePlatforms();
         this.ResetPlayerPosition();
 
-        this.coins.forEach((coin, index) => {
-            const [x, z] = COIN_SPAWNS[index];
+        this.coins.forEach(coin => {
             coin.active = true;
             coin.mesh.visible = true;
-            coin.mesh.transform.SetPosition(x, coin.baseY, z);
         });
+        this.UpdateCoins(0);
     }
 
     ResetPlayerPosition() {
         this.playerFacing = Math.PI;
-        this.playerModel.SetPosition(0, 0.08, -6.0).SetRotation(0, this.playerFacing, 0);
+        this.playerModel.SetPosition(...PLAYER_START).SetRotation(0, this.playerFacing, 0);
         this.playerBody.velocity = [0, 0, 0];
+        this.cameraReady = false;
     }
 
     UpdateCamera(dt) {
@@ -323,20 +456,16 @@ export class CubeGameLevel extends Level3D {
             - ActionManager.GetActionValue("CAMERA_LEFT");
         this.cameraYaw += cameraTurn * 2.25 * dt;
 
-        const playerPosition = this.playerModel.transform.position;
-        const desiredTarget = [
-            playerPosition[0],
-            playerPosition[1] + 0.52,
-            playerPosition[2],
-        ];
+        const position = this.playerModel.transform.position;
+        const desiredTarget = [position[0], position[1] + 0.65, position[2] - 0.75];
         const follow = this.cameraReady ? 1 - Math.exp(-8 * dt) : 1;
         this.cameraTarget = this.cameraTarget.map((value, index) => (
             value + (desiredTarget[index] - value) * follow
         ));
         const desiredPosition = [
-            this.cameraTarget[0] + Math.sin(this.cameraYaw) * 6.5,
-            this.cameraTarget[1] + 4.25,
-            this.cameraTarget[2] + Math.cos(this.cameraYaw) * 6.5,
+            this.cameraTarget[0] + Math.sin(this.cameraYaw) * 7,
+            this.cameraTarget[1] + 4.65,
+            this.cameraTarget[2] + Math.cos(this.cameraYaw) * 7,
         ];
         const cameraPosition = this.camera.position.map((value, index) => (
             value + (desiredPosition[index] - value) * follow
@@ -351,53 +480,60 @@ export class CubeGameLevel extends Level3D {
 
         const draw = this.ui.Draw;
         const ctx = draw.screen.Context;
+        const controllerConnected = Input.GetConnectedGamepadIndices().length > 0;
+        const remainingCoins = this.goalCoins - this.collectedCoins;
+        const altitude = Math.max(0, this.playerModel.transform.position[1]).toFixed(1);
 
         ctx.save();
-        ctx.globalAlpha = 0.46;
-        draw.Color = "#05070D";
-        draw.DrawRect(12, 12, 292, 96);
+        ctx.globalAlpha = 0.54;
+        draw.Color = "#07172A";
+        draw.DrawRect(12, 12, 316, 118);
         ctx.restore();
 
         draw.SetTextAlign("left");
         draw.Font = "Arial";
-        draw.FontSize = "20px";
+        draw.FontSize = "21px";
         draw.Color = "#FFD76A";
-        draw.DrawText(`Moedas: ${this.collectedCoins}/${this.goalCoins}`, 22, 40);
+        draw.DrawText(`Moedas: ${this.collectedCoins}/${this.goalCoins}`, 22, 39);
         draw.Color = "#FFFFFF";
-        draw.FontSize = "16px";
-        draw.DrawText(`Score: ${this.score}`, 22, 66);
+        draw.FontSize = "15px";
+        draw.DrawText(`Score: ${this.score}   Quedas: ${this.falls}`, 22, 65);
         draw.FontSize = "13px";
-        const controllerConnected = Input.GetConnectedGamepadIndices().length > 0;
+        draw.Color = this.goalUnlocked ? "#8DFFB7" : "#FFE0A3";
+        draw.DrawText(this.goalUnlocked ? "Bandeira liberada: alcance o topo!" : "Colete as moedas ate a bandeira.", 22, 89);
         draw.Color = controllerConnected ? "#8DFFB7" : "#DDE7FF";
-        const controllerState = controllerConnected
-            ? "Controle: conectado"
-            : "Controle: pressione um botao para ativar";
-        draw.DrawText(controllerState, 22, 91);
+        draw.DrawText(
+            controllerConnected ? "Controle: conectado" : "Controle: pressione um botao para ativar",
+            22,
+            113,
+        );
 
         ctx.save();
-        ctx.globalAlpha = 0.42;
-        draw.Color = "#05070D";
+        ctx.globalAlpha = 0.5;
+        draw.Color = "#07172A";
         draw.DrawRect(12, 418, 696, 49);
         ctx.restore();
-        draw.Color = "#DDE7FF";
+        draw.Color = "#F3F7FF";
         draw.FontSize = "13px";
-        draw.DrawText("WASD/setas ou stick esquerdo: mover  |  Space/A: pular  |  Esc/B: menu", 18, 439);
-        draw.DrawText("Q/E ou stick direito: girar camera  |  Shift/RT: acelerar", 18, 458);
+        draw.DrawText(`Altitude: ${altitude} m   Tempo: ${this.time.toFixed(1)} s`, 18, 439);
+        draw.DrawText(this.goalUnlocked ? "CHEGADA ABERTA" : `CHEGADA BLOQUEADA   ${remainingCoins} MOEDAS RESTANTES`, 18, 458);
 
         if (this.gameState === "WON") {
             ctx.save();
-            ctx.globalAlpha = 0.72;
-            draw.Color = "#05070D";
-            draw.DrawRect(170, 176, 390, 112);
+            ctx.globalAlpha = 0.8;
+            draw.Color = "#061325";
+            draw.DrawRect(155, 168, 420, 132);
             ctx.restore();
 
             draw.SetTextAlign("center");
             draw.Color = "#FFD76A";
-            draw.FontSize = "26px";
-            draw.DrawText("Objetivo concluido!", 365, 220);
+            draw.FontSize = "28px";
+            draw.DrawText("Trilha concluida!", 365, 212);
             draw.Color = "#FFFFFF";
-            draw.FontSize = "15px";
-            draw.DrawText("Pressione Space/Enter/A para jogar novamente", 365, 252);
+            draw.FontSize = "16px";
+            draw.DrawText(`Score final: ${this.score}`, 365, 246);
+            draw.FontSize = "14px";
+            draw.DrawText("Uma nova trilha esta pronta.", 365, 274);
             draw.SetTextAlign("left");
         }
     }

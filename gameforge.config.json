@@ -7,13 +7,13 @@
     "window": {
         "title": "GameForgeJS",
         "backgroundColor": "#000000",
-        "fullScreen": false,
         "resizable": true,
         "cursor": "default"
     },
     "screen": {
         "width": 640,
         "height": 480,
+        "fullScreen": false,
         "pixelArt": true,
         "antialiasing": false,
         "orientation": "landscape"

@@ -8,8 +8,8 @@ export class PhysicsWorld3D {
         this.bodies = [];
     }
 
-    AddBody({ object, rigidbody = null, collider = null, tag = "" }) {
-        const body = { object, rigidbody, collider, tag };
+    AddBody({ object, rigidbody = null, collider = null, tag = "", enabled = true }) {
+        const body = { object, rigidbody, collider, tag, enabled };
         this.bodies.push(body);
         return body;
     }
@@ -20,11 +20,13 @@ export class PhysicsWorld3D {
 
     Step(dt) {
         const delta = Math.min(dt || 0.016, 0.05);
-        const dynamicBodies = this.bodies.filter(body => body.rigidbody && !body.rigidbody.isKinematic);
-        const staticBodies = this.bodies.filter(body => !body.rigidbody || body.rigidbody.isKinematic);
+        const activeBodies = this.bodies.filter(body => body.enabled !== false);
+        const dynamicBodies = activeBodies.filter(body => body.rigidbody && !body.rigidbody.isKinematic);
+        const staticBodies = activeBodies.filter(body => !body.rigidbody || body.rigidbody.isKinematic);
 
         dynamicBodies.forEach(body => {
             body.rigidbody.grounded = false;
+            body.rigidbody.groundBody = null;
             body.rigidbody.Integrate(body.object.transform ?? body.object, delta, this.gravity);
             this.#resolveBounds(body);
         });
@@ -96,6 +98,7 @@ export class PhysicsWorld3D {
 
         if (ny > 0.55) {
             rb.grounded = true;
+            rb.groundBody = boxBody;
             rb.velocity[1] = Math.max(0, rb.velocity[1]);
         }
     }

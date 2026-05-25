@@ -2,6 +2,7 @@ export { Color } from "./Core/Color.js";
 export { Transform3D } from "./Core/Transform3D.js";
 
 export { Scene3D } from "./Scene/Scene3D.js";
+export { Skybox } from "./Skybox/Skybox.js";
 export { PerspectiveCamera } from "./Camera/PerspectiveCamera.js";
 
 export { Mesh } from "./Mesh/Mesh.js";

@@ -4,6 +4,7 @@ export class Scene3D {
         this.objects = [];
         this.lights = [];
         this.camera = null;
+        this.skybox = null;
     }
 
     Add(item) {
@@ -11,6 +12,11 @@ export class Scene3D {
 
         if (item.isCamera3D) {
             this.camera = item;
+            return item;
+        }
+
+        if (item.isSkybox3D) {
+            this.skybox = item;
             return item;
         }
 
@@ -27,6 +33,7 @@ export class Scene3D {
         this.objects = this.objects.filter(object => object !== item);
         this.lights = this.lights.filter(light => light !== item);
         if (this.camera === item) this.camera = null;
+        if (this.skybox === item) this.skybox = null;
     }
 
     GetRenderableObjects() {

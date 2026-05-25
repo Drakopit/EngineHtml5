@@ -10,6 +10,7 @@
  * @returns {Object}
  */
 import { Vector2D } from "../../CoreCross/Math/Vector2D.js";
+import { GameViewport } from "../../CoreCross/Window/GameViewport.js";
 
 export class Screen3D {
     constructor(id, width, height) {
@@ -84,6 +85,7 @@ export class Screen3D {
         this.canvas.setAttribute("id", screenName);
         this.canvas.setAttribute("width", this.width);
         this.canvas.setAttribute("height", this.height);
+        GameViewport.Apply(this.canvas);
 
         // Initialize WebGL context. WebGL2 is preferred by Render3D, while the
         // legacy 3D helpers still work with the same returned context.
@@ -157,6 +159,10 @@ export class Screen3D {
         this.canvas.width = vector2D.GetValue().x;
         this.canvas.height = vector2D.GetValue().y;
         this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    FullScreen() {
+        GameViewport.Apply(this.canvas, true);
     }
 
     /**

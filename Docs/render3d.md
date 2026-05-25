@@ -12,6 +12,7 @@ Core3D/Render3D/
   Material/    StandardMaterial, UnlitMaterial
   Mesh/        Mesh, Geometry3D, PrimitiveMesh
   Renderer/    WebGL3DRenderer
+  Skybox/      Skybox para imagens cross convertidas em cubemap
   Shader/      Shader e shaders internos
   Texture/     Texture
 
@@ -31,8 +32,9 @@ Core3D/
 - `StandardMaterial` com albedo, normal map, roughness, metallic, AO e emissive.
 - Luz ambiente, hemisferica, direcional, ponto e spot.
 - Shadow map direcional simples com PCF 3x3.
+- `Skybox` com cubemap criado a partir de uma imagem em formato cross.
 - Shader procedural `CelestialBodyMaterial` para planetas/estrelas.
-- Fisica 3D basica com gravidade, rigidbody, esfera e caixa AABB.
+- Fisica 3D basica com gravidade, rigidbody, esfera, caixa AABB e contato de piso para plataformas moveis.
 - Overlay 2D/UI continua funcionando por cima do canvas 3D.
 
 ## Exemplo
@@ -45,10 +47,12 @@ import {
     PerspectiveCamera,
     PrimitiveMesh,
     Scene3D,
+    Skybox,
     StandardMaterial,
     Texture,
     WebGL3DRenderer,
 } from "../Core3D/index.js";
+import { AssetManager } from "../CoreCross/index.js";
 
 const renderer = new WebGL3DRenderer(canvas);
 const scene = new Scene3D();
@@ -85,6 +89,9 @@ const material = new StandardMaterial({
 const cube = Mesh.FromGeometry(PrimitiveMesh.Cube(1), material);
 scene.Add(cube);
 
+// A imagem deve estar carregada; por exemplo, por um resources.json da demo.
+scene.Add(Skybox.FromImage(AssetManager.instance.GetImage("sky_cross")));
+
 function loop() {
     cube.transform.rotation.y += 0.01;
     renderer.Render(scene, camera);
@@ -98,6 +105,6 @@ loop();
 
 - `ModelLoader` integrado ao novo `Mesh`.
 - `RenderPass`, `ShadowPass` e `ForwardRenderPass` como classes separadas.
-- Skybox dentro do pipeline novo.
+- Materiais de ambiente adicionais e cubemaps de reflexao.
 - Post-processing: tone mapping, bloom e FXAA.
 - PBR mais completo com environment map.

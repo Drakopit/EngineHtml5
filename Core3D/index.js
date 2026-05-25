@@ -22,6 +22,7 @@ export {
     PointLight,
     PrimitiveMesh,
     Scene3D,
+    Skybox,
     SpotLight,
     Material,
     Shader,

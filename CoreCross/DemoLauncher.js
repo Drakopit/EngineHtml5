@@ -31,7 +31,7 @@ const demos = Object.freeze({
     },
     mini3d: {
         label: "MiniGame 3D",
-        description: "Mini jogo 3D jogavel com coleta de moedas, camera e iluminacao.",
+        description: "Sky Trail 3D com plataformas moveis, desafio temporizado, moedas, bandeira e skybox.",
         path: "../Demos/DemoMiniGame3D/mainMiniGame3D.js",
     },
     online: {

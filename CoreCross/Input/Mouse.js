@@ -104,7 +104,13 @@ export class Mouse {
      */
     getPositionRelative(element) {
         const rect = element.getBoundingClientRect();
-        return new Vector2D(this.position.x - rect.left, this.position.y - rect.top);
+        const scaleX = element.width && rect.width ? element.width / rect.width : 1;
+        const scaleY = element.height && rect.height ? element.height / rect.height : 1;
+
+        return new Vector2D(
+            (this.position.x - rect.left) * scaleX,
+            (this.position.y - rect.top) * scaleY
+        );
     }
 
     /**

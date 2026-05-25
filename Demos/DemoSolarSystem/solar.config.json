@@ -12,6 +12,7 @@
     "screen": {
         "width": 960,
         "height": 540,
+        "fullScreen": true,
         "pixelArt": false,
         "antialiasing": true,
         "orientation": "landscape"

@@ -16,6 +16,7 @@ export class Rigidbody3D {
         this.damping = damping;
         this.bounciness = bounciness;
         this.grounded = false;
+        this.groundBody = null;
     }
 
     AddForce(force) {

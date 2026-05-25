@@ -36,6 +36,22 @@ BootstrapGame({
 
 `gameforge.config.json` fica na raiz e contem defaults da engine. `MyGame/mygame.config.json` pertence ao jogo e deve conter titulo, tela, comandos e qualquer configuracao especifica.
 
+## Tela Responsiva
+
+Cada jogo pode fazer seu canvas ocupar toda a area disponivel da pagina:
+
+```json
+{
+  "screen": {
+    "width": 640,
+    "height": 480,
+    "fullScreen": true
+  }
+}
+```
+
+Com `screen.fullScreen: true`, o canvas continua usando sua resolucao logica (`width` e `height`) para entidades, colisao e UI, mas e exibido responsivamente em toda a janela. Isto funciona para telas 2D, 3D e overlays da engine, sem solicitar o fullscreen nativo do navegador.
+
 ## resources.json
 
 ```json

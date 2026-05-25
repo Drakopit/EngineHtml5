@@ -5,6 +5,8 @@ import { STANDARD_FRAGMENT_SHADER, STANDARD_VERTEX_SHADER } from "../Shader/Stan
 import { UNLIT_FRAGMENT_SHADER, UNLIT_VERTEX_SHADER } from "../Shader/UnlitShader.js";
 import { SHADOW_FRAGMENT_SHADER, SHADOW_VERTEX_SHADER } from "../Shader/ShadowShader.js";
 import { CELESTIAL_FRAGMENT_SHADER, CELESTIAL_VERTEX_SHADER } from "../Shader/CelestialShader.js";
+import { SKYBOX_FRAGMENT_SHADER, SKYBOX_VERTEX_SHADER } from "../Shader/SkyboxShader.js";
+import { PrimitiveMesh } from "../Mesh/PrimitiveMesh.js";
 import { AssetManager } from "../../../CoreCross/Assets/AssetManager.js";
 
 const ATTRIBUTE = Object.freeze({
@@ -36,7 +38,10 @@ export class WebGL3DRenderer {
         this.geometryCache = new WeakMap();
         this.textureCache = new Map();
         this.shadowCache = new WeakMap();
+        this.skyboxCache = new WeakMap();
+        this.skyboxTextures = new Set();
         this.lightViewProjection = Mat4.create();
+        this.skyboxGeometry = PrimitiveMesh.Cube(2);
 
         const customCelestialVs = AssetManager.instance?.shaders?.["celestial_vs"];
         const customCelestialFs = AssetManager.instance?.shaders?.["celestial_fs"];
@@ -45,6 +50,7 @@ export class WebGL3DRenderer {
         this.unlitShader = new Shader(this.gl, UNLIT_VERTEX_SHADER, UNLIT_FRAGMENT_SHADER, "UnlitShader");
         this.shadowShader = new Shader(this.gl, SHADOW_VERTEX_SHADER, SHADOW_FRAGMENT_SHADER, "ShadowShader");
         this.celestialShader = new Shader(this.gl, customCelestialVs || CELESTIAL_VERTEX_SHADER, customCelestialFs || CELESTIAL_FRAGMENT_SHADER, "CelestialShader");
+        this.skyboxShader = new Shader(this.gl, SKYBOX_VERTEX_SHADER, SKYBOX_FRAGMENT_SHADER, "SkyboxShader");
 
         this.#configureState();
         this.#createFallbackTextures();
@@ -60,6 +66,7 @@ export class WebGL3DRenderer {
 
         const shadowState = this.#renderShadowPass(scene, camera);
         this.#beginMainPass(scene.backgroundColor ?? this.clearColor);
+        this.#drawSkybox(scene.skybox, camera);
 
         const objects = scene.GetRenderableObjects();
         for (const mesh of objects) {
@@ -72,9 +79,13 @@ export class WebGL3DRenderer {
         this.unlitShader.Dispose();
         this.shadowShader.Dispose();
         this.celestialShader.Dispose();
+        this.skyboxShader.Dispose();
+        this.skyboxTextures.forEach(texture => this.gl.deleteTexture(texture));
+        this.skyboxTextures.clear();
         this.geometryCache = new WeakMap();
         this.textureCache.clear();
         this.shadowCache = new WeakMap();
+        this.skyboxCache = new WeakMap();
     }
 
     #configureState() {
@@ -122,6 +133,85 @@ export class WebGL3DRenderer {
         gl.colorMask(true, true, true, true);
         gl.clearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3] ?? 1);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    }
+
+    #drawSkybox(skybox, camera) {
+        if (!skybox?.image) return;
+
+        const texture = this.#getSkyboxTexture(skybox);
+        if (!texture) return;
+
+        const gl = this.gl;
+        const geometry = this.#getGeometryState(this.skyboxGeometry);
+        this.skyboxShader.Use();
+        gl.bindVertexArray(geometry.vao);
+        this.#setMatrix(this.skyboxShader, "uView", camera.viewMatrix);
+        this.#setMatrix(this.skyboxShader, "uProjection", camera.projectionMatrix);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
+        this.#set1i(this.skyboxShader, "uSkybox", 0);
+
+        gl.depthMask(false);
+        gl.disable(gl.CULL_FACE);
+        gl.disable(gl.BLEND);
+        gl.drawElements(gl.TRIANGLES, geometry.count, geometry.indexType, 0);
+        gl.enable(gl.CULL_FACE);
+        gl.depthMask(true);
+        gl.bindVertexArray(null);
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
+    }
+
+    #getSkyboxTexture(skybox) {
+        if (this.skyboxCache.has(skybox)) return this.skyboxCache.get(skybox);
+
+        const image = skybox.image;
+        if (!image?.width || !image?.height) return null;
+
+        const gl = this.gl;
+        const faceSize = Math.floor(Math.min(image.width / 4, image.height / 3));
+        const canvas = document.createElement("canvas");
+        canvas.width = faceSize;
+        canvas.height = faceSize;
+        const context = canvas.getContext("2d");
+        if (!context) return null;
+
+        const texture = gl.createTexture();
+        const faces = [
+            { target: gl.TEXTURE_CUBE_MAP_POSITIVE_X, col: 2, row: 1 },
+            { target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X, col: 0, row: 1 },
+            { target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y, col: 1, row: 0 },
+            { target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, col: 1, row: 2 },
+            { target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z, col: 1, row: 1 },
+            { target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, col: 3, row: 1 },
+        ];
+
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+        faces.forEach(face => {
+            context.clearRect(0, 0, faceSize, faceSize);
+            context.drawImage(
+                image,
+                face.col * faceSize,
+                face.row * faceSize,
+                faceSize,
+                faceSize,
+                0,
+                0,
+                faceSize,
+                faceSize,
+            );
+            gl.texImage2D(face.target, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
+        });
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE);
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
+
+        this.skyboxCache.set(skybox, texture);
+        this.skyboxTextures.add(texture);
+        return texture;
     }
 
     #drawMesh(mesh, scene, camera, shadowState) {

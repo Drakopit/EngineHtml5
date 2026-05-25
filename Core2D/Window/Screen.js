@@ -11,6 +11,7 @@
  */
 
 import { Vector2D } from "../../CoreCross/Math/Vector2D.js";
+import { GameViewport } from "../../CoreCross/Window/GameViewport.js";
 
 export const PIXELATED_RENDERING = true; // Ativa o modo pixelado para gráficos 2D
 
@@ -96,6 +97,7 @@ export class Screen {
             // Garante que o CSS não vai embaçar a imagem se o canvas for redimensionado
             this.canvas.style.imageRendering = "pixelated";
         }
+        GameViewport.Apply(this.canvas);
     }
 
     /**
@@ -158,15 +160,7 @@ export class Screen {
     }
 
     FullScreen() {
-        if (this.canvas.requestFullscreen) {
-            this.canvas.requestFullscreen();
-        } else if (this.canvas.mozRequestFullScreen) {
-            this.canvas.mozRequestFullScreen();
-        } else if (this.canvas.webkitRequestFullscreen) {
-            this.canvas.webkitRequestFullscreen();
-        } else if (this.canvas.msRequestFullscreen) {
-            this.canvas.msRequestFullscreen();
-        }
+        GameViewport.Apply(this.canvas, true);
     }
 
     /**

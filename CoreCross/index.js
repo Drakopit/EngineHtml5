@@ -37,3 +37,4 @@ export { dijkstra } from "./Pathfinding/Dijkstra.js";
 export { getNeighbors, key, reconstructPath } from "./Pathfinding/Structure.js";
 export { Store } from "./Store.js";
 export { Util } from "./Utils.js";
+export { GameViewport } from "./Window/GameViewport.js";
