@@ -48,7 +48,7 @@
     "tiny_swords_tower": {
       "sprite": "blue_tower",
       "sprites": {
-        "blue_tower_01": { "x": 0, "y": 0, "width": 128, "height": 192 }
+        "blue_tower_01": { "x": 0, "y": 0, "width": 128, "height": 256 }
       }
     },
     "tiny_swords_props_tree_1": {
@@ -78,7 +78,7 @@
     "tiny_swords_props_resources": {
       "sprite": "gold_resource",
       "sprites": {
-        "gold_resource": { "x": 0, "y": 0, "width": 64, "height": 64 }
+        "gold_resource": { "x": 0, "y": 0, "width": 128, "height": 128 }
       }
     }
   }

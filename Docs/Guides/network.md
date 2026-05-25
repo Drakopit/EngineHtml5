@@ -39,7 +39,7 @@ npm run start
 Em outro terminal, inicie um backend externo de teste. O projeto irmao `GameForgeJsTools` contem um exemplo Node isolado, com seu proprio `package.json`:
 
 ```sh
-cd ../GameForgeJsTools/Servers/NodeWebSocketRelay
+cd ../GameForgeJsTools/NodeWebSocketRelay
 npm install
 npm start
 ```

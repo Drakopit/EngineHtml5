@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "kind": "GameForgeJS.Workspace",
+  "id": "demo_advanced",
+  "name": "Demo Advanced",
+  "resources": "resources.json",
+  "resourcePrefix": "Demos/DemoAdvanced/",
+  "levels2D": [
+    {
+      "id": "advanced_first",
+      "label": "Advanced - First",
+      "resources": "resources.json",
+      "resourcePrefix": "Demos/DemoAdvanced/",
+      "documents": {
+        "stageDefault": "Assets/Manifests/advanced/stage-default.json",
+        "core": "Assets/Manifests/advanced/core.json",
+        "stage": "Assets/Manifests/advanced/stage.json",
+        "player": "Assets/Manifests/advanced/player.json",
+        "enemies": "Assets/Manifests/advanced/enemies.json",
+        "effects": "Assets/Manifests/advanced/effects.json",
+        "ui": "Assets/Manifests/advanced/ui.json"
+      }
+    },
+    {
+      "id": "advanced_second",
+      "label": "Advanced - Second",
+      "resources": "resources.json",
+      "resourcePrefix": "Demos/DemoAdvanced/",
+      "documents": {
+        "stageDefault": "Assets/Manifests/advanced/stage-default.json",
+        "core": "Assets/Manifests/advanced/second-core.json",
+        "stage": "Assets/Manifests/advanced/second-stage.json",
+        "player": "Assets/Manifests/advanced/player.json",
+        "enemies": "Assets/Manifests/advanced/second-enemies.json",
+        "effects": "Assets/Manifests/advanced/effects.json",
+        "ui": "Assets/Manifests/advanced/ui.json"
+      }
+    },
+    {
+      "id": "advanced_boss",
+      "label": "Advanced - Boss",
+      "resources": "resources.json",
+      "resourcePrefix": "Demos/DemoAdvanced/",
+      "documents": {
+        "stageDefault": "Assets/Manifests/advanced/stage-default.json",
+        "core": "Assets/Manifests/advanced/boss-core.json",
+        "stage": "Assets/Manifests/advanced/boss-stage.json",
+        "player": "Assets/Manifests/advanced/player.json",
+        "enemies": "Assets/Manifests/advanced/boss-enemies.json",
+        "effects": "Assets/Manifests/advanced/effects.json",
+        "ui": "Assets/Manifests/advanced/ui.json"
+      }
+    }
+  ],
+  "scenes3D": []
+}

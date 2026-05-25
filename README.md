@@ -55,7 +55,7 @@ npm run start
 Em outro terminal, execute o relay opcional do projeto de ferramentas externo, com dependencias proprias:
 
 ```sh
-cd ../GameForgeJsTools/Servers/NodeWebSocketRelay
+cd ../GameForgeJsTools/NodeWebSocketRelay
 npm install
 npm start
 ```
@@ -219,7 +219,7 @@ Veja o guia completo em [Componentizacao](Docs/Guides/components.md). Esse e o c
 
 ## Ferramentas Externas
 
-O Scene Editor 3D e o WorldEditor/WorldMaker agora ficam no aplicativo desktop separado `../GameForgeJsEditor`. O editor 3D usa `Render3D`, oferece hierarchy, inspector, primitivas, materiais, luz/sombra, camera orbital e abre/salva manifests `.scene.json` que podem ser carregados por `SceneManifest3D`.
+O Scene Editor 3D e o WorldEditor/WorldMaker agora ficam no aplicativo desktop separado `../GameForgeJsEditor`. A ferramenta usa `game.workspace.json` para declarar levels/cenas editaveis, sem adicionar dependencia ao runtime; `resources.json` permanece o manifesto carregado pelo jogo. O editor 3D usa `Render3D`, hierarchy, inspector e gizmos visuais de transformacao ancorados no objeto selecionado.
 
 Ela e deliberadamente uma primeira ferramenta leve, nao uma reimplementacao completa do Unity. O runtime permanece JavaScript puro e as demos nao dependem do editor.
 
@@ -230,7 +230,7 @@ cd ../GameForgeJsEditor
 npm run dev
 ```
 
-O editor desktop pode abrir qualquer pasta, detectar configuracoes existentes ou criar uma estrutura nova. `gameforge.editor.json` e apenas opcional.
+O editor desktop pode migrar pastas antigas ao salvar ou criar uma estrutura nova. No 2D, `Novo projeto` gera `game.workspace.json`, `resources.json` e manifests `Assets/Manifests/editor/level_1/*`. No 3D, `New Project` inicializa uma pasta, enquanto `Open Project` e `+ Scene` declaram cenas em `game.workspace.json` e criam arquivos dentro de `Assets/Manifests/scenes/`. `Demos/Demo3D` ja inclui uma cena editavel carregada pela demo no runtime.
 
 ## Documentacao
 

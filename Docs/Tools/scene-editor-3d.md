@@ -25,12 +25,15 @@ required for authoring.
 - Inspector for name, primitive, transform, albedo, roughness, metallic and shadows.
 - Background and sunlight settings.
 - Orbit camera and frame-selected command.
-- Native open, save and save-as operations for `.scene.json` documents.
+- Object-anchored viewport translate, rotate and scale handles, with `W`, `E` and `R` mode shortcuts.
+- Project-aware scene list declared in `game.workspace.json`.
+- `New Project` initialization for a new 3D project folder.
+- `+ Scene` creation and save operations that declare `.scene.json` documents in `game.workspace.json` and register runtime entries in `resources.json`.
+- Native open and save-as operations for loose `.scene.json` documents.
 - Browser import/export fallback while previewing the frontend without Tauri.
 
-This is a focused first editor, not a complete Unity replacement. Future
-layers can add asset browsing, model placement, gizmos, colliders and prefab
-composition.
+This is a focused editor, not a complete Unity replacement. Further layers
+can add asset browsing, model placement, colliders and prefab composition.
 
 ## Runtime Contract
 
@@ -51,12 +54,18 @@ export class MySceneLevel extends Level3D {
 }
 ```
 
-Declare the exported document in the demo's own `resources.json`:
+Use `Open Project` for a demo folder containing `game.workspace.json` or a
+legacy `resources.json`, or `New Project` for an empty project folder, then use
+`+ Scene` and `Save`. `Demos/Demo3D` is a ready-to-open example whose runtime
+loads its editable `Render3D Showcase` scene before adding animation and
+textures. The editor creates
+`Assets/Manifests/scenes/<name>.scene.json` and declares it in the demo's own
+`game.workspace.json`. It also registers the runtime resource in `resources.json`, equivalent to:
 
 ```json
 {
   "jsons": [
-    { "name": "scene", "path": "Demos/My3DGame/Assets/Manifests/start.scene.json" }
+    { "name": "scene", "path": "Demos/My3DGame/Assets/Manifests/scenes/start.scene.json" }
   ]
 }
 ```

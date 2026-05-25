@@ -107,7 +107,7 @@
       "id": "gold_cache_01",
       "spriteRef": "gold_resource",
       "asset": "gold_resource",
-      "frame": { "x": 0, "y": 0, "width": 64, "height": 64 },
+      "frame": { "x": 0, "y": 0, "width": 128, "height": 128 },
       "x": 438,
       "y": 314,
       "width": 42,
