@@ -3,6 +3,9 @@ import { Input } from "../../CoreCross/Input/Input.js";
 import { Screen } from "../Window/Screen.js";
 import { Level } from "../../CoreCross/Level/Level.js";
 
+/**
+ * Basic keyboard-controlled menu level supplied as a simple 2D example.
+ */
 export class Menu extends Level {
     constructor() {
         super();

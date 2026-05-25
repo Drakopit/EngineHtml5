@@ -1,6 +1,18 @@
 import { Color } from "../Core/Color.js";
 import { Material } from "./Material.js";
 
+/**
+ * Lit PBR-style material with color, texture maps and shadow support.
+ *
+ * @param {Object} [options] - Surface settings.
+ * @param {number[]|Color|string} [options.albedoColor] - Base RGBA color.
+ * @param {Texture|null} [options.albedoMap=null] - Base color texture.
+ * @param {Texture|null} [options.normalMap=null] - Tangent-space normal map.
+ * @param {Texture|null} [options.heightMap=null] - Parallax height map.
+ * @param {number} [options.roughness=0.72] - Surface roughness.
+ * @param {number} [options.metallic=0] - Metallic factor.
+ * @param {boolean} [options.receiveShadow=true] - Whether shadows affect this surface.
+ */
 export class StandardMaterial extends Material {
     constructor({
         name = "StandardMaterial",

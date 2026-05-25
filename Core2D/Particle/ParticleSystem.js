@@ -1,6 +1,9 @@
 import { Base } from "../../CoreCross/Base.js";
 import { Particle } from "./Particle.js";
 
+/**
+ * Collection that emits, updates and draws simple `Particle` instances.
+ */
 export class ParticleSystem extends Base {
     constructor() {
         super();

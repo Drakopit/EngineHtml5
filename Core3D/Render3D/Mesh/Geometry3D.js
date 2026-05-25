@@ -1,3 +1,13 @@
+/**
+ * CPU-side indexed vertex buffer data consumed by `WebGL3DRenderer`.
+ *
+ * @param {Object} [options] - Vertex buffer arrays.
+ * @param {Array|Float32Array} [options.positions] - XYZ positions.
+ * @param {Array|Float32Array} [options.normals] - XYZ normals.
+ * @param {Array|Float32Array} [options.uvs] - UV coordinates.
+ * @param {Array|Float32Array} [options.tangents] - XYZW tangents.
+ * @param {Array|Uint16Array|Uint32Array|null} [options.indices] - Triangle indices.
+ */
 export class Geometry3D {
     constructor({
         positions = [],
@@ -14,6 +24,11 @@ export class Geometry3D {
         this.vertexCount = this.positions.length / 3;
     }
 
+    /**
+     * Generates fallback normals when geometry does not contain them.
+     * @param {number[]} [defaultNormal] - Normal repeated per vertex.
+     * @returns {Geometry3D} This geometry.
+     */
     EnsureNormals(defaultNormal = [0, 1, 0]) {
         if (this.normals.length) return this;
 

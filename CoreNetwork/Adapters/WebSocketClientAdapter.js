@@ -2,6 +2,17 @@ import { EventEmitter } from "../../CoreCross/EventEmitter.js";
 import { NetworkClient } from "../NetworkClient.js";
 import { NetworkMessage } from "../NetworkMessage.js";
 
+/**
+ * Adapter that carries `GameNetwork` messages through an external WebSocket relay.
+ *
+ * The relay is optional and replaceable; the game still owns world state and rules.
+ *
+ * @param {Object} [options] - Adapter settings.
+ * @param {string|null} [options.url=null] - WebSocket relay URL.
+ * @param {string} [options.roomId="main"] - Logical room identifier.
+ * @param {Object} [options.peer={}] - Local peer profile.
+ * @param {boolean} [options.autoReconnect=true] - Whether the low-level client reconnects.
+ */
 export class WebSocketClientAdapter extends EventEmitter {
     constructor({
         url = null,
@@ -31,6 +42,10 @@ export class WebSocketClientAdapter extends EventEmitter {
         return this;
     }
 
+    /**
+     * Creates and connects the underlying WebSocket client.
+     * @returns {WebSocketClientAdapter} This adapter.
+     */
     connect() {
         if (!this.url) throw new Error("WebSocketClientAdapter.connect requires a url.");
         if (this.client) return this;
@@ -50,6 +65,12 @@ export class WebSocketClientAdapter extends EventEmitter {
         return this;
     }
 
+    /**
+     * Sends a room-aware message envelope to the relay.
+     * @param {string} type - Message type.
+     * @param {Object} [payload={}] - Serializable message body.
+     * @returns {boolean|Object} `false` while offline, otherwise the sent envelope.
+     */
     send(type, payload = {}) {
         if (!this.IsConnected) return false;
 
@@ -60,6 +81,10 @@ export class WebSocketClientAdapter extends EventEmitter {
         });
     }
 
+    /**
+     * Gracefully closes the underlying client.
+     * @returns {WebSocketClientAdapter} This adapter.
+     */
     disconnect() {
         if (!this.client) return this;
         if (this.IsConnected) this.send("peer:left", { peer: this.peer });

@@ -1,3 +1,6 @@
+/**
+ * Dependency-free four-by-four matrix math utilities for Render3D.
+ */
 export class Mat4 {
     static create() {
         const out = new Float32Array(16);

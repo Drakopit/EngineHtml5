@@ -1,5 +1,11 @@
 import { ActionManager } from "./Input/ActionManager.js";
 
+/**
+ * Base attachable behavior unit for composing lightweight game entities.
+ *
+ * @param {Object} [options] - Component settings.
+ * @param {boolean} [options.enabled=true] - Whether the owner should update this component.
+ */
 export class Component {
     constructor({ enabled = true } = {}) {
         this.owner = null;
@@ -18,6 +24,9 @@ export class Component {
     }
 }
 
+/**
+ * Stores 2D position, rotation and scale and can mirror them onto its owner.
+ */
 export class TransformComponent extends Component {
     constructor({
         x = null,
@@ -74,6 +83,9 @@ export class TransformComponent extends Component {
     }
 }
 
+/**
+ * Applies velocity, gravity and friction to an owner's 2D position.
+ */
 export class VelocityComponent extends Component {
     constructor({
         vx = 0,
@@ -127,6 +139,9 @@ export class VelocityComponent extends Component {
     }
 }
 
+/**
+ * Supplies a reusable AABB for collision tests and pointer selection.
+ */
 export class BoundsComponent extends Component {
     constructor({
         width = null,
@@ -185,6 +200,9 @@ export class BoundsComponent extends Component {
     }
 }
 
+/**
+ * Tracks hit points, invulnerability time and owner damage/death callbacks.
+ */
 export class HealthComponent extends Component {
     constructor({ hp = 1, maxHp = hp, invulnerability = 0 } = {}) {
         super();
@@ -238,6 +256,9 @@ export class HealthComponent extends Component {
     }
 }
 
+/**
+ * Disables or removes short-lived owner objects after an elapsed duration.
+ */
 export class LifetimeComponent extends Component {
     constructor({ duration = 1, mode = "disable", onExpire = null } = {}) {
         super();
@@ -279,6 +300,9 @@ export class LifetimeComponent extends Component {
     }
 }
 
+/**
+ * Exposes configured `ActionManager` values to a composed game entity.
+ */
 export class ActionInputComponent extends Component {
     constructor({ actions = {} } = {}) {
         super();

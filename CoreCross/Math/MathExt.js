@@ -12,6 +12,9 @@
 
 import { Vector2D } from "./Vector2D.js";
 
+/**
+ * General scalar and 2D interpolation helpers shared by demos.
+ */
 export class MathExt {
     constructor() {}
 

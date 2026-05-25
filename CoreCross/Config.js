@@ -1,6 +1,14 @@
+/**
+ * Loads and merges global and per-game JSON configuration files.
+ */
 export class Config {
     static data = null;
 
+    /**
+     * Fetches one or more config paths, with later values overriding earlier values.
+     * @param {string|string[]} filepath - JSON configuration path or ordered paths.
+     * @returns {Promise<Object>} Merged configuration data.
+     */
     static async Load(filepath) {
         try {
             const paths = Array.isArray(filepath) ? filepath : [filepath];

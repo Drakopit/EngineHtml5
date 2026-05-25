@@ -2,6 +2,12 @@ import { Vector2D } from "../../CoreCross/Math/Vector2D.js";
 import { BoxManifest2D } from "./BoxManifest2D.js";
 import { DEBUG } from "../../CoreCross/Engine.js";
 
+/**
+ * Resolves an entity's manifest-defined collision, hurt and attack boxes in world space.
+ *
+ * @param {GameObject} owner - Animated entity that supplies position and facing.
+ * @param {Object|BoxManifest2D} [manifestData={}] - Box definitions.
+ */
 export class BoxController2D {
     constructor(owner, manifestData = {}) {
         this.owner = owner;
@@ -20,6 +26,10 @@ export class BoxController2D {
         return this.GetWorldBoxes("hurt");
     }
 
+    /**
+     * Returns active attack boxes for the current animation frame.
+     * @returns {Object[]} World-space hitboxes.
+     */
     GetHitBoxes() {
         const boxes = this.GetWorldBoxes("hit");
         if (boxes.length === 0) this.ResetHitMemory();

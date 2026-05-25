@@ -1,8 +1,17 @@
 import { AssetManager } from "./AssetManager.js";
 
+/**
+ * Combines JSON game manifests referenced through their `compose` entries.
+ */
 export class JsonManifestComposer {
     static cache = new Map();
 
+    /**
+     * Recursively merges one loaded JSON asset with its child manifests.
+     * @param {string} name - AssetManager JSON key.
+     * @param {AssetManager} [assets] - Loaded asset store.
+     * @returns {Object} Composed manifest.
+     */
     static Compose(name, assets = AssetManager.instance) {
         if (this.cache.has(name)) {
             return this.cache.get(name);

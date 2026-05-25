@@ -15,6 +15,12 @@ import { Draw } from "../Graphics/Draw.js";
 import { Vector2D } from "../../CoreCross/Math/Vector2D.js";
 import { Base } from "../../CoreCross/Base.js";
 
+/**
+ * Viewport camera for translating, zooming and shaking a 2D game world.
+ *
+ * @param {Vector2D} position - Initial world position.
+ * @param {Vector2D} size - Visible viewport size.
+ */
 export class Camera extends Base {
     /**
      * @doc Constructor

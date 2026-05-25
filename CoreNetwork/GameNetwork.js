@@ -8,6 +8,24 @@ const PEER_MESSAGE = Object.freeze({
     LEFT: "peer:left",
 });
 
+/**
+ * High-level multiplayer session API built on a replaceable transport adapter.
+ *
+ * `GameNetwork` discovers peers in a room and forwards game-defined messages.
+ * It does not contain maps, entities or gameplay rules.
+ *
+ * @param {Object} [options] - Initial network settings.
+ * @param {Object|null} [options.adapter=null] - Adapter implementing connect, disconnect and send.
+ * @param {string} [options.roomId="main"] - Logical room shared by connected peers.
+ * @param {Object} [options.peer={}] - Local peer profile such as a display name.
+ * @example
+ * const network = new GameNetwork({
+ *     adapter: new LocalNetworkAdapter(),
+ *     peer: { name: "Ada" },
+ * });
+ * network.onPlayerStateReceived((peerId, state) => players.updateState(peerId, state));
+ * network.connect();
+ */
 export class GameNetwork extends EventEmitter {
     constructor({
         adapter = null,
@@ -32,6 +50,11 @@ export class GameNetwork extends EventEmitter {
         return this.adapter?.IsConnected === true;
     }
 
+    /**
+     * Selects the transport used by this session.
+     * @param {Object} adapter - A LocalNetworkAdapter, WebSocketClientAdapter or compatible adapter.
+     * @returns {GameNetwork} This network instance.
+     */
     useAdapter(adapter) {
         if (!adapter) throw new Error("GameNetwork.useAdapter requires an adapter.");
         this.unbindAdapter();
@@ -47,12 +70,20 @@ export class GameNetwork extends EventEmitter {
         return this;
     }
 
+    /**
+     * Opens the selected adapter and starts peer discovery.
+     * @returns {GameNetwork} This network instance.
+     */
     connect() {
         if (!this.adapter) throw new Error("GameNetwork.connect requires an adapter.");
         this.adapter.connect();
         return this;
     }
 
+    /**
+     * Closes the adapter and forgets discovered remote peers.
+     * @returns {GameNetwork} This network instance.
+     */
     disconnect() {
         this.adapter?.disconnect();
         this.peers.clear();
@@ -72,6 +103,11 @@ export class GameNetwork extends EventEmitter {
         return this;
     }
 
+    /**
+     * Updates the local public identity and informs connected peers.
+     * @param {Object} profile - Public peer fields such as `name`.
+     * @returns {GameNetwork} This network instance.
+     */
     setPeerProfile(profile = {}) {
         this.peer = {
             ...this.peer,
@@ -83,11 +119,22 @@ export class GameNetwork extends EventEmitter {
         return this;
     }
 
+    /**
+     * Sends an application message to peers in the current room.
+     * @param {string} type - Message channel name.
+     * @param {Object} [payload={}] - Game-owned serializable payload.
+     * @returns {boolean} Whether an adapter accepted the message.
+     */
     send(type, payload = {}) {
         if (!this.IsConnected) return false;
         return this.adapter.send(type, payload);
     }
 
+    /**
+     * Sends the local player's small replicated state payload.
+     * @param {Object} state - Game-selected state such as position and animation.
+     * @returns {boolean} Whether the message was submitted.
+     */
     sendPlayerState(state) {
         return this.send("playerState", state);
     }

@@ -2,6 +2,10 @@ import { Config } from "../CoreCross/Config.js";
 import { EventEmitter } from "../CoreCross/EventEmitter.js";
 import { NetworkMessage } from "./NetworkMessage.js";
 
+/**
+ * Lifecycle states emitted by `NetworkClient`.
+ * @type {Object<string, string>}
+ */
 export const NETWORK_CLIENT_STATE = Object.freeze({
     IDLE: "idle",
     CONNECTING: "connecting",
@@ -10,6 +14,19 @@ export const NETWORK_CLIENT_STATE = Object.freeze({
     CLOSED: "closed",
 });
 
+/**
+ * Low-level WebSocket client for message envelopes and optional request/reply calls.
+ *
+ * Games normally consume `GameNetwork` and an adapter instead of this transport
+ * primitive directly.
+ *
+ * @param {Object} [options] - Client connection settings.
+ * @param {string|null} [options.url=null] - WebSocket endpoint.
+ * @param {boolean} [options.autoConnect=false] - Connect during construction.
+ * @param {boolean} [options.autoReconnect=false] - Retry unexpected connection losses.
+ * @param {Function|null} [options.serializer=null] - Envelope-to-wire converter.
+ * @param {Function|null} [options.parser=null] - Wire-to-envelope converter.
+ */
 export class NetworkClient extends EventEmitter {
     constructor({
         url = null,
@@ -43,6 +60,11 @@ export class NetworkClient extends EventEmitter {
         if (autoConnect) this.Connect();
     }
 
+    /**
+     * Constructs a client using `Config.data.network` compatible properties.
+     * @param {Object} [config] - Network configuration object.
+     * @returns {NetworkClient} Configured client.
+     */
     static FromConfig(config = Config.data?.network ?? {}) {
         return new NetworkClient({
             url: config.serverUrl ?? config.url ?? null,
@@ -57,6 +79,12 @@ export class NetworkClient extends EventEmitter {
         return typeof WebSocket !== "undefined" && this.socket?.readyState === WebSocket.OPEN;
     }
 
+    /**
+     * Opens a WebSocket connection.
+     * @param {string} [url] - Endpoint override.
+     * @param {string|string[]} [protocols] - WebSocket subprotocol override.
+     * @returns {NetworkClient} This client.
+     */
     Connect(url = this.url, protocols = this.protocols) {
         if (!url) throw new Error("NetworkClient.Connect requires a url.");
         if (typeof WebSocket === "undefined") throw new Error("WebSocket is not available in this runtime.");
@@ -82,6 +110,12 @@ export class NetworkClient extends EventEmitter {
         return this;
     }
 
+    /**
+     * Stops reconnection and closes the socket.
+     * @param {number} [code=1000] - WebSocket close code.
+     * @param {string} [reason="client disconnect"] - Close reason.
+     * @returns {NetworkClient} This client.
+     */
     Disconnect(code = 1000, reason = "client disconnect") {
         this.intentionalClose = true;
         this.ClearReconnect();
@@ -97,6 +131,13 @@ export class NetworkClient extends EventEmitter {
         return this;
     }
 
+    /**
+     * Sends a message envelope or creates one from a type and payload.
+     * @param {string|Object} type - Type name or complete envelope.
+     * @param {Object} [payload={}] - Serializable payload.
+     * @param {Object} [meta={}] - Envelope metadata.
+     * @returns {Object|boolean} Sent envelope, or `false` while disconnected.
+     */
     Send(type, payload = {}, meta = {}) {
         const message = NetworkMessage.IsEnvelope(type)
             ? type
@@ -112,6 +153,13 @@ export class NetworkClient extends EventEmitter {
         return message;
     }
 
+    /**
+     * Sends a correlated message and waits for its matching reply.
+     * @param {string} type - Request message type.
+     * @param {Object} [payload={}] - Serializable request data.
+     * @param {Object} [options] - Timeout and expected response type.
+     * @returns {Promise<Object>} Reply envelope.
+     */
     Request(type, payload = {}, { timeout = 5000, responseType = null } = {}) {
         const correlationId = NetworkMessage.CreateId("req");
         const message = NetworkMessage.Create(type, payload, { correlationId });
@@ -139,6 +187,14 @@ export class NetworkClient extends EventEmitter {
         });
     }
 
+    /**
+     * Responds to a previously received request envelope.
+     * @param {Object} requestMessage - Envelope carrying correlation metadata.
+     * @param {string} type - Response type.
+     * @param {Object} [payload={}] - Serializable response data.
+     * @param {Object} [meta={}] - Additional response metadata.
+     * @returns {Object|boolean} Sent response or `false`.
+     */
     Reply(requestMessage, type, payload = {}, meta = {}) {
         const replyTo = requestMessage?.meta?.correlationId
             ?? requestMessage?.meta?.id

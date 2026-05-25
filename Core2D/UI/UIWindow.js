@@ -3,6 +3,12 @@ import { Vector2D } from "../../CoreCross/Math/Vector2D.js";
 import { NineSlice } from "./NineSlice.js";
 import { Draw } from "../Graphics/Draw.js";
 
+/**
+ * Nine-slice canvas window that positions child labels relative to its frame.
+ *
+ * Subclass or compose this class for in-game panels rendered inside GameForgeJS
+ * rather than as external HTML.
+ */
 export class UIWindow extends GameObject {
     constructor(screen, image, x, y, width, height, cornerSize = 16) {
         super();
@@ -23,6 +29,13 @@ export class UIWindow extends GameObject {
 
     /**
      * Adds text relative to the window's top-left corner
+     * @param {string} text - Label content.
+     * @param {number} offsetX - Horizontal offset inside the window.
+     * @param {number} offsetY - Vertical offset inside the window.
+     * @param {string} [color="#FFFFFF"] - Canvas text color.
+     * @param {string} [fontSize="20px"] - CSS canvas font size.
+     * @param {string} [fontStyle="Arial"] - Canvas font family.
+     * @returns {void}
      */
     AddText(text, offsetX, offsetY, color = "#FFFFFF", fontSize = "20px", fontStyle = "Arial") {
         this.children.push({

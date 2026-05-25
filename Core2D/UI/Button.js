@@ -14,6 +14,11 @@ import { Draw } from "../Graphics/Draw.js";
 import { Mouse } from "../../CoreCross/Input/Mouse.js";
 import { Rectangle } from "../Graphics/Rectangle.js"; // Certifique-se de que a classe Rectangle está corretamente importada
 
+/**
+ * Canvas-rendered clickable UI button.
+ *
+ * @param {Screen} screen - Screen used for drawing and pointer input.
+ */
 export class Button {
     constructor(screen) {
         this.screen = screen;

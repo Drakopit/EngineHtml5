@@ -1,3 +1,6 @@
+/**
+ * Console logging helpers for engine startup, diagnostics and HTTP requests.
+ */
 export class Logger {
 	static logRequest(url, init = {}, response, duration) {
 		const isError = response && !response.ok;

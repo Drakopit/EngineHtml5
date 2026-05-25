@@ -1,5 +1,8 @@
 // Arquivo: Root/AudioManager.js
 
+/**
+ * Singleton Web Audio service for loaded effects, music and master volume control.
+ */
 export class AudioManager {
     // Padrão Singleton: Só existe uma instância no jogo inteiro
     static instance = new AudioManager();

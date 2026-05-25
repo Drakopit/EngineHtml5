@@ -14,6 +14,11 @@ const DEFAULT_FLOATING_TEXT = {
     fallbackDelta: 0.016,
 };
 
+/**
+ * Canvas effect for short-lived labels such as damage or collectible feedback.
+ *
+ * @param {Screen} screen - Target 2D canvas screen.
+ */
 export class FloatingText {
     constructor(screen) {
         this.name = "FloatingText";
@@ -30,6 +35,14 @@ export class FloatingText {
         this.fontSize = DEFAULT_FLOATING_TEXT.fontSize;
     }
 
+    /**
+     * Activates this effect at a world or HUD position.
+     * @param {string|number} text - Display content.
+     * @param {number} x - Horizontal position.
+     * @param {number} y - Vertical position.
+     * @param {Object} [options={}] - Velocity, lifetime and font overrides.
+     * @returns {void}
+     */
     Spawn(text, x, y, options = {}) {
         this.text = String(text);
         this.position = new Vector2D(x, y);

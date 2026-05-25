@@ -7,6 +7,16 @@ import { AudioManager } from "./Audio/AudioManager.js";
 import { Logger } from "./Logger.js";
 import { ResourceManifestLoader } from "./Assets/ResourceManifestLoader.js";
 
+/**
+ * Loads a game's configuration and assets, registers its levels and starts the engine.
+ *
+ * @param {Object} [options] - Game startup values.
+ * @param {string|string[]} [options.configPath="gameforge.config.json"] - Config manifest paths.
+ * @param {string|string[]|null} [options.manifestPath=null] - Resource manifest paths.
+ * @param {Level[]} [options.levels=[]] - Levels registered before startup.
+ * @param {Function|null} [options.beforeStart=null] - Async customization hook.
+ * @returns {Promise<Object>} Loaded config, assets, manifest and levels.
+ */
 export async function BootstrapGame({
     configPath = "gameforge.config.json",
     manifestPath = null,

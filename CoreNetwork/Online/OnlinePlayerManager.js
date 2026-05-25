@@ -1,3 +1,13 @@
+/**
+ * Stores remote peer render state and smooths numeric movement fields.
+ *
+ * The manager is intentionally representation-neutral: the demo decides how
+ * each returned remote player is rendered.
+ *
+ * @param {GameNetwork} network - Session supplying peer and player-state events.
+ * @param {Object} [options] - Remote state settings.
+ * @param {number} [options.smoothing=16] - Interpolation response per second.
+ */
 export class OnlinePlayerManager {
     constructor(network, { smoothing = 16 } = {}) {
         if (!network) throw new Error("OnlinePlayerManager requires a GameNetwork instance.");
@@ -13,6 +23,11 @@ export class OnlinePlayerManager {
         ];
     }
 
+    /**
+     * Creates or refreshes a remote player profile.
+     * @param {Object} peer - Peer with a stable `id`.
+     * @returns {Object|null} Stored player entry.
+     */
     spawn(peer) {
         if (!peer?.id) return null;
         const player = this.players.get(peer.id) ?? {
@@ -29,6 +44,13 @@ export class OnlinePlayerManager {
         this.players.delete(peerId);
     }
 
+    /**
+     * Stores the newest target state received from a remote player.
+     * @param {string} peerId - Remote peer identifier.
+     * @param {Object} [state={}] - Target render state.
+     * @param {Object} [peer={}] - Updated peer profile.
+     * @returns {void}
+     */
     updateState(peerId, state = {}, peer = {}) {
         const player = this.spawn({ id: peerId, ...peer });
         if (!player) return;
@@ -37,6 +59,11 @@ export class OnlinePlayerManager {
         if (!player.displayState) player.displayState = { ...player.state };
     }
 
+    /**
+     * Interpolates displayed numeric position and velocity fields.
+     * @param {number} [deltaTime=0.0166667] - Frame time in seconds.
+     * @returns {void}
+     */
     update(deltaTime = 1 / 60) {
         const alpha = Math.min(1, Math.max(0, deltaTime) * this.smoothing);
         this.players.forEach(player => {
@@ -52,12 +79,20 @@ export class OnlinePlayerManager {
         });
     }
 
+    /**
+     * Returns render-ready remote player records.
+     * @returns {Object[]} Visible interpolated player entries.
+     */
     getPlayers() {
         return [...this.players.values()]
             .filter(player => player.displayState)
             .map(player => ({ ...player, ...player.displayState }));
     }
 
+    /**
+     * Removes subscriptions and known remote peers.
+     * @returns {void}
+     */
     dispose() {
         this.unsubscribe.forEach(unsubscribe => unsubscribe?.());
         this.unsubscribe = [];

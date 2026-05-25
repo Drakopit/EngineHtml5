@@ -5,6 +5,7 @@
   "scripts": {
     "start": "node Tools/server.js",
     "dev": "node Tools/server.js",
-    "check": "node Tools/check-js.js"
+    "check": "node Tools/check-js.js",
+    "docs": "node Tools/generate-docs.js"
   }
 }

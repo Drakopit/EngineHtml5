@@ -13,7 +13,10 @@ import { Base } from "./Base.js";
 import { Level } from "./Level/Level.js"
 import { EventEmitter } from "./EventEmitter.js";
 
-// Level Handler
+/**
+ * Ordered level registry and current-level cursor used by `Engine`.
+ * @type {Object}
+ */
 export const LevelHandler = {
     levels: [],
     current: null,
@@ -51,8 +54,17 @@ let fps = 0;
 let fpsTime = 0;
 
 import { Config } from "./Config.js";
+/**
+ * Reads whether collision and hitbox debugging is enabled in config.
+ * @returns {boolean} Current hitbox debug flag.
+ */
 export const DEBUG = () => Config.data?.debug?.showHitboxes ?? false; // Lê do config.json
 
+/**
+ * Main update and render loop orchestrator for the active GameForgeJS level.
+ *
+ * The engine publishes frame events consumed by systems such as `Input`.
+ */
 export class Engine extends Base {
     constructor() {
         super();

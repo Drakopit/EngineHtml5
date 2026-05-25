@@ -1,7 +1,10 @@
 import { Mat4 } from "../../CoreCross/Math/Mat4.js";
+import { Deprecation } from "../../CoreCross/Deprecation.js";
 
+/** @deprecated Use `PerspectiveCamera` from `Core3D/index.js`. */
 export class Camera3D {
     constructor(screen) {
+        Deprecation.WarnOnce("Camera3D", "PerspectiveCamera");
         this.screen = screen;
         
         // Posição da câmera no mundo (X, Y, Z)

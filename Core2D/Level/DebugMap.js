@@ -20,6 +20,11 @@ const GROUNDING = Object.freeze({
     ROCK: 3
 });
 
+/**
+ * Small debug tile-map level helper rendered on a 2D screen.
+ *
+ * @param {Screen} screen - Destination canvas screen.
+ */
 export class DebugMap extends Base {
     constructor(screen) {
         super();

@@ -90,9 +90,9 @@ function renderAdminMode(message = "") {
                     <h1>Escolha uma demo ou ferramenta</h1>
                     <p class="admin-copy">Use esta tela para validar demos sem alterar codigo. Links diretos com <code>?demo=advanced</code> continuam funcionando.</p>
                 </div>
-                <a class="admin-tool" href="WorldEditor_v4.html">
-                    <span>WorldEditor externo</span>
-                    <small>Abrir instrucoes do app desktop</small>
+                <a class="admin-tool" href="Tools/SceneEditor3D/index.html">
+                    <span>Scene Editor 3D</span>
+                    <small>Criar cenas Render3D em JSON</small>
                 </a>
             </section>
             ${message ? `<p class="admin-message">${escapeHtml(message)}</p>` : ""}

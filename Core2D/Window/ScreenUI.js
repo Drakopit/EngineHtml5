@@ -1,6 +1,14 @@
 import { Screen } from "./Screen.js";
 import { Draw } from "../Graphics/Draw.js";
 
+/**
+ * Transparent overlay screen for GameForgeJS canvas-based UI above gameplay.
+ *
+ * @param {string} [id="gameCanvasUI"] - UI canvas identifier.
+ * @param {number} [width=800] - Logical canvas width.
+ * @param {number} [height=600] - Logical canvas height.
+ * @param {number} [zIndex=100] - CSS stacking position.
+ */
 export class ScreenUI {
     constructor(id = "gameCanvasUI", width = 800, height = 600, zIndex = 100) {
         // 1. Instancia a tela nativa 2D (Isso fará o Screen.js criar o canvas automaticamente)

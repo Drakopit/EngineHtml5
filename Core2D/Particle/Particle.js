@@ -1,6 +1,12 @@
 import { Base } from "../../CoreCross/Base.js";
 import { Draw } from "../Graphics/Draw.js";
 
+/**
+ * Short-lived moving dot used by the basic canvas particle system.
+ *
+ * @param {number} x - Initial horizontal coordinate.
+ * @param {number} y - Initial vertical coordinate.
+ */
 export class Particle extends Base {
     constructor(x, y) {
         super();

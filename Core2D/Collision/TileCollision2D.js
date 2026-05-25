@@ -1,5 +1,8 @@
 import { Collide2D } from "./Collide2D.js";
 
+/**
+ * Tile-map collision queries and axis-separated movement for rectangular actors.
+ */
 export class TileCollision2D {
     static RectFromTile(tileX, tileY, tileSize) {
         return {
@@ -47,6 +50,12 @@ export class TileCollision2D {
         return tiles;
     }
 
+    /**
+     * Moves a velocity-bearing rectangle and resolves nearby solid tiles.
+     * @param {Object} rect - Mutable rectangle with optional `vx` and `vy`.
+     * @param {Object} [options={}] - Grid query and movement settings.
+     * @returns {Object} Collision sides and grounded status.
+     */
     static Move(rect, {
         delta = 1 / 60,
         tileSize,

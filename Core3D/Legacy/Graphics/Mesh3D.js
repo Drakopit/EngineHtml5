@@ -5,13 +5,16 @@
 
 import { Mat4 } from '../../../CoreCross/Math/Mat4.js';
 import { AssetManager } from '../../../CoreCross/Assets/AssetManager.js';
+import { Deprecation } from '../../../CoreCross/Deprecation.js';
 
+/** @deprecated Use `Mesh` with `ModelMeshFactory` from `Core3D/index.js`. */
 export class Mesh3D {
 	/**
 	 * @param {WebGLRenderingContext} gl - Contexto WebGL da Screen3D
 	 * @param {object} parsedModel       - Resultado de ModelLoader.Load()[n]
 	 */
 	constructor(gl, parsedModel) {
+		Deprecation.WarnOnce("Mesh3D", "Mesh + ModelMeshFactory");
 		this.gl = gl;
 		this.model = parsedModel;
 		this._buffers = {};

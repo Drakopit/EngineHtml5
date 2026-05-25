@@ -3,9 +3,5 @@
         { "name": "textura_player", "path": "Demos/Demo3D/Assets/TemplateGrid_albedo.png" },
         { "name": "grid_albedo", "path": "Demos/Demo3D/Assets/TemplateGrid_albedo.png" },
         { "name": "grid_normal", "path": "Demos/DemoMiniGame3D/Assets/TemplateGrid/TemplateGrid_normal.png" }
-    ],
-    "shaders": [
-        { "name": "vertexShader", "path": "Core3D/Legacy/Shaders/VertexShader.glsl" },
-        { "name": "fragmentShader", "path": "Core3D/Legacy/Shaders/FragmentShader.glsl" }
     ]
 }

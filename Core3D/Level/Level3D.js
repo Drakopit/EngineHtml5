@@ -4,6 +4,27 @@ import { ScreenUI } from "../../Core2D/Window/ScreenUI.js";
 import { PerspectiveCamera, Scene3D, WebGL3DRenderer } from "../Render3D/index.js";
 import { PhysicsWorld3D } from "../Physics/PhysicsWorld3D.js";
 
+/**
+ * Base level for current Render3D games with optional canvas UI and physics.
+ *
+ * Extend this class and implement `BuildScene()` to add objects, lights and
+ * skyboxes; the standard level lifecycle renders and disposes the scene.
+ *
+ * @param {Object} [options] - Canvas, rendering and simulation settings.
+ * @param {string} [options.canvasId="gameCanvas3D"] - Render canvas identifier.
+ * @param {string} [options.uiCanvasId="gameCanvasUI"] - Overlay UI canvas identifier.
+ * @param {number} [options.width=960] - Logical render width.
+ * @param {number} [options.height=540] - Logical render height.
+ * @param {number[]} [options.clearColor] - RGBA clear color.
+ * @param {boolean} [options.useUI=true] - Whether to create `ScreenUI`.
+ * @param {boolean} [options.usePhysics=true] - Whether to create `PhysicsWorld3D`.
+ * @example
+ * class FirstLevel extends Level3D {
+ *     BuildScene() {
+ *         this.scene.Add(new DirectionalLight({ castShadow: true }));
+ *     }
+ * }
+ */
 export class Level3D extends Level {
     constructor({
         canvasId = "gameCanvas3D",
@@ -51,6 +72,10 @@ export class Level3D extends Level {
         this.BuildScene();
     }
 
+    /**
+     * Scene construction hook implemented by a game level.
+     * @returns {void}
+     */
     BuildScene() {}
 
     OnUpdate(dt) {

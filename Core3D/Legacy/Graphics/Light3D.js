@@ -1,3 +1,6 @@
+import { Deprecation } from "../../../CoreCross/Deprecation.js";
+
+/** @deprecated Use `DirectionalLight` from `Core3D/index.js`. */
 export class DirectionalLight3D {
     constructor({
         direction = [-0.35, 0.85, 0.45],
@@ -5,6 +8,7 @@ export class DirectionalLight3D {
         intensity = 0.75,
         ambientStrength = 0.35,
     } = {}) {
+        Deprecation.WarnOnce("DirectionalLight3D", "DirectionalLight");
         this.direction = this.#normalize(direction);
         this.color = color;
         this.intensity = intensity;

@@ -1,6 +1,16 @@
 import { Config } from "../Config.js";
 
+/**
+ * Applies the responsive full-window canvas mode selected by a game config.
+ *
+ * Logical canvas coordinates remain unchanged; only presentation fills the
+ * available browser viewport.
+ */
 export class GameViewport {
+    /**
+     * Reads the active game's `screen.fullScreen` setting.
+     * @returns {boolean} Whether full-window canvas presentation is enabled.
+     */
     static IsFullScreen() {
         const config = Config.data?.screen?.fullScreen
             ?? Config.data?.window?.fullScreen
@@ -11,6 +21,12 @@ export class GameViewport {
             : config === true;
     }
 
+    /**
+     * Styles a game canvas to occupy the browser window responsively.
+     * @param {HTMLCanvasElement} canvas - Game canvas element.
+     * @param {boolean} [enabled] - Optional setting override.
+     * @returns {HTMLCanvasElement} The supplied canvas.
+     */
     static Apply(canvas, enabled = this.IsFullScreen()) {
         if (!canvas || !enabled) {
             return canvas;

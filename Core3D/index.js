@@ -1,4 +1,5 @@
 export { Level3D } from "./Level/Level3D.js";
+// Deprecated compatibility exports. New projects should use the Render3D API below.
 export { Level3D as LegacyLevel3D } from "./Legacy/Level/LegacyLevel3D.js";
 export { Camera3D } from "./Camera/Camera3D.js";
 export { GameObject3D, Transform3D as LegacyTransform3D } from "./Objects/GameObject3D.js";
@@ -22,6 +23,7 @@ export {
     PointLight,
     PrimitiveMesh,
     Scene3D,
+    SceneManifest3D,
     Skybox,
     SpotLight,
     Material,

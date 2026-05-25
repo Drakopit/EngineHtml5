@@ -3,9 +3,9 @@
  * @namespace Graphic
  * @class ModelLoader
  * @author Sugestão para GameForgeJS
- * @summary Carrega modelos 3D no formato GLTF/GLB e os prepara para renderização WebGL.
- * @description Integra-se ao AssetManager existente via QueueModel/GetModel.
- *              Suporta geometria, UVs, normais e texturas embutidas (GLB).
+ * @summary Loads GLTF and GLB model parts for Render3D through AssetManager.
+ * @description Integrates with `QueueModel` and `GetModel`, preserving positions,
+ *              UVs, normals, indices and embedded GLB base-color images.
  */
 
 // ============================================================
@@ -13,12 +13,17 @@
 //    Uso: assets.QueueModel("nave", "./Assets/Models/nave.glb")
 // ============================================================
 
+/**
+ * Loads GLTF and GLB model parts for Render3D through `AssetManager`.
+ *
+ * The returned parts can be converted into scene meshes by `ModelMeshFactory`.
+ */
 export class ModelLoader {
 
 	/**
-	 * Carrega um arquivo GLTF (.gltf + .bin) ou GLB (binário tudo-em-um).
-	 * @param {string} url - Caminho para o arquivo .gltf ou .glb
-	 * @returns {Promise<ParsedModel>} - Dados prontos para o WebGL
+	 * Loads a GLTF (`.gltf` plus buffers) or binary GLB asset.
+	 * @param {string} url - URL for a `.gltf` or `.glb` model.
+	 * @returns {Promise<Object[]>} Parsed mesh parts ready for `ModelMeshFactory`.
 	 */
 	static async Load(url) {
 		const isGLB = url.toLowerCase().endsWith(".glb");

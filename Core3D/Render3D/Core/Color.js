@@ -1,3 +1,11 @@
+/**
+ * Normalized RGBA color value with array and hexadecimal conversion helpers.
+ *
+ * @param {number} [r=1] - Red channel from zero to one.
+ * @param {number} [g=1] - Green channel from zero to one.
+ * @param {number} [b=1] - Blue channel from zero to one.
+ * @param {number} [a=1] - Alpha channel from zero to one.
+ */
 export class Color {
     constructor(r = 1, g = 1, b = 1, a = 1) {
         this.r = r;
@@ -22,6 +30,12 @@ export class Color {
         return new Color(0, 0, 0, 1);
     }
 
+    /**
+     * Converts a CSS-style hexadecimal value to normalized channels.
+     * @param {string} hex - Three or six digit hexadecimal color.
+     * @param {number} [alpha=1] - Alpha channel.
+     * @returns {Color} Parsed color.
+     */
     static FromHex(hex, alpha = 1) {
         const value = String(hex).replace("#", "");
         const normalized = value.length === 3

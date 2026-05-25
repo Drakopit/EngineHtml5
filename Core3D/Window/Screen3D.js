@@ -12,6 +12,13 @@
 import { Vector2D } from "../../CoreCross/Math/Vector2D.js";
 import { GameViewport } from "../../CoreCross/Window/GameViewport.js";
 
+/**
+ * Creates and owns the canvas used by Render3D and legacy WebGL levels.
+ *
+ * @param {string} id - Canvas element identifier.
+ * @param {number} [width] - Logical canvas width.
+ * @param {number} [height] - Logical canvas height.
+ */
 export class Screen3D {
     constructor(id, width, height) {
         this.id = id;

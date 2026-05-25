@@ -1,3 +1,7 @@
+/**
+ * Legacy-friendly names mapped to browser keyboard `code` values.
+ * @type {Object<string, string|number>}
+ */
 export const KeyCode = Object.freeze({
     "Break": 3,
     "Backspace": 8,
@@ -34,7 +38,10 @@ export const KeyCode = Object.freeze({
     ";": 186, "=": 187, ",": 188, "-": 189, ".": 190, "/": 191, "`": 192, "[": 219, "\\": 220, "]": 221, "'": 222
 });
 
-
+/**
+ * Legacy numeric key codes mapped back to readable names.
+ * @type {Object<number, string>}
+ */
 export const CharCode = Object.freeze({
     0 : 'That key has no keycode',
     3 : "Break",

@@ -102,7 +102,7 @@ LEFT_STICK_LEFT     analogico esquerdo para esquerda
 LEFT_STICK_RIGHT    analogico esquerdo para direita
 ```
 
-A cola completa fica em [`../GAMEPAD_COLA.md`](../GAMEPAD_COLA.md).
+A cola completa fica em [Gamepad](./gamepad.md).
 
 ## Extend Por Jogo
 

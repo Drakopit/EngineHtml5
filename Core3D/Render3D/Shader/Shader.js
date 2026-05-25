@@ -1,3 +1,13 @@
+/**
+ * Compiled WebGL shader program wrapper with cached uniform locations.
+ *
+ * Games generally select a material instead of instantiating shaders directly.
+ *
+ * @param {WebGL2RenderingContext} gl - Active renderer context.
+ * @param {string} vertexSource - GLSL vertex shader source.
+ * @param {string} fragmentSource - GLSL fragment shader source.
+ * @param {string} [label="Shader"] - Error-reporting label.
+ */
 export class Shader {
     constructor(gl, vertexSource, fragmentSource, label = "Shader") {
         this.gl = gl;
@@ -6,10 +16,19 @@ export class Shader {
         this.uniforms = new Map();
     }
 
+    /**
+     * Binds this program for subsequent draw calls.
+     * @returns {void}
+     */
     Use() {
         this.gl.useProgram(this.program);
     }
 
+    /**
+     * Obtains and caches a named uniform location.
+     * @param {string} name - GLSL uniform name.
+     * @returns {WebGLUniformLocation|null} Located uniform.
+     */
     GetUniform(name) {
         if (!this.uniforms.has(name)) {
             this.uniforms.set(name, this.gl.getUniformLocation(this.program, name));

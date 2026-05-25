@@ -1,4 +1,14 @@
+/**
+ * Minimal Wavefront OBJ asset loader producing mesh-part buffer data.
+ *
+ * Materials and textures remain game-owned resources loaded separately.
+ */
 export class OBJLoader {
+    /**
+     * Downloads and parses one OBJ asset.
+     * @param {string} url - OBJ asset URL.
+     * @returns {Promise<Object[]>} Parsed model parts for `AssetManager`.
+     */
     static async Load(url) {
         const text = await fetch(url).then(r => r.text());
         const positions = [], uvs = [], normals = [], indices = [];

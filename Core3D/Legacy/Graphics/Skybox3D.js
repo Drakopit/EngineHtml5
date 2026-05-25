@@ -1,10 +1,13 @@
 import { Mat4 } from '../../../CoreCross/Math/Mat4.js';
 import { Shapes3D } from "./Shape3D.js"; // <-- Importamos a classe pai
 import { AssetManager } from '../../../CoreCross/Assets/AssetManager.js';
+import { Deprecation } from '../../../CoreCross/Deprecation.js';
 
+/** @deprecated Use `Skybox` from `Core3D/index.js`. */
 export class Skybox3D extends Shapes3D { // <-- Herança aplicada (Clean Architecture)
     constructor(screen, image) {
-        super(screen); 
+        super(screen);
+        Deprecation.WarnOnce("Skybox3D", "Skybox");
         
         // Mantemos apenas a criação da textura exclusiva
         this.texture = this.createCubeMapFromCross(image);

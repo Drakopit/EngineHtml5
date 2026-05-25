@@ -1,6 +1,17 @@
 import { EventEmitter } from "../../CoreCross/EventEmitter.js";
 import { NetworkMessage } from "../NetworkMessage.js";
 
+/**
+ * Same-origin multiplayer transport implemented with `BroadcastChannel`.
+ *
+ * It is useful for local demos and testing two browser tabs without an MMO
+ * backend. Messages remain scoped to a room and do not leave the browser.
+ *
+ * @param {Object} [options] - Adapter settings.
+ * @param {string} [options.roomId="main"] - Channel room identifier.
+ * @param {Object} [options.peer={}] - Local public peer profile.
+ * @param {string} [options.channelPrefix="gameforgejs-online"] - Browser channel namespace.
+ */
 export class LocalNetworkAdapter extends EventEmitter {
     constructor({
         roomId = "main",
@@ -30,6 +41,10 @@ export class LocalNetworkAdapter extends EventEmitter {
         return this;
     }
 
+    /**
+     * Opens the browser broadcast channel.
+     * @returns {LocalNetworkAdapter} This adapter.
+     */
     connect() {
         if (this.IsConnected) return this;
         if (typeof BroadcastChannel === "undefined") {
@@ -43,6 +58,12 @@ export class LocalNetworkAdapter extends EventEmitter {
         return this;
     }
 
+    /**
+     * Broadcasts an envelope to the other tabs in this room.
+     * @param {string} type - Message type.
+     * @param {Object} [payload={}] - Serializable message body.
+     * @returns {boolean} Whether the channel was open.
+     */
     send(type, payload = {}) {
         if (!this.IsConnected) return false;
 
@@ -54,6 +75,10 @@ export class LocalNetworkAdapter extends EventEmitter {
         return true;
     }
 
+    /**
+     * Announces departure and releases the browser channel.
+     * @returns {LocalNetworkAdapter} This adapter.
+     */
     disconnect() {
         if (!this.IsConnected) return this;
 

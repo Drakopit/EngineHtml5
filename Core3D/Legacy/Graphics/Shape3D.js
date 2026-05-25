@@ -1,8 +1,11 @@
 import { Mat4 } from '../../../CoreCross/Math/Mat4.js';
 import { AssetManager } from '../../../CoreCross/Assets/AssetManager.js';
+import { Deprecation } from '../../../CoreCross/Deprecation.js';
 
+/** @deprecated Use `Mesh`, `PrimitiveMesh` and `StandardMaterial` from `Core3D/index.js`. */
 export class Shapes3D {
     constructor(screen) {
+        Deprecation.WarnOnce("Shapes3D", "Mesh + PrimitiveMesh + StandardMaterial");
         this.gl = screen.Context;
         this.screen = screen;
         this.programInfo = {};

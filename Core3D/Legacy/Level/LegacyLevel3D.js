@@ -1,9 +1,11 @@
 import { Base } from "../../../CoreCross/Base.js";
-import { Screen3D as ScreenWebGL } from "../../Window/Screen3D.js";
+import { Deprecation } from "../../../CoreCross/Deprecation.js";
 
+/** @deprecated Use `Core3D/Level/Level3D.js` through `Core3D/index.js`. */
 export class Level3D extends Base {
     constructor() {
         super();
+        Deprecation.WarnOnce("LegacyLevel3D", "Level3D");
         this.caption = "Modelo de Level 3D";
         this.TelaId = null;
         this.FPS = 0;

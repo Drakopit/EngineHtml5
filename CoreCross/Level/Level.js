@@ -13,6 +13,11 @@
 import { Base } from "../Base.js";
 import { Logger } from "../Logger.js";
 
+/**
+ * Base scene lifecycle container updated and drawn by the engine.
+ *
+ * Extend this class to own a game's entities and canvas screens.
+ */
 export class Level extends Base {
     constructor() {
         super();

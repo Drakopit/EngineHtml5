@@ -13,6 +13,12 @@
  */
 import { Vector2D } from "../../CoreCross/Math/Vector2D.js";
 
+/**
+ * Canvas sprite renderer supporting sheet-based animation frames.
+ *
+ * @param {Screen} screen - Destination canvas screen.
+ * @param {string} spriteSrc - Loaded image key or sprite source.
+ */
 export class Sprite {
 	constructor(screen, spriteSrc) {
 		this.screen = screen;

@@ -1,3 +1,8 @@
+/**
+ * Resolves readable controller button and axis names into browser Gamepad API indices.
+ *
+ * Profiles allow the same game's actions to match Xbox, PlayStation or Nintendo labels.
+ */
 export class GamepadAlias {
     static COMMON = Object.freeze({
         LB: "button_4",

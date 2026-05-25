@@ -1,4 +1,13 @@
+/**
+ * Queues images, audio, shaders, models and JSON declared by game resource manifests.
+ */
 export class ResourceManifestLoader {
+    /**
+     * Queues and resolves one or more resource manifests through an `AssetManager`.
+     * @param {string|string[]} paths - Resource manifest JSON paths.
+     * @param {AssetManager} assets - Destination asset store.
+     * @returns {Promise<Object|Object[]>} Loaded manifest data.
+     */
     static async Load(paths, assets) {
         const manifestPaths = Array.isArray(paths) ? paths : [paths];
         const manifests = [];

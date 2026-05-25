@@ -1,6 +1,16 @@
 import { Collide2D } from "./Collide2D.js";
 
+/**
+ * Stateless hitbox-versus-hurtbox resolver for data-driven 2D combat.
+ */
 export class CombatResolver2D {
+    /**
+     * Finds new attack contacts and emits optional game-owned hit handling.
+     * @param {BoxController2D} attackerBoxes - Attacking entity boxes.
+     * @param {BoxController2D|BoxController2D[]} defenderBoxesList - Potential defenders.
+     * @param {Object} [options={}] - Default hit values and `onHit` callback.
+     * @returns {Object[]} Resolved hit records.
+     */
     static Resolve(attackerBoxes, defenderBoxesList, options = {}) {
         const defenders = Array.isArray(defenderBoxesList) ? defenderBoxesList : [defenderBoxesList];
         const hits = [];

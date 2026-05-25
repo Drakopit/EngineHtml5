@@ -13,6 +13,11 @@ import { Draw } from "../Graphics/Draw.js";
 import { Mouse } from "../../CoreCross/Input/Mouse.js";
 import { Rectangle } from "../Graphics/Rectangle.js";
 
+/**
+ * Canvas-drawn editable text field for in-game GameForgeJS UI.
+ *
+ * @param {Screen} screen - Screen used for drawing and pointer coordinates.
+ */
 export class TextBox {
     constructor(screen) {
         this.screen = screen;

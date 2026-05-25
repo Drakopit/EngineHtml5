@@ -1,5 +1,17 @@
 import { NetworkMessage } from "./NetworkMessage.js";
 
+/**
+ * Periodically broadcasts snapshots of small tracked objects through a network client.
+ *
+ * This generic helper reads and writes selected fields only; it has no knowledge
+ * of entities, maps or simulation.
+ *
+ * @param {Object} [options] - Synchronization settings.
+ * @param {NetworkClient|null} [options.client=null] - Client used to send snapshots.
+ * @param {string} [options.channel="state:sync"] - Envelope type for snapshots.
+ * @param {string} [options.id] - Local source identifier.
+ * @param {number} [options.tickRate=20] - Snapshot broadcasts per second.
+ */
 export class NetworkStateSync {
     constructor({
         client = null,
@@ -21,6 +33,14 @@ export class NetworkStateSync {
         }
     }
 
+    /**
+     * Tracks state with game-provided reader and optional writer callbacks.
+     * @param {string} id - Entity identifier inside snapshots.
+     * @param {Object} callbacks - State callbacks.
+     * @param {Function} callbacks.read - Produces serializable state.
+     * @param {Function|null} [callbacks.write=null] - Applies remote state.
+     * @returns {NetworkStateSync} This synchronizer.
+     */
     Track(id, { read, write = null } = {}) {
         if (!id) throw new Error("NetworkStateSync.Track requires an id.");
         if (typeof read !== "function") throw new Error("NetworkStateSync.Track requires a read function.");
@@ -29,6 +49,13 @@ export class NetworkStateSync {
         return this;
     }
 
+    /**
+     * Tracks common fields on a plain target object.
+     * @param {string} id - Entity identifier.
+     * @param {Object} target - Target object.
+     * @param {string[]} [fields] - Replicated property names.
+     * @returns {NetworkStateSync} This synchronizer.
+     */
     TrackObject(id, target, fields = ["position", "rotation", "scale"]) {
         return this.Track(id, {
             read: () => this.ReadFields(target, fields),
@@ -41,6 +68,10 @@ export class NetworkStateSync {
         return this;
     }
 
+    /**
+     * Produces the current serializable entity snapshot.
+     * @returns {Object} Snapshot containing source, timestamp and entities.
+     */
     Snapshot() {
         const entities = {};
         this.tracked.forEach((entry, id) => {
@@ -56,6 +87,11 @@ export class NetworkStateSync {
         return this.lastSnapshot;
     }
 
+    /**
+     * Sends one current snapshot.
+     * @param {Object} [meta={}] - Message envelope metadata.
+     * @returns {Object|boolean} Sent envelope or `false` without a client.
+     */
     Broadcast(meta = {}) {
         if (!this.client) return false;
         return this.client.Send(this.channel, this.Snapshot(), meta);

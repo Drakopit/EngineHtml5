@@ -1,9 +1,18 @@
 // Ficheiro: Root/EventEmitter.js
+/**
+ * Minimal synchronous event publisher used across engine services.
+ */
 export class EventEmitter {
     constructor() {
         this.listeners = {};
     }
 
+    /**
+     * Registers a listener for an event name.
+     * @param {string} event - Event name.
+     * @param {Function} callback - Listener callback.
+     * @returns {Function} Unsubscribe callback.
+     */
     on(event, callback) {
         if (!this.listeners[event]) {
             this.listeners[event] = [];

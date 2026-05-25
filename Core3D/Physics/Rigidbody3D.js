@@ -1,3 +1,13 @@
+/**
+ * Small dynamic-body state component integrated by `PhysicsWorld3D`.
+ *
+ * @param {Object} [options] - Body settings.
+ * @param {number} [options.mass=1] - Body mass used for forces.
+ * @param {number[]} [options.velocity] - Initial velocity.
+ * @param {boolean} [options.useGravity=true] - Whether gravity affects this body.
+ * @param {boolean} [options.isKinematic=false] - Whether game code controls motion.
+ * @param {number} [options.damping=0.96] - Horizontal velocity retention.
+ */
 export class Rigidbody3D {
     constructor({
         mass = 1,
@@ -19,12 +29,24 @@ export class Rigidbody3D {
         this.groundBody = null;
     }
 
+    /**
+     * Accumulates a force until the next integration step.
+     * @param {number[]} force - XYZ force.
+     * @returns {void}
+     */
     AddForce(force) {
         this.acceleration[0] += (force[0] ?? 0) / this.mass;
         this.acceleration[1] += (force[1] ?? 0) / this.mass;
         this.acceleration[2] += (force[2] ?? 0) / this.mass;
     }
 
+    /**
+     * Advances velocity and position for one simulation step.
+     * @param {Transform3D} transform - Mutated object transform.
+     * @param {number} dt - Delta time in seconds.
+     * @param {number[]} gravity - World gravity vector.
+     * @returns {void}
+     */
     Integrate(transform, dt, gravity) {
         if (this.isKinematic) return;
 

@@ -14,7 +14,7 @@ O Node.js e opcional: ele entra apenas como servidor local de desenvolvimento pa
 - Cada jogo/demo tem sua propria configuracao de janela, tela e comandos.
 - Assets e fases devem caminhar para manifests data-driven.
 - A engine deve aceitar heranca classica e evoluir gradualmente para componentizacao.
-- Ferramentas como o WorldEditor devem ficar fora das demos, para servir qualquer projeto.
+- Ferramentas como o Scene Editor 3D e o WorldEditor devem ficar fora das demos, para servir qualquer projeto.
 
 ## Como Rodar
 
@@ -29,6 +29,12 @@ http://localhost:8080/Main.html
 ```
 
 Sem query string, `Main.html` abre o Admin Mode, uma tela para escolher qual demo ou ferramenta rodar.
+
+O editor 3D externo ao runtime das demos tambem pode ser aberto diretamente:
+
+```txt
+http://localhost:8080/Tools/SceneEditor3D/index.html
+```
 
 Links diretos continuam funcionando:
 
@@ -66,7 +72,8 @@ GameForgeJS/
   Core2D/                Canvas 2D, GameObject, camera, cena, UI, colisao, combate, particulas e efeitos 2D
   Core3D/                WebGL/Render3D, Level3D, modelos, shaders, janela, objetos e fisica 3D
   CoreNetwork/           Rede e online reutilizaveis: GameNetwork, adaptadores, chat e sincronizacao
-  docs/                  Guias tecnicos
+  Tools/                 Ferramentas externas de autoria, incluindo o Scene Editor 3D
+  Docs/                  Guias, tutoriais e referencia JSDoc gerada
   Demos/                 Todas as demos jogaveis e tecnicas
     DemoAdvanced/        Demo plataforma/RPG data-driven
     DemoFightingGame2D/  Demo de luta 2D
@@ -189,9 +196,13 @@ entity.AddComponent(new BoundsComponent({ width: 32, height: 32 }));
 entity.AddComponent(new HealthComponent({ hp: 100 }));
 ```
 
-Veja o guia completo em [Componentizacao](Docs/components.md). Esse e o caminho para evoluir para um modelo ECS-lite sem quebrar as demos atuais.
+Veja o guia completo em [Componentizacao](Docs/Guides/components.md). Esse e o caminho para evoluir para um modelo ECS-lite sem quebrar as demos atuais.
 
-## WorldEditor
+## Scene Editor 3D E WorldEditor
+
+`Tools/SceneEditor3D/index.html` e uma ferramenta WebGL de autoria incluida no repositorio. Ela usa `Render3D`, oferece hierarchy, inspector, primitivas, materiais, luz/sombra, camera orbital e exporta/importa manifests `.scene.json` que podem ser carregados por `SceneManifest3D`.
+
+Ela e deliberadamente uma primeira ferramenta leve, nao uma reimplementacao completa do Unity. O runtime permanece JavaScript puro e as demos nao dependem do editor.
 
 O WorldEditor/WorldMaker agora e ferramenta externa ao runtime:
 
@@ -210,15 +221,19 @@ O editor desktop pode abrir qualquer pasta, detectar configuracoes existentes ou
 
 ## Documentacao
 
-- [Criando um projeto](Docs/new-project.md)
-- [Configuracao de input por jogo](Docs/input-config.md)
-- [CoreNetwork](Docs/network.md)
-- [Cola de gamepad](GAMEPAD_COLA.md)
-- [Componentizacao](Docs/components.md)
-- [Render3D](Docs/render3d.md)
-- [Advanced Stage Manifest](Docs/advanced-stage-manifest.md)
-- [Hitbox Manifest 2D](Docs/hitbox-manifest.md)
-- [WorldEditor v4](Docs/world-editor-v4.md)
+- [Indice oficial](Docs/index.md)
+- [Criando um projeto](Docs/GettingStarted/new-project.md)
+- [Tutorial: criando demos 2D e 3D](Docs/GettingStarted/tutorial-demos-2d-3d.md)
+- [Configuracao de input por jogo](Docs/GettingStarted/input-config.md)
+- [Cola de gamepad](Docs/GettingStarted/gamepad.md)
+- [CoreNetwork](Docs/Guides/network.md)
+- [Componentizacao](Docs/Guides/components.md)
+- [Render3D](Docs/Guides/render3d.md)
+- [Scene Editor 3D](Docs/Tools/scene-editor-3d.md)
+- [Advanced Stage Manifest](Docs/Manifests/advanced-stage-manifest.md)
+- [Hitbox Manifest 2D](Docs/Manifests/hitbox-manifest.md)
+- [WorldEditor v4](Docs/Tools/world-editor-v4.md)
+- [Referencia de API gerada por JSDoc](Docs/Helper/index.md)
 
 ## Direcao Do Projeto
 

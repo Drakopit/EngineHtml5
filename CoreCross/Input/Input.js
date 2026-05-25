@@ -10,7 +10,9 @@ import { Config } from "../Config.js";
  * @namespace Input
  * @class Input
  * @author Patrick Faustino Camello
- * @summary Manages keyboard input for the game framework.
+ * @summary Manages per-frame keyboard, mouse, touch and polled gamepad input.
+ * @description Gamepad state is polled during the engine update so controllers
+ *              already available to the browser are detected without reconnecting.
  * @Date 26/07/2024
  * @example
  * import { Input } from "./Input.js";
@@ -132,29 +134,62 @@ export class Input {
         return Input.instance?.keysUp[key] === true;
     }
 
+    /**
+     * Tests whether a browser gamepad is currently available.
+     * @param {number} [padIndex=0] - Browser gamepad slot.
+     * @returns {boolean} Whether that pad is connected.
+     */
     static IsGamepadConnected(padIndex = 0) {
         return Input.instance?.gamepad?.IsConnected(padIndex) ?? false;
     }
 
+    /**
+     * Returns all currently connected browser gamepad slots.
+     * @returns {number[]} Connected gamepad indices.
+     */
     static GetConnectedGamepadIndices() {
         return Input.instance?.gamepad?.GetConnectedIndices() ?? [];
     }
 
+    /**
+     * Reads a held gamepad button using a configured alias or browser index token.
+     * @param {number} [padIndex=0] - Browser gamepad slot.
+     * @param {string|number} input - Alias such as `A` or `DPAD_LEFT`.
+     * @returns {boolean} Whether the button is held.
+     */
     static GetGamepadButton(padIndex = 0, input) {
         const buttonIndex = GamepadAlias.ResolveButtonIndex(input, Input.GamepadAliasOptions());
         return buttonIndex !== null && (Input.instance?.gamepad?.GetButton(buttonIndex, padIndex) ?? false);
     }
 
+    /**
+     * Reads a gamepad button press occurring in the current frame.
+     * @param {number} [padIndex=0] - Browser gamepad slot.
+     * @param {string|number} input - Configured alias or button index.
+     * @returns {boolean} Whether the button went down.
+     */
     static GetGamepadButtonDown(padIndex = 0, input) {
         const buttonIndex = GamepadAlias.ResolveButtonIndex(input, Input.GamepadAliasOptions());
         return buttonIndex !== null && (Input.instance?.gamepad?.GetButtonDown(buttonIndex, padIndex) ?? false);
     }
 
+    /**
+     * Reads a gamepad button release occurring in the current frame.
+     * @param {number} [padIndex=0] - Browser gamepad slot.
+     * @param {string|number} input - Configured alias or button index.
+     * @returns {boolean} Whether the button went up.
+     */
     static GetGamepadButtonUp(padIndex = 0, input) {
         const buttonIndex = GamepadAlias.ResolveButtonIndex(input, Input.GamepadAliasOptions());
         return buttonIndex !== null && (Input.instance?.gamepad?.GetButtonUp(buttonIndex, padIndex) ?? false);
     }
 
+    /**
+     * Reads an analog axis using an alias such as `LeftX`.
+     * @param {number} [padIndex=0] - Browser gamepad slot.
+     * @param {string|number} input - Configured axis alias or index.
+     * @returns {number} Axis value from -1 to 1, or zero if unavailable.
+     */
     static GetGamepadAxis(padIndex = 0, input) {
         const axisIndex = GamepadAlias.ResolveAxisIndex(input, Input.GamepadAliasOptions());
         return axisIndex === null ? 0 : (Input.instance?.gamepad?.GetAxis(axisIndex, padIndex) ?? 0);
@@ -180,10 +215,21 @@ export class Input {
         ) ?? false);
     }
 
+    /**
+     * Builds an action mapping rule for keyboard input.
+     * @param {string} input - Keyboard event code.
+     * @returns {Object} Action mapping rule.
+     */
     static Keyboard(input) {
         return { device: "keyboard", input };
     }
 
+    /**
+     * Builds an action mapping rule for a gamepad button.
+     * @param {string|number} input - Gamepad button alias or index.
+     * @param {number|null} [padIndex=null] - Optional fixed gamepad slot.
+     * @returns {Object} Action mapping rule.
+     */
     static GamepadButton(input, padIndex = null) {
         return {
             device: "gamepad",
@@ -192,6 +238,13 @@ export class Input {
         };
     }
 
+    /**
+     * Builds an action mapping rule for one direction of an analog axis.
+     * @param {string|number} input - Gamepad axis alias or index.
+     * @param {string|number} [direction="positive"] - Positive/negative direction or sign.
+     * @param {number|null} [padIndex=null] - Optional fixed gamepad slot.
+     * @returns {Object} Action mapping rule.
+     */
     static GamepadAxis(input, direction = "positive", padIndex = null) {
         return {
             device: "gamepad",

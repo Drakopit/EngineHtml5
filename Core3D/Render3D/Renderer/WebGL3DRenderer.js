@@ -19,6 +19,14 @@ const ATTRIBUTE = Object.freeze({
 const MAX_POINT_LIGHTS = 4;
 const MAX_SPOT_LIGHTS = 2;
 
+/**
+ * WebGL2 renderer for `Scene3D`, including lit materials, skyboxes and shadows.
+ *
+ * @param {HTMLCanvasElement|Screen3D} canvasOrScreen - Destination canvas or screen wrapper.
+ * @param {Object} [options] - Renderer settings.
+ * @param {number[]} [options.clearColor] - Default RGBA clear color.
+ * @param {boolean} [options.antialias=true] - Request browser multisampling.
+ */
 export class WebGL3DRenderer {
     constructor(canvasOrScreen, {
         clearColor = [0.03, 0.04, 0.07, 1],
@@ -56,6 +64,12 @@ export class WebGL3DRenderer {
         this.#createFallbackTextures();
     }
 
+    /**
+     * Draws one scene from a supplied or scene-owned camera.
+     * @param {Scene3D} scene - Scene to render.
+     * @param {PerspectiveCamera} [camera] - Camera override.
+     * @returns {void}
+     */
     Render(scene, camera = scene?.camera) {
         if (!scene) throw new Error("WebGL3DRenderer.Render requires a Scene3D.");
         if (!camera) throw new Error("WebGL3DRenderer.Render requires a PerspectiveCamera.");
@@ -74,6 +88,10 @@ export class WebGL3DRenderer {
         }
     }
 
+    /**
+     * Releases shader programs, caches and GPU-owned resources.
+     * @returns {void}
+     */
     Dispose() {
         this.standardShader.Dispose();
         this.unlitShader.Dispose();

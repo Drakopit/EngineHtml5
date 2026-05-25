@@ -1,5 +1,12 @@
 import { Vector2D } from "../../CoreCross/Math/Vector2D.js";
 
+/**
+ * Draws resizable UI panels from a nine-slice source image.
+ *
+ * @param {Screen} screen - Canvas screen.
+ * @param {HTMLImageElement} image - Panel texture.
+ * @param {number} [cornerSize=16] - Corner sample size in pixels.
+ */
 export class NineSlice {
     /**
      * @param {Object} screen - The screen object to get the Context

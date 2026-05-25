@@ -1,5 +1,14 @@
 import { Mat4 } from "../../../CoreCross/Math/Mat4.js";
 
+/**
+ * Perspective camera holding view and projection matrices for Render3D.
+ *
+ * @param {Object} [options] - Projection and pose settings.
+ * @param {number} [options.fov=60] - Vertical field of view in degrees.
+ * @param {number} [options.aspect=1] - Viewport aspect ratio.
+ * @param {number[]} [options.position] - Camera world position.
+ * @param {number[]} [options.target] - Initial look-at target.
+ */
 export class PerspectiveCamera {
     constructor({
         fov = 60,
@@ -24,6 +33,13 @@ export class PerspectiveCamera {
         this.UpdateView();
     }
 
+    /**
+     * Sets world position and rebuilds the view matrix.
+     * @param {number} x - World x coordinate.
+     * @param {number} y - World y coordinate.
+     * @param {number} z - World z coordinate.
+     * @returns {PerspectiveCamera} This camera.
+     */
     SetPosition(x, y, z) {
         this.position[0] = x;
         this.position[1] = y;
@@ -32,6 +48,11 @@ export class PerspectiveCamera {
         return this;
     }
 
+    /**
+     * Aims the camera at a world-space point.
+     * @param {number[]} target - Three-component world position.
+     * @returns {PerspectiveCamera} This camera.
+     */
     LookAt(target) {
         this.target = [...target];
         this.UpdateView();

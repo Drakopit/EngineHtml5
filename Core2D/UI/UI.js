@@ -17,6 +17,11 @@ import { TextBox } from "./TextBox.js"; // Supondo que você tenha uma classe Te
 import { Label } from "./Label.js";     // Supondo que você tenha uma classe Label
 import { Rectangle } from "../Graphics/Rectangle.js"; // Certifique-se de que a classe Rectangle está corretamente importada
 
+/**
+ * Convenience factory for canvas buttons, labels and text boxes on a screen.
+ *
+ * @param {Screen} screen - Screen receiving UI elements.
+ */
 export class UI {
     constructor(screen) {
         if (!screen) {

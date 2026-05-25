@@ -12,6 +12,11 @@
 import { Draw } from "../Graphics/Draw.js";
 import { Rectangle } from "../Graphics/Rectangle.js";
 
+/**
+ * Simple canvas text label positioned by a rectangle.
+ *
+ * @param {Screen} screen - Screen used for drawing.
+ */
 export class Label {
     constructor(screen) {
         this.screen = screen;

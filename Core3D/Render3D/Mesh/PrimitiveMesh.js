@@ -1,6 +1,16 @@
 import { Geometry3D } from "./Geometry3D.js";
 
+/**
+ * Factory for educational and manifest-friendly primitive geometries.
+ *
+ * Methods return `Geometry3D`; wrap the result in `Mesh` to render it.
+ */
 export class PrimitiveMesh {
+    /**
+     * Creates a textured cube centered at the origin.
+     * @param {number} [size=1] - Edge length.
+     * @returns {Geometry3D} Cube geometry.
+     */
     static Cube(size = 1) {
         const half = size / 2;
         const faces = [
@@ -75,6 +85,13 @@ export class PrimitiveMesh {
         return new Geometry3D({ positions, normals, uvs, tangents, indices });
     }
 
+    /**
+     * Creates a subdivided horizontal plane suitable for floors.
+     * @param {number} [width=1] - X span.
+     * @param {number} [depth=1] - Z span.
+     * @param {Object} [options] - Segmentation settings.
+     * @returns {Geometry3D} Plane geometry.
+     */
     static Plane(width = 1, depth = 1, { subdivisions = 1 } = {}) {
         const positions = [];
         const normals = [];
@@ -110,6 +127,12 @@ export class PrimitiveMesh {
         return new Geometry3D({ positions, normals, uvs, tangents, indices });
     }
 
+    /**
+     * Creates a UV sphere centered at the origin.
+     * @param {number} [radius=1] - Sphere radius.
+     * @param {Object} [options] - Segment settings.
+     * @returns {Geometry3D} Sphere geometry.
+     */
     static Sphere(radius = 1, { widthSegments = 24, heightSegments = 12 } = {}) {
         const positions = [];
         const normals = [];

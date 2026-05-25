@@ -1,6 +1,16 @@
 import { BoxCollider3D } from "./BoxCollider3D.js";
 import { SphereCollider3D } from "./SphereCollider3D.js";
 
+/**
+ * Lightweight 3D physics world for gravity and sphere-versus-platform collision.
+ *
+ * It is intended for approachable demos rather than a full general-purpose
+ * physics solver.
+ *
+ * @param {Object} [options] - Simulation settings.
+ * @param {number[]} [options.gravity] - World gravity vector.
+ * @param {Object|null} [options.bounds=null] - Optional horizontal movement bounds.
+ */
 export class PhysicsWorld3D {
     constructor({ gravity = [0, -9.81, 0], bounds = null } = {}) {
         this.gravity = [...gravity];
@@ -8,6 +18,11 @@ export class PhysicsWorld3D {
         this.bodies = [];
     }
 
+    /**
+     * Registers a game object and its optional motion and collision components.
+     * @param {Object} definition - Body definition.
+     * @returns {Object} Stored body record.
+     */
     AddBody({ object, rigidbody = null, collider = null, tag = "", enabled = true }) {
         const body = { object, rigidbody, collider, tag, enabled };
         this.bodies.push(body);
@@ -18,6 +33,11 @@ export class PhysicsWorld3D {
         this.bodies = this.bodies.filter(candidate => candidate !== body);
     }
 
+    /**
+     * Advances enabled bodies and resolves supported solid collisions.
+     * @param {number} dt - Delta time in seconds.
+     * @returns {void}
+     */
     Step(dt) {
         const delta = Math.min(dt || 0.016, 0.05);
         const activeBodies = this.bodies.filter(body => body.enabled !== false);

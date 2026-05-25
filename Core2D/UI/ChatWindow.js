@@ -3,6 +3,15 @@ import { Rectangle } from "../Graphics/Rectangle.js";
 import { Mouse } from "../../CoreCross/Input/Mouse.js";
 import { TextBox } from "./TextBox.js";
 
+/**
+ * Canvas-rendered chat panel composed from GameForgeJS drawing and text input APIs.
+ *
+ * The window is transport-neutral: connect it to `ChatManager` or any local
+ * message source through `onMessageSubmitted` and `addMessage`.
+ *
+ * @param {Screen} screen - Canvas screen used for drawing and pointer coordinates.
+ * @param {Object} [options] - Window position, size and message limits.
+ */
 export class ChatWindow {
     constructor(screen, {
         x = 12,
@@ -33,6 +42,11 @@ export class ChatWindow {
         return this.input.isActive;
     }
 
+    /**
+     * Registers a handler for text confirmed by the player.
+     * @param {Function} callback - Handler receiving the submitted string.
+     * @returns {Function} Unsubscribe callback.
+     */
     onMessageSubmitted(callback) {
         this.submitListeners.push(callback);
         return () => {
@@ -40,6 +54,11 @@ export class ChatWindow {
         };
     }
 
+    /**
+     * Appends a normalized message for rendering.
+     * @param {Object} message - Message containing `text`, name and optional system flag.
+     * @returns {void}
+     */
     addMessage(message) {
         if (!message?.text) return;
         this.messages.push(message);
@@ -147,6 +166,10 @@ export class ChatWindow {
         return `${trimmed}...`;
     }
 
+    /**
+     * Removes input listeners when a scene closes.
+     * @returns {void}
+     */
     Dispose() {
         globalThis.removeEventListener?.("keydown", this.handleKeyDown);
         this.submitListeners = [];

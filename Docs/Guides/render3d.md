@@ -12,15 +12,16 @@ Core3D/Render3D/
   Material/    StandardMaterial, UnlitMaterial
   Mesh/        Mesh, Geometry3D, PrimitiveMesh
   Renderer/    WebGL3DRenderer
+  Scene/       Scene3D e SceneManifest3D
   Skybox/      Skybox para imagens cross convertidas em cubemap
   Shader/      Shader e shaders internos
   Texture/     Texture
 
 Core3D/
-  Level/       Level3D oficial e base 3D legada
+  Level/       Level3D oficial
   Model/       Model3D e ModelMeshFactory
   Physics/     Rigidbody3D, SphereCollider3D, BoxCollider3D, PhysicsWorld3D
-  Shaders/     Shaders GLSL legados
+  Legacy/      Compatibilidade obsoleta para projetos antigos
 ```
 
 ## Recursos Atuais
@@ -36,6 +37,7 @@ Core3D/
 - Shader procedural `CelestialBodyMaterial` para planetas/estrelas.
 - Fisica 3D basica com gravidade, rigidbody, esfera, caixa AABB e contato de piso para plataformas moveis.
 - Overlay 2D/UI continua funcionando por cima do canvas 3D.
+- `SceneManifest3D` para instanciar cenas JSON exportadas pelo Scene Editor 3D.
 
 ## Exemplo
 
@@ -105,6 +107,42 @@ function loop() {
 
 loop();
 ```
+
+## Cenas Por Manifest
+
+O editor em `Tools/SceneEditor3D/index.html` exporta um documento com camera, luzes e objetos primitivos. Em um `Level3D`, ele pode ser usado assim:
+
+```js
+import { AssetManager } from "../CoreCross/index.js";
+import { Level3D, SceneManifest3D } from "../Core3D/index.js";
+
+export class MyLevel3D extends Level3D {
+    BuildScene() {
+        const document = AssetManager.instance.GetJson("my_scene");
+        this.scene.backgroundColor = [...document.backgroundColor];
+        this.camera = SceneManifest3D.CreateCamera(document.camera, this.width / this.height);
+        this.scene.Add(this.camera);
+        SceneManifest3D.Populate(this.scene, document);
+    }
+}
+```
+
+## API Legada
+
+`LegacyLevel3D`, `LegacyTransform3D`, `GameObject3D`, `Camera3D`, `DirectionalLight3D`, `Shapes3D`, `Mesh3D` e `Skybox3D` permanecem exportados apenas para nao quebrar projetos antigos. Eles possuem JSDoc `@deprecated` e exibem um aviso unico no console quando instanciados. A engine nao usa a sintaxe experimental `@Deprecated`: JSDoc e aviso em runtime funcionam no JavaScript nativo do navegador sem bundler ou transpiler.
+
+Nao use essa API em demos novas:
+
+| Legado | Render3D atual |
+| --- | --- |
+| `LegacyLevel3D` | `Level3D` |
+| `LegacyTransform3D` | `Transform3D` |
+| `GameObject3D` | `Mesh`, `Model3D` ou entidade propria sobre Render3D |
+| `Camera3D` | `PerspectiveCamera` |
+| `DirectionalLight3D` | `DirectionalLight` |
+| `Shapes3D` | `Mesh` + `PrimitiveMesh` + materiais |
+| `Mesh3D` | `Mesh` + `ModelMeshFactory` |
+| `Skybox3D` | `Skybox` |
 
 ## Proximas Camadas
 

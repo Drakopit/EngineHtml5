@@ -15,6 +15,13 @@ import { GameViewport } from "../../CoreCross/Window/GameViewport.js";
 
 export const PIXELATED_RENDERING = true; // Ativa o modo pixelado para gráficos 2D
 
+/**
+ * Creates and owns a two-dimensional gameplay canvas and draw context.
+ *
+ * @param {string} id - Canvas element identifier.
+ * @param {number} [width] - Logical canvas width.
+ * @param {number} [height] - Logical canvas height.
+ */
 export class Screen {
     constructor(id, width, height) {
         this.id = id;

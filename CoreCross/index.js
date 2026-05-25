@@ -14,6 +14,7 @@ export {
     VelocityComponent,
 } from "./Component.js";
 export { Config } from "./Config.js";
+export { Deprecation } from "./Deprecation.js";
 export { Engine, LevelHandler, DEBUG } from "./Engine.js";
 export { EventEmitter } from "./EventEmitter.js";
 export { ActionManager } from "./Input/ActionManager.js";

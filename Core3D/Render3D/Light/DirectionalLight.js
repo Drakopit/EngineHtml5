@@ -1,5 +1,14 @@
 import { Light, normalize3 } from "./Light.js";
 
+/**
+ * Sun-like directional light that can cast one shadow map.
+ *
+ * @param {Object} [options] - Light and shadow settings.
+ * @param {number[]} [options.direction] - Direction in world space.
+ * @param {boolean} [options.castShadow=false] - Whether to render shadows.
+ * @param {number} [options.shadowMapSize=1024] - Shadow texture resolution.
+ * @param {number} [options.shadowDistance=16] - Shadow camera coverage.
+ */
 export class DirectionalLight extends Light {
     constructor({
         direction = [-0.4, -1.0, -0.35],
@@ -20,6 +29,11 @@ export class DirectionalLight extends Light {
         this.shadowDistance = shadowDistance;
     }
 
+    /**
+     * Updates the normalized light direction.
+     * @param {number[]} direction - New world-space direction.
+     * @returns {DirectionalLight} This light.
+     */
     SetDirection(direction) {
         this.direction = normalize3(direction);
         return this;

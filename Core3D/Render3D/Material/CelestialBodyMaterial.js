@@ -1,6 +1,16 @@
 import { Color } from "../Core/Color.js";
 import { Material } from "./Material.js";
 
+/**
+ * Procedural lit material used for planets, stars and atmospheric bodies.
+ *
+ * @param {Object} [options] - Celestial surface controls.
+ * @param {number[]} [options.baseColor] - Main RGB terrain color.
+ * @param {number[]} [options.secondaryColor] - Secondary variation color.
+ * @param {number[]} [options.atmosphereColor] - Rim lighting color.
+ * @param {number} [options.cloudStrength=0.35] - Procedural cloud amount.
+ * @param {number} [options.emissiveStrength=0] - Self-illumination factor.
+ */
 export class CelestialBodyMaterial extends Material {
     constructor({
         name = "CelestialBodyMaterial",

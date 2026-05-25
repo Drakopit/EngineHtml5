@@ -12,6 +12,9 @@
 
 import { Vector3D } from "../../CoreCross/Math/Vector3D.js";
 
+/**
+ * Static helpers and coefficient values for basic 2D motion calculations.
+ */
 export class Physic2D {
     constructor() {}
     

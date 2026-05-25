@@ -2,7 +2,18 @@ import { AssetManager } from "../../CoreCross/Assets/AssetManager.js";
 import { Geometry3D, Mesh, StandardMaterial } from "../Render3D/index.js";
 import { Model3D } from "./Model3D.js";
 
+/**
+ * Converts model asset parts already loaded by `AssetManager` into Render3D meshes.
+ */
 export class ModelMeshFactory {
+    /**
+     * Builds a `Model3D` from a queued model asset.
+     * @param {string} modelName - AssetManager model key.
+     * @param {Object} [options] - Mesh naming and material options.
+     * @param {Material|null} [options.material=null] - Shared material override.
+     * @param {Function|null} [options.materialFactory=null] - Per-part material factory.
+     * @returns {Model3D} Renderable model wrapper.
+     */
     static FromAsset(modelName, { material = null, materialFactory = null, name = modelName } = {}) {
         const parts = AssetManager.instance.GetModel(modelName) ?? [];
         const meshes = parts.map((part, index) => {

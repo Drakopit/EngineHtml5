@@ -17,6 +17,11 @@ import { Base } from "../../CoreCross/Base.js";
 import { Util } from "../../CoreCross/Utils.js";
 import { DEBUG } from "../../CoreCross/Engine.js";
 
+/**
+ * Base movable 2D entity with sprite, collision and component support.
+ *
+ * Extend it for game-specific players, enemies and interactive objects.
+ */
 export class GameObject extends Base {
     constructor() {
         super();
