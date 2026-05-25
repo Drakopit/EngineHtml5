@@ -1,0 +1,91 @@
+{
+    "project": {
+        "name": "GameForgeJS MiniGame 3D",
+        "version": "1.0.0",
+        "author": "Camello"
+    },
+    "window": {
+        "title": "GameForgeJS - MiniGame 3D",
+        "backgroundColor": "#000000",
+        "cursor": "default"
+    },
+    "screen": {
+        "width": 640,
+        "height": 480,
+        "fullScreen": true,
+        "pixelArt": true,
+        "antialiasing": false,
+        "orientation": "landscape"
+    },
+    "input": {
+        "gamepadProfile": "xbox",
+        "actionMappings": {
+            "ATTACK": [
+                { "device": "keyboard", "input": "KeyZ" },
+                { "device": "keyboard", "input": "Enter" },
+                { "device": "keyboard", "input": "Space" },
+                { "device": "gamepad", "input": "A" },
+                { "device": "gamepad", "input": "START" }
+            ],
+            "JUMP": [
+                { "device": "keyboard", "input": "Space" },
+                { "device": "keyboard", "input": "KeyZ" },
+                { "device": "gamepad", "input": "A" }
+            ],
+            "CANCEL": [
+                { "device": "keyboard", "input": "Escape" },
+                { "device": "keyboard", "input": "Backspace" },
+                { "device": "gamepad", "input": "B" },
+                { "device": "gamepad", "input": "BACK" }
+            ],
+            "FORWARD": [
+                { "device": "keyboard", "input": "KeyW" },
+                { "device": "keyboard", "input": "ArrowUp" },
+                { "device": "gamepad", "input": "LEFT_STICK_UP" },
+                { "device": "gamepad", "input": "DPAD_UP" }
+            ],
+            "BACK": [
+                { "device": "keyboard", "input": "KeyS" },
+                { "device": "keyboard", "input": "ArrowDown" },
+                { "device": "gamepad", "input": "LEFT_STICK_DOWN" },
+                { "device": "gamepad", "input": "DPAD_DOWN" }
+            ],
+            "UP": [
+                { "device": "keyboard", "input": "KeyW" },
+                { "device": "keyboard", "input": "ArrowUp" },
+                { "device": "gamepad", "input": "LEFT_STICK_UP" },
+                { "device": "gamepad", "input": "DPAD_UP" }
+            ],
+            "DOWN": [
+                { "device": "keyboard", "input": "KeyS" },
+                { "device": "keyboard", "input": "ArrowDown" },
+                { "device": "gamepad", "input": "LEFT_STICK_DOWN" },
+                { "device": "gamepad", "input": "DPAD_DOWN" }
+            ],
+            "RIGHT": [
+                { "device": "keyboard", "input": "KeyD" },
+                { "device": "keyboard", "input": "ArrowRight" },
+                { "device": "gamepad", "input": "LEFT_STICK_RIGHT" },
+                { "device": "gamepad", "input": "DPAD_RIGHT" }
+            ],
+            "LEFT": [
+                { "device": "keyboard", "input": "KeyA" },
+                { "device": "keyboard", "input": "ArrowLeft" },
+                { "device": "gamepad", "input": "LEFT_STICK_LEFT" },
+                { "device": "gamepad", "input": "DPAD_LEFT" }
+            ],
+            "CAMERA_LEFT": [
+                { "device": "keyboard", "input": "KeyQ" },
+                { "device": "gamepad", "input": "RIGHT_STICK_LEFT" }
+            ],
+            "CAMERA_RIGHT": [
+                { "device": "keyboard", "input": "KeyE" },
+                { "device": "gamepad", "input": "RIGHT_STICK_RIGHT" }
+            ],
+            "BOOST": [
+                { "device": "keyboard", "input": "ShiftLeft" },
+                { "device": "gamepad", "input": "RT" }
+            ]
+        }
+    }
+}

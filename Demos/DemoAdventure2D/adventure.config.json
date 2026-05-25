@@ -1,0 +1,61 @@
+{
+    "project": {
+        "name": "GameForgeJS Adventure Component Demo",
+        "version": "1.0.0",
+        "author": "Camello"
+    },
+    "window": {
+        "title": "GameForgeJS - Adventure Component Demo",
+        "backgroundColor": "#050806",
+        "cursor": "default"
+    },
+    "screen": {
+        "width": 640,
+        "height": 480,
+        "pixelArt": true,
+        "antialiasing": false,
+        "orientation": "landscape"
+    },
+    "input": {
+        "gamepadProfile": "xbox",
+        "gamepadAliases": {
+            "SWORD": "X"
+        },
+        "actionMappings": {
+            "ATTACK": [
+                { "device": "keyboard", "input": "KeyZ" },
+                { "device": "keyboard", "input": "Enter" },
+                { "device": "gamepad", "input": "SWORD" }
+            ],
+            "CANCEL": [
+                { "device": "keyboard", "input": "Escape" },
+                { "device": "gamepad", "input": "B" },
+                { "device": "gamepad", "input": "BACK" }
+            ],
+            "RIGHT": [
+                { "device": "keyboard", "input": "KeyD" },
+                { "device": "keyboard", "input": "ArrowRight" },
+                { "device": "gamepad", "input": "LEFT_STICK_RIGHT" },
+                { "device": "gamepad", "input": "DPAD_RIGHT" }
+            ],
+            "LEFT": [
+                { "device": "keyboard", "input": "KeyA" },
+                { "device": "keyboard", "input": "ArrowLeft" },
+                { "device": "gamepad", "input": "LEFT_STICK_LEFT" },
+                { "device": "gamepad", "input": "DPAD_LEFT" }
+            ],
+            "DOWN": [
+                { "device": "keyboard", "input": "KeyS" },
+                { "device": "keyboard", "input": "ArrowDown" },
+                { "device": "gamepad", "input": "LEFT_STICK_DOWN" },
+                { "device": "gamepad", "input": "DPAD_DOWN" }
+            ],
+            "UP": [
+                { "device": "keyboard", "input": "KeyW" },
+                { "device": "keyboard", "input": "ArrowUp" },
+                { "device": "gamepad", "input": "LEFT_STICK_UP" },
+                { "device": "gamepad", "input": "DPAD_UP" }
+            ]
+        }
+    }
+}

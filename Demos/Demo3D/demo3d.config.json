@@ -1,0 +1,20 @@
+{
+    "project": {
+        "name": "GameForgeJS 3D Demo",
+        "version": "1.0.0",
+        "author": "Camello"
+    },
+    "window": {
+        "title": "GameForgeJS - 3D Demo",
+        "backgroundColor": "#000000",
+        "cursor": "default"
+    },
+    "screen": {
+        "width": 640,
+        "height": 480,
+        "fullScreen": true,
+        "pixelArt": true,
+        "antialiasing": false,
+        "orientation": "landscape"
+    }
+}

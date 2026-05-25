@@ -1,0 +1,57 @@
+{
+    "project": {
+        "name": "GameForgeJS Solar System",
+        "version": "1.0.0",
+        "author": "GameForgeJS"
+    },
+    "window": {
+        "title": "GameForgeJS - Sistema Solar 3D",
+        "backgroundColor": "#02030a",
+        "cursor": "default"
+    },
+    "screen": {
+        "width": 960,
+        "height": 540,
+        "fullScreen": true,
+        "pixelArt": false,
+        "antialiasing": true,
+        "orientation": "landscape"
+    },
+    "input": {
+        "gamepadProfile": "xbox",
+        "actionMappings": {
+            "LEFT": [
+                { "device": "keyboard", "input": "ArrowLeft" },
+                { "device": "keyboard", "input": "KeyA" },
+                { "device": "gamepad", "input": "LEFT_STICK_LEFT" },
+                { "device": "gamepad", "input": "DPAD_LEFT" }
+            ],
+            "RIGHT": [
+                { "device": "keyboard", "input": "ArrowRight" },
+                { "device": "keyboard", "input": "KeyD" },
+                { "device": "gamepad", "input": "LEFT_STICK_RIGHT" },
+                { "device": "gamepad", "input": "DPAD_RIGHT" }
+            ],
+            "UP": [
+                { "device": "keyboard", "input": "ArrowUp" },
+                { "device": "keyboard", "input": "KeyW" },
+                { "device": "gamepad", "input": "LEFT_STICK_UP" },
+                { "device": "gamepad", "input": "DPAD_UP" }
+            ],
+            "DOWN": [
+                { "device": "keyboard", "input": "ArrowDown" },
+                { "device": "keyboard", "input": "KeyS" },
+                { "device": "gamepad", "input": "LEFT_STICK_DOWN" },
+                { "device": "gamepad", "input": "DPAD_DOWN" }
+            ],
+            "ATTACK": [
+                { "device": "keyboard", "input": "Space" },
+                { "device": "gamepad", "input": "A" }
+            ],
+            "CANCEL": [
+                { "device": "keyboard", "input": "Escape" },
+                { "device": "gamepad", "input": "B" }
+            ]
+        }
+    }
+}

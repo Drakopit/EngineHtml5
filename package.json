@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js",
-    "check": "node tools/check-js.js"
+    "start": "node Tools/server.js",
+    "dev": "node Tools/server.js",
+    "check": "node Tools/check-js.js",
+    "docs": "node Tools/generate-docs.js"
   }
 }

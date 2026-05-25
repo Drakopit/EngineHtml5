@@ -1,0 +1,107 @@
+{
+  "enemyDefaults": {
+    "asset": "red_warrior_idle",
+    "runAsset": "red_warrior_run",
+    "color": "#f35b52",
+    "scale": 0.35,
+    "frame": {
+      "x": 0,
+      "y": 0,
+      "width": 192,
+      "height": 192,
+      "frames": 8
+    },
+    "runFrame": {
+      "x": 0,
+      "y": 0,
+      "width": 192,
+      "height": 192,
+      "frames": 6
+    },
+    "bodySize": {
+      "width": 48,
+      "height": 56
+    },
+    "stats": {
+      "hp": 22,
+      "attack": 7,
+      "defense": 2,
+      "moveRange": 2,
+      "attackRange": 1
+    }
+  },
+  "enemies": [
+    {
+      "id": "red_warrior_01",
+      "name": "Red Warrior",
+      "asset": "red_warrior_idle",
+      "col": 8,
+      "row": 3,
+      "x": 506,
+      "y": 192
+    },
+    {
+      "id": "red_lancer_01",
+      "name": "Red Lancer",
+      "asset": "red_lancer_idle",
+      "runAsset": "red_lancer_run",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "width": 320,
+        "height": 320,
+        "frames": 12
+      },
+      "runFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 320,
+        "height": 320,
+        "frames": 6
+      },
+      "scale": 0.24,
+      "stats": {
+        "hp": 24,
+        "attack": 8,
+        "defense": 3,
+        "moveRange": 2,
+        "attackRange": 1
+      },
+      "col": 7,
+      "row": 5,
+      "x": 446,
+      "y": 312
+    },
+    {
+      "id": "red_archer_01",
+      "name": "Red Archer",
+      "asset": "red_archer_idle",
+      "runAsset": "red_archer_run",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "width": 192,
+        "height": 192,
+        "frames": 6
+      },
+      "runFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 192,
+        "height": 192,
+        "frames": 4
+      },
+      "stats": {
+        "hp": 18,
+        "attack": 6,
+        "defense": 1,
+        "moveRange": 2,
+        "attackRange": 3
+      },
+      "col": 8,
+      "row": 1,
+      "x": 506,
+      "y": 72
+    }
+  ]
+}

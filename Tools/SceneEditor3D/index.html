@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>GameForgeJS - Scene Editor 3D</title>
+        <link rel="stylesheet" href="./editor3d.css">
+    </head>
+    <body>
+        <header class="editor-header">
+            <div class="editor-brand">
+                <a href="../../Main.html" title="Back to GameForgeJS">GameForgeJS</a>
+                <h1>Scene Editor 3D</h1>
+            </div>
+            <nav class="editor-commands" aria-label="Scene commands">
+                <button id="new-scene" type="button">New</button>
+                <label class="file-command" for="import-scene">Import JSON</label>
+                <input id="import-scene" type="file" accept=".json,application/json">
+                <button id="export-scene" type="button" class="primary">Export JSON</button>
+            </nav>
+        </header>
+        <main class="editor-workspace">
+            <aside class="hierarchy-panel" aria-label="Hierarchy">
+                <div class="panel-title">Hierarchy</div>
+                <div class="create-tools" aria-label="Create object">
+                    <button type="button" data-create="beveledCube">+ Cube</button>
+                    <button type="button" data-create="sphere">+ Sphere</button>
+                    <button type="button" data-create="plane">+ Plane</button>
+                </div>
+                <ul id="hierarchy" class="hierarchy-list"></ul>
+                <div class="object-actions">
+                    <button id="duplicate-object" type="button">Duplicate</button>
+                    <button id="delete-object" type="button" class="danger">Delete</button>
+                </div>
+            </aside>
+            <section class="viewport-panel" aria-label="3D viewport">
+                <canvas id="scene-viewport" tabindex="0"></canvas>
+                <div class="viewport-toolbar">
+                    <button id="focus-object" type="button">Frame Selected</button>
+                    <span>Drag to orbit | Wheel to zoom</span>
+                </div>
+                <p id="status" role="status">Ready</p>
+            </section>
+            <aside class="inspector-panel" aria-label="Inspector">
+                <div class="panel-title">Inspector</div>
+                <fieldset class="property-group">
+                    <legend>Scene</legend>
+                    <label>Name <input id="scene-name" type="text"></label>
+                    <label>Background <input id="scene-background" type="color"></label>
+                    <label>Sun Intensity <input id="sun-intensity" type="number" min="0" max="10" step="0.1"></label>
+                </fieldset>
+                <fieldset id="object-inspector" class="property-group">
+                    <legend>Selected Object</legend>
+                    <label>Name <input id="object-name" type="text"></label>
+                    <label>Primitive
+                        <select id="object-primitive">
+                            <option value="beveledCube">Beveled Cube</option>
+                            <option value="cube">Cube</option>
+                            <option value="sphere">Sphere</option>
+                            <option value="plane">Plane</option>
+                            <option value="ring">Ring</option>
+                        </select>
+                    </label>
+                    <div class="vector-title">Position</div>
+                    <div class="vector-inputs" data-vector="position">
+                        <input type="number" step="0.1" aria-label="Position X">
+                        <input type="number" step="0.1" aria-label="Position Y">
+                        <input type="number" step="0.1" aria-label="Position Z">
+                    </div>
+                    <div class="vector-title">Rotation</div>
+                    <div class="vector-inputs" data-vector="rotation">
+                        <input type="number" step="0.05" aria-label="Rotation X">
+                        <input type="number" step="0.05" aria-label="Rotation Y">
+                        <input type="number" step="0.05" aria-label="Rotation Z">
+                    </div>
+                    <div class="vector-title">Scale</div>
+                    <div class="vector-inputs" data-vector="scale">
+                        <input type="number" step="0.1" min="0.01" aria-label="Scale X">
+                        <input type="number" step="0.1" min="0.01" aria-label="Scale Y">
+                        <input type="number" step="0.1" min="0.01" aria-label="Scale Z">
+                    </div>
+                    <label>Albedo <input id="object-color" type="color"></label>
+                    <label>Roughness <input id="object-roughness" type="range" min="0.02" max="1" step="0.01"></label>
+                    <label>Metallic <input id="object-metallic" type="range" min="0" max="1" step="0.01"></label>
+                    <label class="toggle"><input id="object-shadow" type="checkbox"> Cast Shadow</label>
+                </fieldset>
+            </aside>
+        </main>
+        <script type="module" src="./Editor3D.js"></script>
+    </body>
+</html>

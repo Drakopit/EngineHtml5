@@ -1,0 +1,146 @@
+{
+  "id": "tiny_swords_skirmish",
+  "name": "Tiny Swords Skirmish",
+  "world": {
+    "cols": 10,
+    "rows": 7,
+    "cell": 60,
+    "originX": 20,
+    "originY": 10
+  },
+  "tilemap": {
+    "sprite": "tactical_tilemap_color1",
+    "tileWidth": 64,
+    "tileHeight": 64,
+    "tiles": {
+      "grass_top_left": { "x": 0, "y": 0, "width": 64, "height": 64 },
+      "grass_top": { "x": 64, "y": 0, "width": 64, "height": 64 },
+      "grass_top_right": { "x": 128, "y": 0, "width": 64, "height": 64 },
+      "grass_left": { "x": 0, "y": 64, "width": 64, "height": 64 },
+      "grass_center": { "x": 64, "y": 64, "width": 64, "height": 64 },
+      "grass_right": { "x": 128, "y": 64, "width": 64, "height": 64 },
+      "grass_bottom_left": { "x": 0, "y": 128, "width": 64, "height": 64 },
+      "grass_bottom": { "x": 64, "y": 128, "width": 64, "height": 64 },
+      "grass_bottom_right": { "x": 128, "y": 128, "width": 64, "height": 64 },
+      "cliff_top": { "x": 320, "y": 192, "width": 64, "height": 64 },
+      "cliff_mid": { "x": 320, "y": 256, "width": 64, "height": 64 },
+      "cliff_bottom": { "x": 320, "y": 320, "width": 64, "height": 64 }
+    },
+    "terrainRows": [
+      ["grass_top_left", "grass_top", "grass_top", "grass_top", "grass_top", "grass_top", "grass_top", "grass_top", "grass_top", "grass_top_right"],
+      ["grass_left", "grass_center", "grass_center", "grass_center", "grass_center", "grass_center", "grass_center", "cliff_top", "grass_center", "grass_right"],
+      ["grass_left", "grass_center", "grass_center", "grass_center", "cliff_mid", "grass_center", "grass_center", "grass_center", "grass_center", "grass_right"],
+      ["grass_left", "grass_center", "grass_center", "grass_center", "cliff_mid", "grass_center", "grass_center", "grass_center", "grass_center", "grass_right"],
+      ["grass_left", "grass_center", "grass_center", "grass_center", "cliff_bottom", "cliff_mid", "grass_center", "grass_center", "grass_center", "grass_right"],
+      ["grass_left", "grass_center", "grass_center", "grass_center", "grass_center", "grass_center", "grass_center", "grass_center", "grass_center", "grass_right"],
+      ["grass_bottom_left", "grass_bottom", "grass_bottom", "grass_bottom", "grass_bottom", "grass_bottom", "grass_bottom", "grass_bottom", "grass_bottom", "grass_bottom_right"]
+    ],
+    "blockedTileId": "cliff_mid",
+    "blockedTiles": ["4,2", "4,3", "4,4", "5,4", "7,1"]
+  },
+  "platforms": [],
+  "objects": [
+    {
+      "id": "blue_house_01",
+      "spriteRef": "blue_house_01",
+      "asset": "blue_house1",
+      "x": 54,
+      "y": 28,
+      "width": 96,
+      "height": 120,
+      "solid": false,
+      "visible": true,
+      "zIndex": 5
+    },
+    {
+      "id": "blue_tower_01",
+      "spriteRef": "blue_tower_01",
+      "asset": "blue_tower",
+      "x": 492,
+      "y": 16,
+      "width": 86,
+      "height": 138,
+      "solid": true,
+      "visible": true,
+      "zIndex": 8
+    },
+    {
+      "id": "tree_cluster_01",
+      "spriteRef": "tree_01",
+      "asset": "tree_1",
+      "frame": { "x": 0, "y": 0, "width": 256, "height": 256 },
+      "x": 240,
+      "y": 96,
+      "width": 90,
+      "height": 90,
+      "solid": true,
+      "visible": true,
+      "zIndex": 18
+    },
+    {
+      "id": "tree_cluster_02",
+      "spriteRef": "tree_02",
+      "asset": "tree_2",
+      "frame": { "x": 0, "y": 0, "width": 256, "height": 256 },
+      "x": 300,
+      "y": 214,
+      "width": 86,
+      "height": 86,
+      "solid": true,
+      "visible": true,
+      "zIndex": 18
+    },
+    {
+      "id": "bush_line_01",
+      "spriteRef": "bush_01",
+      "asset": "bush_1",
+      "frame": { "x": 0, "y": 0, "width": 128, "height": 128 },
+      "x": 132,
+      "y": 320,
+      "width": 58,
+      "height": 58,
+      "solid": false,
+      "visible": true,
+      "zIndex": 12
+    },
+    {
+      "id": "gold_cache_01",
+      "spriteRef": "gold_resource",
+      "asset": "gold_resource",
+      "frame": { "x": 0, "y": 0, "width": 64, "height": 64 },
+      "x": 438,
+      "y": 314,
+      "width": 42,
+      "height": 42,
+      "solid": false,
+      "visible": true,
+      "zIndex": 14
+    },
+    {
+      "id": "rock_cover_01",
+      "spriteRef": "rock_01",
+      "asset": "rock_1",
+      "frame": { "x": 0, "y": 0, "width": 64, "height": 64 },
+      "x": 386,
+      "y": 252,
+      "width": 44,
+      "height": 44,
+      "solid": true,
+      "visible": true,
+      "zIndex": 15
+    }
+  ],
+  "parallax": {
+    "layers": []
+  },
+  "materials": [
+    {
+      "id": "grass",
+      "color": "#4f8a3d"
+    },
+    {
+      "id": "stone",
+      "color": "#617070"
+    }
+  ]
+}

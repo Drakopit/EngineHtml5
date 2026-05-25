@@ -1,0 +1,40 @@
+{
+  "player": {
+    "name": "Blue Warrior",
+    "asset": "blue_warrior_idle",
+    "runAsset": "blue_warrior_run",
+    "color": "#4f8dff",
+    "scale": 0.36,
+    "frame": {
+      "x": 0,
+      "y": 0,
+      "width": 192,
+      "height": 192,
+      "frames": 8
+    },
+    "runFrame": {
+      "x": 0,
+      "y": 0,
+      "width": 192,
+      "height": 192,
+      "frames": 6
+    },
+    "spawn": {
+      "col": 1,
+      "row": 3,
+      "x": 88,
+      "y": 194
+    },
+    "bodySize": {
+      "width": 44,
+      "height": 52
+    },
+    "stats": {
+      "hp": 34,
+      "attack": 10,
+      "defense": 3,
+      "moveRange": 3,
+      "attackRange": 1
+    }
+  }
+}

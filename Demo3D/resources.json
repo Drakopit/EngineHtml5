@@ -1,9 +1,0 @@
-{
-    "images": [
-        { "name": "textura_player", "path": "Demo3D/Assets/TemplateGrid_albedo.png" }
-    ],
-    "shaders": [
-        { "name": "vertexShader", "path": "Shaders/VertexShader.glsl" },
-        { "name": "fragmentShader", "path": "Shaders/FragmentShader.glsl" }
-    ]
-}

@@ -1,0 +1,85 @@
+{
+  "atlases": {
+    "tiny_swords_terrain": {
+      "sprite": "tactical_tilemap_color1",
+      "tileWidth": 64,
+      "tileHeight": 64,
+      "tiles": {
+        "grassTopLeft": { "x": 0, "y": 0, "width": 64, "height": 64 },
+        "grassTop": { "x": 64, "y": 0, "width": 64, "height": 64 },
+        "grassTopRight": { "x": 128, "y": 0, "width": 64, "height": 64 },
+        "grassLeft": { "x": 0, "y": 64, "width": 64, "height": 64 },
+        "grassMiddle": { "x": 64, "y": 64, "width": 64, "height": 64 },
+        "grassRight": { "x": 128, "y": 64, "width": 64, "height": 64 },
+        "grassBottomLeft": { "x": 0, "y": 128, "width": 64, "height": 64 },
+        "grassBottom": { "x": 64, "y": 128, "width": 64, "height": 64 },
+        "grassBottomRight": { "x": 128, "y": 128, "width": 64, "height": 64 },
+        "stone": { "x": 192, "y": 64, "width": 64, "height": 64 }
+      },
+      "terrainSets": {
+        "tiny_grass_platform": {
+          "tiles": {
+            "topLeft": "grassTopLeft",
+            "top": "grassTop",
+            "topRight": "grassTopRight",
+            "middleLeft": "grassLeft",
+            "middle": "grassMiddle",
+            "middleRight": "grassRight",
+            "bottomLeft": "grassBottomLeft",
+            "bottom": "grassBottom",
+            "bottomRight": "grassBottomRight"
+          }
+        },
+        "tiny_stone_block": {
+          "tiles": {
+            "top": "stone",
+            "middle": "stone",
+            "bottom": "stone"
+          }
+        }
+      }
+    },
+    "tiny_swords_buildings": {
+      "sprite": "blue_house1",
+      "sprites": {
+        "blue_house_01": { "x": 0, "y": 0, "width": 128, "height": 192 }
+      }
+    },
+    "tiny_swords_tower": {
+      "sprite": "blue_tower",
+      "sprites": {
+        "blue_tower_01": { "x": 0, "y": 0, "width": 128, "height": 192 }
+      }
+    },
+    "tiny_swords_props_tree_1": {
+      "sprite": "tree_1",
+      "sprites": {
+        "tree_01": { "x": 0, "y": 0, "width": 256, "height": 256 }
+      }
+    },
+    "tiny_swords_props_tree_2": {
+      "sprite": "tree_2",
+      "sprites": {
+        "tree_02": { "x": 0, "y": 0, "width": 256, "height": 256 }
+      }
+    },
+    "tiny_swords_props_bush": {
+      "sprite": "bush_1",
+      "sprites": {
+        "bush_01": { "x": 0, "y": 0, "width": 128, "height": 128 }
+      }
+    },
+    "tiny_swords_props_rocks": {
+      "sprite": "rock_1",
+      "sprites": {
+        "rock_01": { "x": 0, "y": 0, "width": 64, "height": 64 }
+      }
+    },
+    "tiny_swords_props_resources": {
+      "sprite": "gold_resource",
+      "sprites": {
+        "gold_resource": { "x": 0, "y": 0, "width": 64, "height": 64 }
+      }
+    }
+  }
+}
