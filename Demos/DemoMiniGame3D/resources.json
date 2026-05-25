@@ -4,23 +4,20 @@
         { "name": "textura_player", "path": "Demos/DemoMiniGame3D/Assets/Textures/player.jpg" },
         { "name": "textura_coin",   "path": "Demos/DemoMiniGame3D/Assets/Textures/coin.jpg"},
         { "name": "sky_cross",      "path": "Demos/DemoMiniGame3D/Assets/Textures/Daylight Box UV.png"},
-        { "name": "grid_albedo",    "path": "Demos/DemoMiniGame3D/Assets/TemplateGrid/TemplateGrid_albedo.png"},
-        { "name": "grid_normal",    "path": "Demos/DemoMiniGame3D/Assets/TemplateGrid/TemplateGrid_normal.png"}
+        { "name": "rock_albedo",    "path": "Demos/DemoMiniGame3D/Assets/Materials/RockGround/rock_ground_diff_1k.jpg"},
+        { "name": "rock_normal",    "path": "Demos/DemoMiniGame3D/Assets/Materials/RockGround/rock_ground_nor_gl_1k.jpg"},
+        { "name": "rock_arm",       "path": "Demos/DemoMiniGame3D/Assets/Materials/RockGround/rock_ground_arm_1k.jpg"},
+        { "name": "rock_height",    "path": "Demos/DemoMiniGame3D/Assets/Materials/RockGround/rock_ground_disp_1k.jpg"}
     ],
     "audios": [
         { "name": "bgm_fase1",  "path": "Demos/DemoAdvanced/Assets/BGM/battle_sound.mpeg" },
         { "name": "sfx_jump",   "path": "Demos/DemoAdvanced/Assets/SFX/Jump 1.wav" },
         { "name": "sfx_laser",  "path": "Demos/DemoAdvanced/Assets/SFX/Blow 1V2.wav" }
     ],
-    "shaders": [
-        { "name": "vertexShader",       "path": "Core3D/Legacy/Shaders/VertexShader.glsl"},
-        { "name": "fragmentShader",     "path": "Core3D/Legacy/Shaders/FragmentShader.glsl"},
-        { "name": "MeshFragmentShader", "path": "Core3D/Legacy/Shaders/MeshFragmentShader.glsl" },
-        { "name": "MeshVertexShader",   "path": "Core3D/Legacy/Shaders/MeshVertexShader.glsl" },
-        { "name": "SkyFragmentShader",  "path": "Core3D/Legacy/Shaders/SkyBoxFragmentShader.glsl" },
-        { "name": "SkyVertexShader",    "path": "Core3D/Legacy/Shaders/SkyBoxVertexShader.glsl" }
-    ],
     "models": [
         {"name": "character", "path": "Demos/DemoMiniGame3D/Assets/Models/character.glb"}
+    ],
+    "jsons": [
+        { "name": "sky_trail_course", "path": "Demos/DemoMiniGame3D/Assets/Manifests/sky-trail/course.json" }
     ]
 }

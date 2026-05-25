@@ -32,6 +32,49 @@ export class PrimitiveMesh {
         return new Geometry3D({ positions, normals, uvs, tangents, indices });
     }
 
+    static BeveledCube(bevel = 0.08) {
+        const half = 0.5;
+        const edge = Math.min(0.24, Math.max(0.001, bevel));
+        const inner = half - edge;
+        const positions = [];
+        const normals = [];
+        const uvs = [];
+        const tangents = [];
+        const indices = [];
+        const faceUvs = [[0, 0], [1, 0], [1, 1], [0, 1]];
+        const addFace = (corners, normal, tangent) => {
+            const offset = positions.length / 3;
+            corners.forEach((corner, index) => {
+                positions.push(...corner);
+                normals.push(...normal);
+                uvs.push(...faceUvs[index]);
+                tangents.push(...tangent);
+            });
+            indices.push(offset, offset + 1, offset + 2, offset, offset + 2, offset + 3);
+        };
+        const slope = Math.SQRT1_2;
+
+        addFace([[-inner, half, inner], [inner, half, inner], [inner, half, -inner], [-inner, half, -inner]], [0, 1, 0], [1, 0, 0, 1]);
+        addFace([[-inner, -half, -inner], [inner, -half, -inner], [inner, -half, inner], [-inner, -half, inner]], [0, -1, 0], [1, 0, 0, 1]);
+
+        addFace([[-half, -inner, half], [half, -inner, half], [half, inner, half], [-half, inner, half]], [0, 0, 1], [1, 0, 0, 1]);
+        addFace([[half, -inner, -half], [-half, -inner, -half], [-half, inner, -half], [half, inner, -half]], [0, 0, -1], [-1, 0, 0, 1]);
+        addFace([[half, -inner, half], [half, -inner, -half], [half, inner, -half], [half, inner, half]], [1, 0, 0], [0, 0, -1, 1]);
+        addFace([[-half, -inner, -half], [-half, -inner, half], [-half, inner, half], [-half, inner, -half]], [-1, 0, 0], [0, 0, 1, 1]);
+
+        addFace([[-inner, half, inner], [inner, half, inner], [half, inner, half], [-half, inner, half]], [0, slope, slope], [1, 0, 0, 1]);
+        addFace([[inner, half, -inner], [-inner, half, -inner], [-half, inner, -half], [half, inner, -half]], [0, slope, -slope], [-1, 0, 0, 1]);
+        addFace([[inner, half, inner], [inner, half, -inner], [half, inner, -half], [half, inner, half]], [slope, slope, 0], [0, 0, -1, 1]);
+        addFace([[-inner, half, -inner], [-inner, half, inner], [-half, inner, half], [-half, inner, -half]], [-slope, slope, 0], [0, 0, 1, 1]);
+
+        addFace([[-half, -inner, half], [half, -inner, half], [inner, -half, inner], [-inner, -half, inner]], [0, -slope, slope], [1, 0, 0, 1]);
+        addFace([[half, -inner, -half], [-half, -inner, -half], [-inner, -half, -inner], [inner, -half, -inner]], [0, -slope, -slope], [-1, 0, 0, 1]);
+        addFace([[half, -inner, half], [half, -inner, -half], [inner, -half, -inner], [inner, -half, inner]], [slope, -slope, 0], [0, 0, -1, 1]);
+        addFace([[-half, -inner, -half], [-half, -inner, half], [-inner, -half, inner], [-inner, -half, -inner]], [-slope, -slope, 0], [0, 0, 1, 1]);
+
+        return new Geometry3D({ positions, normals, uvs, tangents, indices });
+    }
+
     static Plane(width = 1, depth = 1, { subdivisions = 1 } = {}) {
         const positions = [];
         const normals = [];

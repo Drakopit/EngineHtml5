@@ -1,0 +1,164 @@
+{
+    "world": {
+        "gravity": [0, -16, 0],
+        "bounds": {
+            "minX": -5.4,
+            "maxX": 5.4,
+            "minZ": -16.2,
+            "maxZ": 3.2
+        },
+        "fallLimit": -4.5
+    },
+    "camera": {
+        "fov": 56,
+        "near": 0.1,
+        "far": 140,
+        "position": [0, 5.0, 8.0],
+        "target": [0, 0, -2],
+        "follow": {
+            "targetOffset": [0, 0.65, -0.75],
+            "distance": 7,
+            "height": 4.65,
+            "smoothness": 8,
+            "turnSpeed": 2.25
+        }
+    },
+    "lighting": {
+        "ambient": {
+            "color": [0.95, 0.98, 1.0],
+            "intensity": 0.045
+        },
+        "hemisphere": {
+            "skyColor": [0.62, 0.8, 1.0],
+            "groundColor": [0.2, 0.3, 0.17],
+            "intensity": 0.24
+        },
+        "sun": {
+            "direction": [-0.48, -1.0, -0.34],
+            "color": [1.0, 0.95, 0.8],
+            "intensity": 2.15,
+            "shadowMapSize": 2048,
+            "shadowBias": 0.0016,
+            "shadowStrength": 0.84,
+            "shadowDistance": 17
+        },
+        "goalLight": {
+            "offset": [0, 1.3, 0],
+            "color": [0.38, 1, 0.52],
+            "intensity": 1.1,
+            "range": 5
+        }
+    },
+    "surface": {
+        "textures": {
+            "albedo": "rock_albedo",
+            "normal": "rock_normal",
+            "orm": "rock_arm",
+            "height": "rock_height",
+            "fallbackAlbedo": "textura_chao"
+        },
+        "anisotropy": 8,
+        "bevel": 0.075,
+        "uvDensity": 0.48,
+        "normalScale": 1.05,
+        "heightScale": 0.035,
+        "roughness": 0.96
+    },
+    "player": {
+        "spawn": [0, 0.12, 1.1],
+        "scale": 0.72,
+        "collider": {
+            "radius": 0.38,
+            "offset": [0, 0.38, 0]
+        },
+        "movement": {
+            "speed": 5.45,
+            "boostSpeed": 7.0,
+            "jumpSpeed": 6.15,
+            "smoothing": 14,
+            "turnSmoothing": 16
+        }
+    },
+    "platforms": [
+        {
+            "id": "start",
+            "position": [0, -0.45, 0],
+            "size": [6.4, 0.42, 5.0],
+            "color": [0.94, 0.95, 0.9, 1]
+        },
+        {
+            "id": "garden",
+            "position": [-2.05, 0.22, -3.55],
+            "size": [3.15, 0.4, 2.2],
+            "color": [0.86, 0.9, 0.84, 1],
+            "motion": { "axis": "x", "amplitude": 0.75, "speed": 1.25, "phase": 0.2 }
+        },
+        {
+            "id": "sunrise",
+            "position": [1.55, 0.88, -6.0],
+            "size": [3.25, 0.4, 2.15],
+            "color": [0.98, 0.91, 0.78, 1],
+            "motion": { "axis": "z", "amplitude": 0.55, "speed": 1.5, "phase": 1.1 }
+        },
+        {
+            "id": "cloudstep",
+            "position": [-1.6, 1.54, -8.55],
+            "size": [3.0, 0.4, 2.2],
+            "color": [0.8, 0.88, 0.94, 1],
+            "motion": { "axis": "x", "amplitude": 1.25, "speed": 1.15, "phase": 2.2 }
+        },
+        {
+            "id": "highbridge",
+            "position": [1.65, 2.2, -11.05],
+            "size": [3.2, 0.4, 2.25],
+            "color": [0.92, 0.81, 0.76, 1],
+            "motion": { "axis": "x", "amplitude": 0.9, "speed": 1.4, "phase": 3.3 },
+            "blink": { "period": 4.2, "solidDuration": 2.85, "warningDuration": 0.6, "phase": 0.5 }
+        },
+        {
+            "id": "summit",
+            "position": [0, 2.88, -13.9],
+            "size": [4.7, 0.48, 3.0],
+            "color": [0.86, 0.93, 0.84, 1]
+        }
+    ],
+    "coins": {
+        "radius": 0.22,
+        "pickupDistance": 0.72,
+        "spinSpeed": 3.4,
+        "bobSpeed": 4.2,
+        "bobDistance": 0.08,
+        "items": [
+            { "platformId": "start", "offset": [-1.25, 0.93, 0.25], "value": 10 },
+            { "platformId": "start", "offset": [1.25, 0.93, -0.65], "value": 10 },
+            { "platformId": "garden", "offset": [0, 0.91, 0], "value": 10 },
+            { "platformId": "sunrise", "offset": [0, 0.91, 0], "value": 10 },
+            { "platformId": "cloudstep", "offset": [0, 0.91, 0], "value": 10 },
+            { "platformId": "highbridge", "offset": [0, 0.91, 0], "value": 10 },
+            { "platformId": "summit", "offset": [-0.9, 0.95, 0.4], "value": 10 }
+        ]
+    },
+    "goal": {
+        "trigger": [1.25, 3.12, -14.25],
+        "radius": 0.92,
+        "pole": {
+            "position": [1.42, 4.68, -14.3],
+            "scale": [0.07, 3.1, 0.07]
+        },
+        "flag": {
+            "position": [0.94, 5.62, -14.3],
+            "scale": [0.92, 0.48, 0.055]
+        },
+        "ring": {
+            "offset": [0, 0.03, 0],
+            "innerRadius": 0.38,
+            "outerRadius": 0.55
+        },
+        "beacon": {
+            "offset": [0, 0.32, 0],
+            "radius": 0.18,
+            "bobSpeed": 3.5,
+            "bobDistance": 0.08
+        }
+    }
+}

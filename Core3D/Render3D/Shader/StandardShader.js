@@ -50,6 +50,9 @@ out vec4 outColor;
 uniform vec3 uCameraPosition;
 uniform vec4 uAlbedoColor;
 uniform vec3 uEmissiveColor;
+uniform vec2 uUvScale;
+uniform float uNormalScale;
+uniform float uHeightScale;
 uniform float uRoughness;
 uniform float uMetallic;
 
@@ -57,6 +60,8 @@ uniform sampler2D uAlbedoMap;
 uniform sampler2D uNormalMap;
 uniform sampler2D uRoughnessMap;
 uniform sampler2D uAoMap;
+uniform sampler2D uOrmMap;
+uniform sampler2D uHeightMap;
 uniform sampler2D uEmissiveMap;
 uniform sampler2D uShadowMap;
 
@@ -64,6 +69,8 @@ uniform bool uHasAlbedoMap;
 uniform bool uHasNormalMap;
 uniform bool uHasRoughnessMap;
 uniform bool uHasAoMap;
+uniform bool uHasOrmMap;
+uniform bool uHasHeightMap;
 uniform bool uHasEmissiveMap;
 uniform bool uUseShadowMap;
 
@@ -136,23 +143,56 @@ vec3 applyLight(vec3 lightDirection, vec3 lightColor, float intensity, vec3 norm
     return diffuse + specular;
 }
 
+vec2 parallaxUv(vec2 uv, vec3 tangentViewDirection) {
+    if (!uHasHeightMap || uHeightScale <= 0.0) {
+        return uv;
+    }
+
+    const int layers = 10;
+    float layerDepth = 1.0 / float(layers);
+    float viewDepth = max(abs(tangentViewDirection.z), 0.22);
+    vec2 deltaUv = tangentViewDirection.xy / viewDepth * uHeightScale / float(layers);
+    vec2 mappedUv = uv;
+    float currentDepth = 0.0;
+    float mappedHeight = texture(uHeightMap, mappedUv).r;
+
+    for (int layer = 0; layer < layers; layer++) {
+        if (currentDepth >= mappedHeight) {
+            break;
+        }
+
+        mappedUv -= deltaUv;
+        currentDepth += layerDepth;
+        mappedHeight = texture(uHeightMap, mappedUv).r;
+    }
+
+    return mappedUv;
+}
+
 void main() {
-    vec4 albedoSample = uHasAlbedoMap ? texture(uAlbedoMap, vUv) : vec4(1.0);
+    vec3 viewDirection = normalize(uCameraPosition - vWorldPosition);
+    vec3 tangentViewDirection = normalize(transpose(vTbn) * viewDirection);
+    vec2 surfaceUv = parallaxUv(vUv * uUvScale, tangentViewDirection);
+    vec4 albedoSample = uHasAlbedoMap ? texture(uAlbedoMap, surfaceUv) : vec4(1.0);
     vec4 baseColor = uAlbedoColor * albedoSample;
 
     vec3 normal = normalize(vNormal);
     if (uHasNormalMap) {
-        vec3 mapNormal = texture(uNormalMap, vUv).xyz * 2.0 - 1.0;
+        vec3 mapNormal = texture(uNormalMap, surfaceUv).xyz * 2.0 - 1.0;
+        mapNormal.xy *= uNormalScale;
         normal = normalize(vTbn * mapNormal);
     }
 
+    vec3 orm = uHasOrmMap ? texture(uOrmMap, surfaceUv).rgb : vec3(1.0, 1.0, uMetallic);
     float roughness = clamp(uRoughness, 0.02, 1.0);
     if (uHasRoughnessMap) {
-        roughness *= texture(uRoughnessMap, vUv).r;
+        roughness *= texture(uRoughnessMap, surfaceUv).r;
+    } else if (uHasOrmMap) {
+        roughness *= orm.g;
     }
 
-    float ao = uHasAoMap ? texture(uAoMap, vUv).r : 1.0;
-    vec3 viewDirection = normalize(uCameraPosition - vWorldPosition);
+    float metallic = uHasOrmMap ? orm.b : uMetallic;
+    float ao = uHasAoMap ? texture(uAoMap, surfaceUv).r : (uHasOrmMap ? orm.r : 1.0);
     vec3 litColor = baseColor.rgb * uAmbientColor * uAmbientIntensity * ao;
 
     float hemiMix = normal.y * 0.5 + 0.5;
@@ -169,7 +209,7 @@ void main() {
             viewDirection,
             baseColor.rgb,
             roughness,
-            uMetallic
+            metallic
         );
     }
 
@@ -188,7 +228,7 @@ void main() {
             viewDirection,
             baseColor.rgb,
             roughness,
-            uMetallic
+            metallic
         );
     }
 
@@ -209,13 +249,13 @@ void main() {
             viewDirection,
             baseColor.rgb,
             roughness,
-            uMetallic
+            metallic
         );
     }
 
     vec3 emissive = uEmissiveColor;
     if (uHasEmissiveMap) {
-        emissive += texture(uEmissiveMap, vUv).rgb;
+        emissive += texture(uEmissiveMap, surfaceUv).rgb;
     }
 
     outColor = vec4(litColor + emissive, baseColor.a);

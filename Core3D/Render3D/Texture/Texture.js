@@ -6,6 +6,7 @@ export class Texture {
         wrapT = null,
         minFilter = null,
         magFilter = null,
+        anisotropy = 1,
     } = {}) {
         this.source = source;
         this.flipY = flipY;
@@ -14,6 +15,7 @@ export class Texture {
         this.wrapT = wrapT;
         this.minFilter = minFilter;
         this.magFilter = magFilter;
+        this.anisotropy = anisotropy;
         this.glTexture = null;
         this.ready = false;
         this.loading = null;
@@ -75,6 +77,20 @@ export class Texture {
 
         if (this.generateMipmaps) {
             gl.generateMipmap(gl.TEXTURE_2D);
+        }
+
+        if (this.anisotropy > 1) {
+            const extension = gl.getExtension("EXT_texture_filter_anisotropic")
+                ?? gl.getExtension("WEBKIT_EXT_texture_filter_anisotropic")
+                ?? gl.getExtension("MOZ_EXT_texture_filter_anisotropic");
+            if (extension) {
+                const maximum = gl.getParameter(extension.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+                gl.texParameterf(
+                    gl.TEXTURE_2D,
+                    extension.TEXTURE_MAX_ANISOTROPY_EXT,
+                    Math.min(this.anisotropy, maximum)
+                );
+            }
         }
 
         gl.bindTexture(gl.TEXTURE_2D, null);

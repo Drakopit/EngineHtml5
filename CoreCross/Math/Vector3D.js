@@ -6,7 +6,7 @@
  * @summary That class was made, to compose the EngineHtml5 framework.
  * @Date 15/05/2019
  * @example
- *  var vector3D = new Vector3D(0, 0);
+ *  var vector3D = new Vector3D(0, 0, 0);
  * @returns {Object}
  */
 
@@ -17,9 +17,13 @@ export class Vector3D {
         this.z = z || 0;
     }
 
+    static FromArray(values = [0, 0, 0]) {
+        return new Vector3D(values[0], values[1], values[2]);
+    }
+
     /**
      * @doc Method
-     * @description Get value x and y of Vector
+     * @description Get value x, y and z of Vector
      * @example
      *  var position = vector3D.Value();
      * @returns new Vector3D(x, y, z)
@@ -28,9 +32,13 @@ export class Vector3D {
         return new Vector3D(this.x, this.y, this.z);
     }
 
+    ToArray() {
+        return [this.x, this.y, this.z];
+    }
+
     /**
      * @doc Method
-     * @description Set value in Vector
+     * @description Set value x, y and z of Vector
      * @example
      *  vector3D.Value(100, 150);
      * @returns void
@@ -47,5 +55,10 @@ export class Vector3D {
 
     SubtractValue(vector3D) {
         return new Vector3D(this.x - vector3D.GetValue().x, this.y - vector3D.GetValue().y, this.z - vector3D.GetValue().z);
+    }
+
+    DistanceTo(vector3D) {
+        const difference = this.SubtractValue(vector3D);
+        return Math.hypot(difference.x, difference.y, difference.z);
     }
 }

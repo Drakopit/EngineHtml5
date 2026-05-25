@@ -284,6 +284,9 @@ export class WebGL3DRenderer {
     #bindStandardMaterial(shader, material, mesh, shadowState) {
         this.#setVec4(shader, "uAlbedoColor", material.albedoColor ?? [1, 1, 1, 1]);
         this.#setVec3(shader, "uEmissiveColor", material.emissiveColor ?? [0, 0, 0]);
+        this.#setVec2(shader, "uUvScale", material.uvScale ?? [1, 1]);
+        this.#set1f(shader, "uNormalScale", material.normalScale ?? 1);
+        this.#set1f(shader, "uHeightScale", material.heightScale ?? 0);
         this.#set1f(shader, "uRoughness", material.roughness ?? 0.72);
         this.#set1f(shader, "uMetallic", material.metallic ?? 0);
 
@@ -292,10 +295,12 @@ export class WebGL3DRenderer {
         this.#bindTexture(shader, 2, "uRoughnessMap", "uHasRoughnessMap", material.roughnessMap, this.whiteTexture);
         this.#bindTexture(shader, 3, "uAoMap", "uHasAoMap", material.aoMap, this.whiteTexture);
         this.#bindTexture(shader, 4, "uEmissiveMap", "uHasEmissiveMap", material.emissiveMap, this.blackTexture);
+        this.#bindTexture(shader, 5, "uOrmMap", "uHasOrmMap", material.ormMap, this.whiteTexture);
+        this.#bindTexture(shader, 6, "uHeightMap", "uHasHeightMap", material.heightMap, this.blackTexture);
 
         const useShadow = Boolean(shadowState?.texture && material.receiveShadow !== false && mesh.receiveShadow !== false);
         this.#set1i(shader, "uUseShadowMap", useShadow ? 1 : 0);
-        this.#bindTextureObject(shader, 5, "uShadowMap", shadowState?.texture ?? this.whiteTexture);
+        this.#bindTextureObject(shader, 7, "uShadowMap", shadowState?.texture ?? this.whiteTexture);
     }
 
     #bindCelestialMaterial(shader, material, scene) {
@@ -525,6 +530,10 @@ export class WebGL3DRenderer {
 
     #setVec3(shader, name, value) {
         this.gl.uniform3fv(shader.GetUniform(name), value);
+    }
+
+    #setVec2(shader, name, value) {
+        this.gl.uniform2fv(shader.GetUniform(name), value);
     }
 
     #setVec4(shader, name, value) {

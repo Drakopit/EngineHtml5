@@ -28,8 +28,8 @@ Core3D/
 - WebGL2 renderer com `Scene3D`.
 - `PerspectiveCamera`.
 - `Mesh` com transform, material, shadow flags e visibilidade.
-- Primitivas: cubo, plano e esfera.
-- `StandardMaterial` com albedo, normal map, roughness, metallic, AO e emissive.
+- Primitivas: cubo, cubo chanfrado, plano, esfera e anel.
+- `StandardMaterial` com albedo, normal map, ARM/ORM, height/parallax, tiling UV, roughness, metallic, AO e emissive.
 - Luz ambiente, hemisferica, direcional, ponto e spot.
 - Shadow map direcional simples com PCF 3x3.
 - `Skybox` com cubemap criado a partir de uma imagem em formato cross.
@@ -82,11 +82,16 @@ scene.Add(new DirectionalLight({
 const material = new StandardMaterial({
     albedoMap: Texture.Load("Assets/rock_albedo.png"),
     normalMap: Texture.Load("Assets/rock_normal.png"),
-    roughness: 0.85,
+    ormMap: Texture.Load("Assets/rock_arm.png"),
+    heightMap: Texture.Load("Assets/rock_height.png"),
+    uvScale: [2, 2],
+    normalScale: 1.05,
+    heightScale: 0.035,
+    roughness: 0.9,
     metallic: 0.0,
 });
 
-const cube = Mesh.FromGeometry(PrimitiveMesh.Cube(1), material);
+const cube = Mesh.FromGeometry(PrimitiveMesh.BeveledCube(0.075), material);
 scene.Add(cube);
 
 // A imagem deve estar carregada; por exemplo, por um resources.json da demo.

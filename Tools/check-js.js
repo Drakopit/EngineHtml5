@@ -24,6 +24,7 @@ function CollectJsFiles(directory, files = []) {
 
 let hasError = false;
 for (const file of CollectJsFiles(ROOT_DIR)) {
+    console.log("Checking:", file);
     const result = spawnSync(process.execPath, ["--check", file], {
         cwd: ROOT_DIR,
         stdio: "inherit",
