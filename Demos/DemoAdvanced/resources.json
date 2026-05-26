@@ -52,6 +52,7 @@
         { "name": "advanced_boss_core", "path": "Demos/DemoAdvanced/Assets/Manifests/advanced/boss-core.json" },
         { "name": "advanced_boss_stage", "path": "Demos/DemoAdvanced/Assets/Manifests/advanced/boss-stage.json" },
         { "name": "advanced_boss_enemies", "path": "Demos/DemoAdvanced/Assets/Manifests/advanced/boss-enemies.json" },
+        { "name": "advanced_actors_catalog", "path": "Demos/DemoAdvanced/Assets/Manifests/advanced/actors.json" },
         { "name": "snow_pack", "path": "Demos/DemoAdvanced/Assets/Manifests/snow.pack.json" },
         { "name": "snow_backgrounds", "path": "Demos/DemoAdvanced/Assets/Manifests/snow/backgrounds.json" },
         { "name": "snow_terrain", "path": "Demos/DemoAdvanced/Assets/Manifests/snow/terrain.json" },

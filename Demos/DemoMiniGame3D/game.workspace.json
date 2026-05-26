@@ -1,0 +1,21 @@
+{
+    "schemaVersion": 1,
+    "kind": "GameForgeJS.Workspace",
+    "id": "demo_mini_game_3d",
+    "name": "Sky Trail 3D",
+    "resources": "resources.json",
+    "resourcePrefix": "Demos/DemoMiniGame3D/",
+    "defaultSceneFormat": "SkyTrailCourse",
+    "levels2D": [],
+    "scenes3D": [
+        {
+            "id": "sky_trail_course",
+            "label": "Sky Trail",
+            "path": "Assets/Manifests/sky-trail/course.json",
+            "format": "SkyTrailCourse",
+            "resourceName": "sky_trail_course",
+            "resources": "resources.json",
+            "resourcePrefix": "Demos/DemoMiniGame3D/"
+        }
+    ]
+}

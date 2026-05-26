@@ -9,6 +9,10 @@ import { StateMachine } from "./States/StateMachine.js";
 import { BoxController2D } from "../../Core2D/Collision/BoxController2D.js";
 
 const DEFAULT_ENEMY_CONFIG = {
+    asset: "enemy_idle",
+    runAsset: "enemy_run",
+    frame: { x: 0, y: 0, width: 148, height: 96, frames: 6 },
+    runFrame: { x: 0, y: 0, width: 148, height: 96, frames: 8 },
     scale: 1,
     bodySize: { width: 64, height: 64 },
     movement: {
@@ -127,7 +131,7 @@ export class Enemy extends GameObject {
         this.draw = new Draw(screen);
         this.sprite.screen = screen;
 
-        this.sprite.sprite = this.ResolveImage("enemy_idle", "heroi_idle");
+        this.sprite.sprite = this.ResolveImage(this.config.asset, "heroi_idle");
         this.animator = new Animator(this.sprite);
         this.RegisterAnimations();
         this.boxes = new BoxController2D(this, AssetManager.instance.GetJson("enemy_boxes"));
@@ -152,7 +156,7 @@ export class Enemy extends GameObject {
     }
 
     RegisterAnimations() {
-        ENEMY_ANIMATIONS.forEach(animation => {
+        this.AnimationDefinitions().forEach(animation => {
             const image = this.ResolveImage(animation.asset, animation.fallback);
             this.animator.AddAnimation(
                 animation.name,
@@ -166,6 +170,26 @@ export class Enemy extends GameObject {
                 null,
                 { loop: animation.loop ?? true }
             );
+        });
+    }
+
+    AnimationDefinitions() {
+        return ENEMY_ANIMATIONS.map(animation => {
+            if (animation.name === "Idle") {
+                return {
+                    ...animation,
+                    asset: this.config.asset ?? animation.asset,
+                    frames: this.config.frame?.frames ?? animation.frames,
+                };
+            }
+            if (animation.name === "Run") {
+                return {
+                    ...animation,
+                    asset: this.config.runAsset ?? animation.asset,
+                    frames: this.config.runFrame?.frames ?? animation.frames,
+                };
+            }
+            return animation;
         });
     }
 

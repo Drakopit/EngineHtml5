@@ -66,6 +66,48 @@ O comando verifica arquivos ausentes, recortes de tiles/sprites/animacoes fora
 dos limites da imagem e divergencias em que o runtime desenharia uma imagem
 inteira enquanto o catalogo do editor a recortaria.
 
+## Contrato De Atores 2D
+
+Um `player.json` editavel guarda a aparencia no proprio `player`; somente a
+posicao inicial vive em `spawn`:
+
+```json
+{
+  "player": {
+    "asset": "hero_idle",
+    "frame": { "x": 0, "y": 0, "width": 96, "height": 84, "frames": 7 },
+    "runAsset": "hero_run",
+    "runFrame": { "x": 0, "y": 0, "width": 96, "height": 84, "frames": 8 },
+    "scale": 1,
+    "bodySize": { "width": 32, "height": 48 },
+    "spawn": { "x": 100, "y": 300 }
+  }
+}
+```
+
+Em `enemies.json`, as propriedades visuais compartilhadas ficam em
+`enemyDefaults`, com posicoes e overrides planos nas instancias:
+
+```json
+{
+  "enemyDefaults": {
+    "asset": "enemy_idle",
+    "frame": { "x": 0, "y": 0, "width": 148, "height": 96, "frames": 6 },
+    "scale": 1,
+    "bodySize": { "width": 64, "height": 64 }
+  },
+  "enemies": [
+    { "id": "enemy_01", "x": 420, "y": 300 }
+  ]
+}
+```
+
+`asset` deve apontar para um nome em `resources.json.images`. `frame` e o
+primeiro recorte da spritesheet e `frames` informa quantos quadros horizontais
+podem ser animados. O editor aceita projetos antigos que guardem overrides em
+`config`, mas novos overrides sao gravados diretamente na instancia. Os demos
+`DemoAdvanced` e `DemoTacticalRPG` usam este formato.
+
 ## Recursos
 
 - Abrir qualquer pasta do disco.

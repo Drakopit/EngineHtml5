@@ -1,0 +1,24 @@
+{
+  "atlases": {
+    "advanced_hero": {
+      "sprite": "heroi_idle",
+      "animations": {
+        "hero_idle": {
+          "source": { "x": 0, "y": 0, "width": 96, "height": 84 },
+          "frames": 7,
+          "frameStepX": 96
+        }
+      }
+    },
+    "advanced_kobold": {
+      "sprite": "enemy_idle",
+      "animations": {
+        "kobold_idle": {
+          "source": { "x": 0, "y": 0, "width": 148, "height": 96 },
+          "frames": 6,
+          "frameStepX": 148
+        }
+      }
+    }
+  }
+}

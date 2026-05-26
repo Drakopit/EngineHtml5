@@ -1,0 +1,52 @@
+{
+    "name": "Demo Advanced (Published)",
+    "entry": "index.html",
+    "output": "./publish",
+    "gameRoot": "./Demos/DemoAdvanced",
+    "engineRoot": "./",
+    "engineModules": [
+        "Core2D",
+        "Core3D",
+        "CoreCross",
+        "CoreNetwork",
+        "main.css",
+        "reset.css",
+        "gameforge.config.json"
+    ],
+    "gameFiles": [
+        "mainAdvanced.js",
+        "advanced.config.json",
+        "resources.json",
+        "AdvancedDemoBossLevel.js",
+        "AdvancedDemoCongratulations.js",
+        "AdvancedDemoFirstLevel.js",
+        "AdvancedDemoGameOver.js",
+        "AdvancedDemoMenu.js",
+        "AdvancedDemoPhaseSelector.js",
+        "AdvancedDemoProgress.js",
+        "AdvancedDemoResultScreen.js",
+        "AdvancedDemoSecondLevel.js",
+        "Assets",
+        "Attacks",
+        "Block.js",
+        "Bullet.js",
+        "Enemy.js",
+        "Environment",
+        "Levels",
+        "Player.js",
+        "PlayerHUD.js",
+        "States",
+        "Systems",
+        "UI",
+        "game.workspace.json"
+    ],
+    "exclude": [
+        ".git",
+        "node_modules",
+        "package.json",
+        "package-lock.json",
+        "*.log",
+        "publish"
+    ],
+    "cleanOutput": true
+}

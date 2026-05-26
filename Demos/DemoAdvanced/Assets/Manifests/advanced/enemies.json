@@ -1,5 +1,9 @@
 {
   "enemyDefaults": {
+    "asset": "enemy_idle",
+    "runAsset": "enemy_run",
+    "frame": { "x": 0, "y": 0, "width": 148, "height": 96, "frames": 6 },
+    "runFrame": { "x": 0, "y": 0, "width": 148, "height": 96, "frames": 8 },
     "scale": 1,
     "bodySize": {
       "width": 64,

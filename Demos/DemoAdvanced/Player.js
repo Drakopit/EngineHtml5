@@ -13,6 +13,10 @@ import { ActionManager } from "../../CoreCross/Input/ActionManager.js";
 import { StateMachine } from "./States/StateMachine.js";
 
 const DEFAULT_PLAYER_CONFIG = {
+    asset: "heroi_idle",
+    runAsset: "heroi_run",
+    frame: { x: 0, y: 0, width: 96, height: 84, frames: 7 },
+    runFrame: { x: 0, y: 0, width: 96, height: 84, frames: 8 },
     spawn: { x: 100, y: 300 },
     scale: 1.7,
     bodySize: { width: 26, height: 37 },
@@ -134,7 +138,7 @@ export class Player extends GameObject {
         this.knockbackDrag = this.config.combat.knockbackDrag;
         this.invulnerabilityFlickerInterval = this.config.combat.invulnerabilityFlickerInterval;
 
-        const idleImage = AssetManager.instance.GetImage("heroi_idle");
+        const idleImage = AssetManager.instance.GetImage(this.config.asset);
         this.sprite.sprite = idleImage;
         this.sprite.screen = screen;
 
@@ -161,7 +165,7 @@ export class Player extends GameObject {
     }
 
     RegisterAnimations() {
-        PLAYER_ANIMATIONS.forEach(animation => {
+        this.AnimationDefinitions().forEach(animation => {
             const image = AssetManager.instance.GetImage(animation.asset);
             this.animator.AddAnimation(
                 animation.name,
@@ -175,6 +179,26 @@ export class Player extends GameObject {
                 null,
                 { loop: animation.loop ?? true }
             );
+        });
+    }
+
+    AnimationDefinitions() {
+        return PLAYER_ANIMATIONS.map(animation => {
+            if (animation.name === "Idle") {
+                return {
+                    ...animation,
+                    asset: this.config.asset ?? animation.asset,
+                    frames: this.config.frame?.frames ?? animation.frames,
+                };
+            }
+            if (animation.name === "Run") {
+                return {
+                    ...animation,
+                    asset: this.config.runAsset ?? animation.asset,
+                    frames: this.config.runFrame?.frames ?? animation.frames,
+                };
+            }
+            return animation;
         });
     }
 

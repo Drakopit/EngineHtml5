@@ -1,5 +1,21 @@
 {
   "player": {
+    "asset": "heroi_idle",
+    "runAsset": "heroi_run",
+    "frame": {
+      "x": 0,
+      "y": 0,
+      "width": 96,
+      "height": 84,
+      "frames": 7
+    },
+    "runFrame": {
+      "x": 0,
+      "y": 0,
+      "width": 96,
+      "height": 84,
+      "frames": 8
+    },
     "spawn": {
       "x": 75,
       "y": 360

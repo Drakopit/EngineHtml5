@@ -230,7 +230,7 @@ cd ../GameForgeJsEditor
 npm run dev
 ```
 
-O editor desktop pode migrar pastas antigas ao salvar ou criar uma estrutura nova. No 2D, `Novo projeto` gera `game.workspace.json`, `resources.json` e manifests `Assets/Manifests/editor/level_1/*`. No 3D, `New Project` inicializa uma pasta, enquanto `Open Project` e `+ Scene` declaram cenas em `game.workspace.json` e criam arquivos dentro de `Assets/Manifests/scenes/`. `Demos/Demo3D` ja inclui uma cena editavel carregada pela demo no runtime.
+O editor desktop pode migrar pastas antigas ao salvar ou criar uma estrutura nova. No 2D, `Novo projeto` gera `game.workspace.json`, `resources.json` e manifests `Assets/Manifests/editor/level_1/*`. No 3D, `New Project` inicializa uma pasta, enquanto `Open Project` e `+ Scene` declaram cenas em `game.workspace.json` e criam arquivos dentro de `Assets/Manifests/scenes/`. `Demos/Demo3D` inclui uma cena editavel carregada pela demo. `Demos/DemoMiniGame3D` declara seu `course.json` nativo como level editavel: o editor transforma plataformas, moedas, spawn e objetivo, e novos cursos salvos passam a aparecer no menu do jogo.
 
 ## Documentacao
 

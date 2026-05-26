@@ -47,7 +47,20 @@ export class LevelBuilder {
         const spawn = typeof x === "object"
             ? x
             : { x, y };
-        const enemyConfig = this.MergeConfig(config, spawn.config ?? spawn.overrides ?? {});
+        const {
+            id: _id,
+            x: _x,
+            y: _y,
+            col: _col,
+            row: _row,
+            config: nestedConfig,
+            overrides,
+            ...inlineConfig
+        } = spawn;
+        const enemyConfig = this.MergeConfig(
+            this.MergeConfig(config, inlineConfig),
+            nestedConfig ?? overrides ?? {},
+        );
 
         const enemy = new Enemy(this.level.screen, this.level.player, spawn, enemyConfig);
         enemy.id = spawn.id ?? enemy.id;

@@ -7,6 +7,7 @@
     "dev": "node Tools/server.js",
     "check": "node Scripts/check-js.js && node Scripts/check-editor-assets.js",
     "check:editor-assets": "node Scripts/check-editor-assets.js",
-    "docs": "node Scripts/generate-docs.js"
+    "docs": "node Scripts/generate-docs.js",
+    "publish": "node Tools/Publisher/publisher.js"
   }
 }

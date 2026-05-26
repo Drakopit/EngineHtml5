@@ -2,8 +2,27 @@ import { AssetManager } from "../../../CoreCross/Assets/AssetManager.js";
 import { Vector3D } from "../../../CoreCross/Math/Vector3D.js";
 
 const COURSE_ASSET_NAME = "sky_trail_course";
+let selectedCourseAssetName = COURSE_ASSET_NAME;
 
-export function LoadSkyTrailCourse(assetName = COURSE_ASSET_NAME) {
+export function ListSkyTrailCourses() {
+    return Object.entries(AssetManager.instance.jsons ?? {})
+        .filter(([name, document]) => isCourseAsset(name, document))
+        .map(([name, document]) => ({
+            name,
+            label: document.name ?? (name === COURSE_ASSET_NAME ? "Sky Trail" : name.replace(`${COURSE_ASSET_NAME}_`, "")),
+        }))
+        .sort((left, right) => {
+            if (left.name === COURSE_ASSET_NAME) return -1;
+            if (right.name === COURSE_ASSET_NAME) return 1;
+            return left.label.localeCompare(right.label);
+        });
+}
+
+export function SelectSkyTrailCourse(assetName = COURSE_ASSET_NAME) {
+    selectedCourseAssetName = assetName;
+}
+
+export function LoadSkyTrailCourse(assetName = selectedCourseAssetName) {
     const document = AssetManager.instance.GetJson(assetName);
     if (!document) {
         throw new Error(`SkyTrailCourse: manifest '${assetName}' nao foi carregado.`);
@@ -70,6 +89,12 @@ export function LoadSkyTrailCourse(assetName = COURSE_ASSET_NAME) {
             },
         },
     };
+}
+
+function isCourseAsset(name, document) {
+    return (name === COURSE_ASSET_NAME || name.startsWith(`${COURSE_ASSET_NAME}_`))
+        && Array.isArray(document?.platforms)
+        && Boolean(document?.world && document?.camera && document?.player && document?.goal);
 }
 
 function transform(definition, name) {

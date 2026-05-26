@@ -183,6 +183,18 @@ function validateAnimatedActor(label, actor, resources) {
     }
 }
 
+function validateEditableActor(label, actor, resources) {
+    if (!actor?.asset) {
+        errors.push(`${label}: missing 'asset' for Editor2D preview`);
+        return;
+    }
+    if (!actor.frame) {
+        errors.push(`${label}: missing 'frame' for Editor2D preview`);
+        return;
+    }
+    validateAnimatedActor(label, actor, resources);
+}
+
 function auditProject(projectDir, workspace) {
     const resources = loadResources(projectDir, workspace);
     if (!resources) return;
@@ -197,13 +209,13 @@ function auditProject(projectDir, workspace) {
         const playerFile = documents.player ? projectFile(projectDir, documents.player) : null;
         if (playerFile && requireFile(playerFile, `${relative(projectDir)} player`)) {
             const player = readJson(playerFile)?.player;
-            if (player) validateAnimatedActor(`${relative(playerFile)} player`, player, resources);
+            if (player) validateEditableActor(`${relative(playerFile)} player`, player, resources);
         }
         const enemiesFile = documents.enemies ? projectFile(projectDir, documents.enemies) : null;
         if (enemiesFile && requireFile(enemiesFile, `${relative(projectDir)} enemies`)) {
             const enemies = readJson(enemiesFile);
             for (const enemy of enemies?.enemies ?? []) {
-                validateAnimatedActor(
+                validateEditableActor(
                     `${relative(enemiesFile)} enemy '${enemy.id ?? "enemy"}'`,
                     { ...(enemies.enemyDefaults ?? {}), ...enemy },
                     resources,

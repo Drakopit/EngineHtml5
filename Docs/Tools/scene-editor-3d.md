@@ -20,7 +20,7 @@ required for authoring.
 ## Features
 
 - WebGL `Render3D` viewport with directional shadows.
-- Hierarchy with cube, sphere and plane creation.
+- Hierarchy with platform, cube, sphere and plane creation.
 - Duplicate and delete operations.
 - Inspector for name, primitive, transform, albedo, roughness, metallic and shadows.
 - Background and sunlight settings.
@@ -28,7 +28,7 @@ required for authoring.
 - Object-anchored viewport translate, rotate and scale handles, with `W`, `E` and `R` mode shortcuts.
 - Project-aware scene list declared in `game.workspace.json`.
 - `New Project` initialization for a new 3D project folder.
-- `+ Scene` creation and save operations that declare `.scene.json` documents in `game.workspace.json` and register runtime entries in `resources.json`.
+- `+ Scene` creation and save operations for `.scene.json` documents, plus native `SkyTrailCourse` level creation for `DemoMiniGame3D`.
 - Native open and save-as operations for loose `.scene.json` documents.
 - Browser import/export fallback while previewing the frontend without Tauri.
 
@@ -70,5 +70,12 @@ textures. The editor creates
 }
 ```
 
-The editor owns no game rules. The demo may add movement, collisions, scripts,
-goals, NPCs or UI after instantiating the authored scene.
+`Demos/DemoMiniGame3D` is also ready to open as a project. Its workspace maps
+`Assets/Manifests/sky-trail/course.json` into editable terrain, coin, player
+spawn and goal markers without changing the runtime schema. In that project,
+`+ Platform` adds playable terrain and `+ Scene` creates a new course resource;
+after saving and reloading the demo, the game menu lists the saved courses.
+
+For ordinary `SceneManifest3D` projects, the editor owns no game rules. The
+demo may add movement, collisions, scripts, goals, NPCs or UI after
+instantiating the authored scene.

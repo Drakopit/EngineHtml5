@@ -80,6 +80,46 @@
       "sprites": {
         "gold_resource": { "x": 0, "y": 0, "width": 128, "height": 128 }
       }
+    },
+    "tiny_swords_blue_warrior": {
+      "sprite": "blue_warrior_idle",
+      "animations": {
+        "blue_warrior": {
+          "source": { "x": 0, "y": 0, "width": 192, "height": 192 },
+          "frames": 8,
+          "frameStepX": 192
+        }
+      }
+    },
+    "tiny_swords_red_warrior": {
+      "sprite": "red_warrior_idle",
+      "animations": {
+        "red_warrior": {
+          "source": { "x": 0, "y": 0, "width": 192, "height": 192 },
+          "frames": 8,
+          "frameStepX": 192
+        }
+      }
+    },
+    "tiny_swords_red_lancer": {
+      "sprite": "red_lancer_idle",
+      "animations": {
+        "red_lancer": {
+          "source": { "x": 0, "y": 0, "width": 320, "height": 320 },
+          "frames": 12,
+          "frameStepX": 320
+        }
+      }
+    },
+    "tiny_swords_red_archer": {
+      "sprite": "red_archer_idle",
+      "animations": {
+        "red_archer": {
+          "source": { "x": 0, "y": 0, "width": 192, "height": 192 },
+          "frames": 6,
+          "frameStepX": 192
+        }
+      }
     }
   }
 }
