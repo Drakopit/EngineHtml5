@@ -44,6 +44,11 @@ const demos = Object.freeze({
         description: "Demo simples de movimentacao, colisao e coleta para exemplos basicos.",
         path: "../Demos/Demo/mainImmature.js",
     },
+    streetfightpuzzle: {
+        label: "Street Fight Puzzle",
+        description: "Arcade puzzle competitivo inspirado em clássicos de fliperama. Combos enviam blocos para o adversário!",
+        path: "../Demos/DemoStreetFightPuzzle/mainStreetFightPuzzle.js",
+    },
 });
 
 const aliases = Object.freeze({
