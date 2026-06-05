@@ -1,0 +1,13 @@
+{
+    "images": [
+        { "name": "earth_diffuse", "path": "examples/DemoSolarSystem/Assets/Textures/EarthDiffuse.jpg" },
+        { "name": "earth_normal", "path": "examples/DemoSolarSystem/Assets/Textures/EarthNormal.jpg" },
+        { "name": "moon_diffuse", "path": "examples/DemoSolarSystem/Assets/Textures/MoonDiffuse.jpg" }
+    ],
+    "audios": [],
+    "shaders": [
+        { "name": "celestial_vs", "path": "examples/DemoSolarSystem/Assets/Shaders/Celestial.vs.glsl" },
+        { "name": "celestial_fs", "path": "examples/DemoSolarSystem/Assets/Shaders/Celestial.fs.glsl" }
+    ],
+    "models": []
+}

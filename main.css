@@ -13,7 +13,7 @@ canvas {
     min-height: 100vh;
     background:
         linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(2, 6, 23, 0.96)),
-        url("engrenagem.png") right 8vw top 6vh / min(38vw, 420px) auto no-repeat;
+        url("assets/branding/engrenagem.png") right 8vw top 6vh / min(38vw, 420px) auto no-repeat;
 }
 
 .admin-shell {

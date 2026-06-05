@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="Docs/assets/gameforgejs-banner.png" alt="GameForgeJS Banner" width="100%" />
+  <img src="docs/assets/gameforgejs-banner.png" alt="GameForgeJS Banner" width="100%" />
 </p>
 
 # GameForgeJS
@@ -72,28 +72,28 @@ The relay is for testing only. A real MMO requires an authoritative external bac
 
 | Demo | Entry | Config | Description |
 | --- | --- | --- | --- |
-| Advanced | `Demos/DemoAdvanced/mainAdvanced.js` | `Demos/DemoAdvanced/advanced.config.json` | 2D Platformer/RPG with manifests, levels, inventory, skill tree, hitboxes, and HUD. |
-| Tactical RPG | `Demos/DemoTacticalRPG/mainTacticalRPG.js` | `Demos/DemoTacticalRPG/tactical.config.json` | Tactical grid with AStar, movement range, action, and battle system. |
-| Fighting 2D | `Demos/DemoFightingGame2D/mainFightingGame2D.js` | `Demos/DemoFightingGame2D/fighting.config.json` | Menu, arcade, versus, character select, configurable keyboard and gamepad. |
-| Adventure 2D | `Demos/DemoAdventure2D/mainAdventure2D.js` | `Demos/DemoAdventure2D/adventure.config.json` | Component-based top-down adventure with camera transitions between rooms. |
-| Demo 3D | `Demos/Demo3D/mainDemo3D.js` | `Demos/Demo3D/demo3d.config.json` | Render3D layer validation with WebGL2, lighting, normal maps, and shadows. |
-| Solar System 3D | `Demos/DemoSolarSystem/mainSolarSystem.js` | `Demos/DemoSolarSystem/solar.config.json` | Render3D demo with procedural planet shaders, sunlight, and orbits. |
-| MiniGame 3D | `Demos/DemoMiniGame3D/mainMiniGame3D.js` | `Demos/DemoMiniGame3D/mini3d.config.json` | Sky Trail with moving platforms, PBR/parallax, shadows, skybox, physics, and gamepad. |
-| Online MMO | `Demos/DemoOnlineMMO/mainOnlineMMO.js` | `Demos/DemoOnlineMMO/online.config.json` | 2D online sandbox with canvas chat, custom map, and local tab sync via swappable adapter. |
-| Immature | `Demos/Demo/mainImmature.js` | `Demos/Demo/immature.config.json` | Simple movement and collision example. |
+| Advanced | `examples/DemoAdvanced/mainAdvanced.js` | `examples/DemoAdvanced/advanced.config.json` | 2D Platformer/RPG with manifests, levels, inventory, skill tree, hitboxes, and HUD. |
+| Tactical RPG | `examples/DemoTacticalRPG/mainTacticalRPG.js` | `examples/DemoTacticalRPG/tactical.config.json` | Tactical grid with AStar, movement range, action, and battle system. |
+| Fighting 2D | `examples/DemoFightingGame2D/mainFightingGame2D.js` | `examples/DemoFightingGame2D/fighting.config.json` | Menu, arcade, versus, character select, configurable keyboard and gamepad. |
+| Adventure 2D | `examples/DemoAdventure2D/mainAdventure2D.js` | `examples/DemoAdventure2D/adventure.config.json` | Component-based top-down adventure with camera transitions between rooms. |
+| Demo 3D | `examples/Demo3D/mainDemo3D.js` | `examples/Demo3D/demo3d.config.json` | Render3D layer validation with WebGL2, lighting, normal maps, and shadows. |
+| Solar System 3D | `examples/DemoSolarSystem/mainSolarSystem.js` | `examples/DemoSolarSystem/solar.config.json` | Render3D demo with procedural planet shaders, sunlight, and orbits. |
+| MiniGame 3D | `examples/DemoMiniGame3D/mainMiniGame3D.js` | `examples/DemoMiniGame3D/mini3d.config.json` | Sky Trail with moving platforms, PBR/parallax, shadows, skybox, physics, and gamepad. |
+| Online MMO | `examples/DemoOnlineMMO/mainOnlineMMO.js` | `examples/DemoOnlineMMO/online.config.json` | 2D online sandbox with canvas chat, custom map, and local tab sync via swappable adapter. |
+| Immature | `examples/Demo/mainImmature.js` | `examples/Demo/immature.config.json` | Simple movement and collision example. |
 
 ## Structure
 
 ```txt
 GameForgeJS/
-  CoreCross/             Bootstrap, loop, config, assets, audio, input, math, shared components and pathfinding
-  Core2D/                Canvas 2D, GameObject, camera, scene, UI, collision, combat, particles and 2D effects
-  Core3D/                WebGL/Render3D, Level3D, models, shaders, window, objects and 3D physics
-  CoreNetwork/           Reusable networking and online: GameNetwork, adapters, chat and sync
-  Tools/                 Optional local static server for development
-  Scripts/               Engine documentation verification and generation
-  Docs/                  Guides, tutorials and generated JSDoc reference
-  Demos/                 All playable and technical demos
+  src/CoreCross/             Bootstrap, loop, config, assets, audio, input, math, shared components and pathfinding
+  src/Core2D/                Canvas 2D, GameObject, camera, scene, UI, collision, combat, particles and 2D effects
+  src/Core3D/                WebGL/Render3D, Level3D, models, shaders, window, objects and 3D physics
+  src/CoreNetwork/           Reusable networking and online: GameNetwork, adapters, chat and sync
+  tools/                 Optional local static server for development
+  scripts/               Engine documentation verification and generation
+  docs/                  Guides, tutorials and generated JSDoc reference
+  examples/                 All playable and technical demos
     DemoAdvanced/        Data-driven platformer/RPG demo
     DemoFightingGame2D/  2D fighting demo
     DemoAdventure2D/     Component-based top-down adventure demo
@@ -123,7 +123,7 @@ MyGame/
 Minimal entry point:
 
 ```js
-import { BootstrapGame } from "../CoreCross/index.js";
+import { BootstrapGame } from "../src/CoreCross/index.js";
 import { FirstLevel } from "./Levels/FirstLevel.js";
 
 BootstrapGame({
@@ -181,7 +181,7 @@ Assets are loaded by `ResourceManifestLoader`:
 In the AdvancedDemo, levels are composed from smaller manifests. Shared configuration lives in:
 
 ```txt
-Demos/DemoAdvanced/Assets/Manifests/advanced/stage-default.json
+examples/DemoAdvanced/Assets/Manifests/advanced/stage-default.json
 ```
 
 And a level composes defaults with level-specific parts:
@@ -206,8 +206,8 @@ And a level composes defaults with level-specific parts:
 `GameObject` still supports the classic flow with `OnStart`, `OnUpdate`, `OnFixedUpdate`, `OnDrawn`, and `OnGUI`, but can now also receive reusable components.
 
 ```js
-import { GameObject } from "./Core2D/index.js";
-import { BoundsComponent, HealthComponent, TransformComponent } from "./CoreCross/index.js";
+import { GameObject } from "./src/Core2D/index.js";
+import { BoundsComponent, HealthComponent, TransformComponent } from "./src/CoreCross/index.js";
 
 const entity = new GameObject();
 entity.AddComponent(new TransformComponent({ x: 80, y: 120 }));
@@ -215,7 +215,7 @@ entity.AddComponent(new BoundsComponent({ width: 32, height: 32 }));
 entity.AddComponent(new HealthComponent({ hp: 100 }));
 ```
 
-See the full guide at [Componentization](Docs/Guides/components.md). This is the path toward evolving into an ECS-lite model without breaking existing demos.
+See the full guide at [Componentization](docs/guides/components.md). This is the path toward evolving into an ECS-lite model without breaking existing demos.
 
 ## External Tools
 
@@ -230,23 +230,23 @@ cd ../GameForgeJsEditor
 npm run dev
 ```
 
-The desktop editor can migrate old folders on save or create a fresh structure. In 2D, `New Project` generates `game.workspace.json`, `resources.json`, and `Assets/Manifests/editor/level_1/*` manifests. In 3D, `New Project` initializes a folder, while `Open Project` and `+ Scene` declare scenes in `game.workspace.json` and create files inside `Assets/Manifests/scenes/`. `Demos/Demo3D` includes an editable scene loaded by the demo. `Demos/DemoMiniGame3D` declares its native `course.json` as an editable level: the editor transforms platforms, coins, spawn, and goal, and newly saved courses appear in the game menu.
+The desktop editor can migrate old folders on save or create a fresh structure. In 2D, `New Project` generates `game.workspace.json`, `resources.json`, and `Assets/Manifests/editor/level_1/*` manifests. In 3D, `New Project` initializes a folder, while `Open Project` and `+ Scene` declare scenes in `game.workspace.json` and create files inside `Assets/Manifests/scenes/`. `examples/Demo3D` includes an editable scene loaded by the demo. `examples/DemoMiniGame3D` declares its native `course.json` as an editable level: the editor transforms platforms, coins, spawn, and goal, and newly saved courses appear in the game menu.
 
 ## Documentation
 
-- [Official index](Docs/index.md)
-- [Creating a project](Docs/GettingStarted/new-project.md)
-- [Tutorial: creating 2D and 3D demos](Docs/GettingStarted/tutorial-demos-2d-3d.md)
-- [Per-game input configuration](Docs/GettingStarted/input-config.md)
-- [Gamepad cheat sheet](Docs/GettingStarted/gamepad.md)
-- [CoreNetwork](Docs/Guides/network.md)
-- [Componentization](Docs/Guides/components.md)
-- [Render3D](Docs/Guides/render3d.md)
-- [External 3D Scene Editor integration](Docs/Tools/scene-editor-3d.md)
-- [Advanced Stage Manifest](Docs/Manifests/advanced-stage-manifest.md)
-- [Hitbox Manifest 2D](Docs/Manifests/hitbox-manifest.md)
-- [WorldEditor v4](Docs/Tools/world-editor-v4.md)
-- [API Reference generated by JSDoc](Docs/Helper/index.md)
+- [Official index](docs/index.md)
+- [Creating a project](docs/getting-started/new-project.md)
+- [Tutorial: creating 2D and 3D demos](docs/getting-started/tutorial-demos-2d-3d.md)
+- [Per-game input configuration](docs/getting-started/input-config.md)
+- [Gamepad cheat sheet](docs/getting-started/gamepad.md)
+- [CoreNetwork](docs/guides/network.md)
+- [Componentization](docs/guides/components.md)
+- [Render3D](docs/guides/render3d.md)
+- [External 3D Scene Editor integration](docs/tools/scene-editor-3d.md)
+- [Advanced Stage Manifest](docs/manifests/advanced-stage-manifest.md)
+- [Hitbox Manifest 2D](docs/manifests/hitbox-manifest.md)
+- [WorldEditor v4](docs/tools/world-editor-v4.md)
+- [API Reference generated by JSDoc](docs/helper/index.md)
 
 ## Project Direction
 

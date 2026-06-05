@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node Tools/server.js",
-    "dev": "node Tools/server.js",
-    "check": "node Scripts/check-js.js && node Scripts/check-editor-assets.js",
-    "check:editor-assets": "node Scripts/check-editor-assets.js",
-    "docs": "node Scripts/generate-docs.js",
-    "publish": "node Tools/Publisher/publisher.js"
+    "start": "node tools/server.js",
+    "dev": "node tools/server.js",
+    "check": "node scripts/check-js.js && node scripts/check-editor-assets.js",
+    "check:editor-assets": "node scripts/check-editor-assets.js",
+    "docs": "node scripts/generate-docs.js",
+    "publish": "node tools/Publisher/publisher.js"
   }
 }

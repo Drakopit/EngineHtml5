@@ -1,8 +1,0 @@
-{
-  "images": [
-    { "name": "fight_char_blue", "path": "Demos/DemoFightingGame2D/Assets/Chars/Char_3.png" },
-    { "name": "fight_char_no_armor", "path": "Demos/DemoFightingGame2D/Assets/Chars/Char_3_No_Armor.png" },
-    { "name": "fight_char_gold", "path": "Demos/DemoFightingGame2D/Assets/Chars/Char_4.png" },
-    { "name": "fight_char_silver", "path": "Demos/DemoFightingGame2D/Assets/Chars/Char_5.png" }
-  ]
-}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "kind": "GameForgeJS.Workspace",
+  "id": "demo_3d",
+  "name": "Demo 3D",
+  "resources": "resources.json",
+  "resourcePrefix": "examples/Demo3D/",
+  "levels2D": [],
+  "scenes3D": [
+    {
+      "id": "render3d_showcase",
+      "label": "Render3D Showcase",
+      "path": "Assets/Manifests/scenes/render3d-showcase.scene.json",
+      "resources": "resources.json",
+      "resourcePrefix": "examples/Demo3D/"
+    }
+  ]
+}
