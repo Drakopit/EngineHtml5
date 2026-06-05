@@ -1,10 +1,10 @@
-# Configuracao De Input Por Jogo
+# Per-Game Input Configuration
 
-Os comandos nao devem morar no `gameforge.config.json`. Esse arquivo e global da engine. Cada demo/jogo deve declarar seus proprios comandos no config local.
+Input bindings should not live in `gameforge.config.json`. That file is global to the engine. Each demo/game must declare its own bindings in its local config.
 
 ## ActionManager
 
-Demos que usam `ActionManager` declaram `input.actionMappings`. O gamepad aceita tanto tokens crus (`button_0`, `axis_0_positive`) quanto aliases legiveis:
+Demos that use `ActionManager` declare `input.actionMappings`. The gamepad accepts both raw tokens (`button_0`, `axis_0_positive`) and human-readable aliases:
 
 ```json
 {
@@ -29,7 +29,7 @@ Demos que usam `ActionManager` declaram `input.actionMappings`. O gamepad aceita
 }
 ```
 
-O `BootstrapGame` pode carregar uma lista de configs. Os ultimos arquivos sobrescrevem ou complementam os anteriores:
+`BootstrapGame` can load a list of configs. Later files override or extend the earlier ones:
 
 ```js
 BootstrapGame({
@@ -40,9 +40,9 @@ BootstrapGame({
 });
 ```
 
-## Input E Polling De Gamepad
+## Input and Gamepad Polling
 
-`Input` consulta `navigator.getGamepads()` em todo `PreUpdate` da engine. Assim, um controle conectado antes do jogo iniciar tambem aparece sem precisar ser reconectado, e desconexoes sao removidas do estado atual. Em navegadores que so liberam o controle apos interacao, basta pressionar um botao uma vez.
+`Input` calls `navigator.getGamepads()` on every engine `PreUpdate`. This means a controller connected before the game starts is detected without needing to be reconnected, and disconnections are removed from the current state. In browsers that only expose a controller after user interaction, pressing any button once is enough.
 
 ```js
 if (Input.IsGamepadConnected(0)) {
@@ -51,13 +51,13 @@ if (Input.IsGamepadConnected(0)) {
 }
 ```
 
-O teclado continua com `Input.GetKey`, `Input.GetKeyDown` e `Input.GetKeyUp`. Para gameplay, prefira a camada de acoes; `GetActionValue` mantem a intensidade de um eixo analogico:
+The keyboard continues to work via `Input.GetKey`, `Input.GetKeyDown`, and `Input.GetKeyUp`. For gameplay, prefer the action layer; `GetActionValue` preserves the intensity of an analog axis:
 
 ```js
 const horizontal = ActionManager.GetActionValue("RIGHT") - ActionManager.GetActionValue("LEFT");
 ```
 
-Mapeamentos tambem podem ser declarados por codigo quando um jogo precisar configura-los dinamicamente:
+Mappings can also be declared in code when a game needs to configure them dynamically:
 
 ```js
 ActionManager.MapAction("MOVE_LEFT", [
@@ -67,17 +67,17 @@ ActionManager.MapAction("MOVE_LEFT", [
 ]);
 ```
 
-## Perfis
+## Profiles
 
-`input.gamepadProfile` muda o significado dos nomes curtos `A`, `B`, `X` e `Y`:
+`input.gamepadProfile` changes the meaning of the short names `A`, `B`, `X`, and `Y`:
 
-| Perfil | Botao sul | Botao direito | Botao esquerdo | Botao norte |
+| Profile | South button | Right button | Left button | North button |
 | --- | --- | --- | --- | --- |
 | `xbox` | `A` | `B` | `X` | `Y` |
 | `playstation` | `X` / `CROSS` | `CIRCLE` | `SQUARE` | `TRIANGLE` |
 | `nintendo` | `B` | `A` | `Y` | `X` |
 
-Quando quiser remover qualquer ambiguidade, use aliases explicitos:
+When you want to remove all ambiguity, use explicit aliases:
 
 ```json
 { "device": "gamepad", "input": "XBOX_A" }
@@ -85,28 +85,28 @@ Quando quiser remover qualquer ambiguidade, use aliases explicitos:
 { "device": "gamepad", "input": "NINTENDO_B" }
 ```
 
-## Aliases Comuns
+## Common Aliases
 
 ```txt
-A / B / X / Y       dependem do gamepadProfile
-LB / RB / LT / RT   ombros e gatilhos Xbox-style
-L1 / R1 / L2 / R2   ombros e gatilhos PlayStation-style
-BACK / START        botoes de menu
-DPAD_UP             direcional para cima
-DPAD_DOWN           direcional para baixo
-DPAD_LEFT           direcional para esquerda
-DPAD_RIGHT          direcional para direita
-LEFT_STICK_UP       analogico esquerdo para cima
-LEFT_STICK_DOWN     analogico esquerdo para baixo
-LEFT_STICK_LEFT     analogico esquerdo para esquerda
-LEFT_STICK_RIGHT    analogico esquerdo para direita
+A / B / X / Y       depend on gamepadProfile
+LB / RB / LT / RT   Xbox-style shoulders and triggers
+L1 / R1 / L2 / R2   PlayStation-style shoulders and triggers
+BACK / START        menu buttons
+DPAD_UP             d-pad up
+DPAD_DOWN           d-pad down
+DPAD_LEFT           d-pad left
+DPAD_RIGHT          d-pad right
+LEFT_STICK_UP       left analog stick up
+LEFT_STICK_DOWN     left analog stick down
+LEFT_STICK_LEFT     left analog stick left
+LEFT_STICK_RIGHT    left analog stick right
 ```
 
-A cola completa fica em [Gamepad](./gamepad.md).
+The full cheat sheet is at [Gamepad](./gamepad.md).
 
-## Extend Por Jogo
+## Per-Game Extension
 
-Cada jogo pode criar aliases sem mexer na engine:
+Each game can define its own aliases without touching the engine:
 
 ```json
 {
@@ -130,11 +130,11 @@ Cada jogo pode criar aliases sem mexer na engine:
 }
 ```
 
-Aliases podem apontar para outros aliases. Por exemplo, `LIGHT_ATTACK -> X -> button_2` no perfil Xbox.
+Aliases can point to other aliases. For example, `LIGHT_ATTACK -> X -> button_2` under the Xbox profile.
 
-## Demo De Luta
+## Fighting Demo
 
-A demo de luta usa uma configuracao propria em `fighting.controls`, porque possui dois jogadores, menu, arcade e versus. Ela tambem resolve aliases de gamepad:
+The fighting demo uses its own configuration under `fighting.controls`, because it supports two players, a menu, arcade mode, and versus mode. It also resolves gamepad aliases:
 
 ```json
 {
@@ -164,4 +164,4 @@ A demo de luta usa uma configuracao propria em `fighting.controls`, porque possu
 }
 ```
 
-Assim o controle de cada jogo fica no proprio jogo, sem vazar para outras demos.
+This keeps each game's controls contained within that game, with no leakage into other demos.

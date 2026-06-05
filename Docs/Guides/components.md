@@ -1,19 +1,19 @@
-# Componentizacao
+# Componentization
 
-`GameObject` continua aceitando heranca classica, mas agora tambem pode ser montado por componentes pequenos. A ideia e deixar entidades mais modulares sem quebrar as demos atuais.
+`GameObject` still supports classic inheritance, but can now also be assembled from small components. The goal is to make entities more modular without breaking existing demos.
 
-## Componentes Disponiveis
+## Available Components
 
-| Componente | Uso |
+| Component | Usage |
 | --- | --- |
-| `TransformComponent` | Posicao, rotacao e escala, sincronizando com `owner.position`. |
-| `VelocityComponent` | Movimento por velocidade, gravidade, friccao e limite de velocidade. |
-| `BoundsComponent` | Caixa AABB reutilizavel para colisao, selecao e hit test. |
-| `HealthComponent` | HP, dano, cura, invulnerabilidade curta e callbacks `OnDamage`/`OnDeath`. |
-| `LifetimeComponent` | Objetos temporarios, como efeitos, textos flutuantes e projeteis. |
-| `ActionInputComponent` | Leitura de acoes do `ActionManager` dentro de uma entidade. |
+| `TransformComponent` | Position, rotation, and scale, synchronized with `owner.position`. |
+| `VelocityComponent` | Movement via velocity, gravity, friction, and speed limits. |
+| `BoundsComponent` | Reusable AABB box for collision, selection, and hit testing. |
+| `HealthComponent` | HP, damage, healing, brief invulnerability, and `OnDamage`/`OnDeath` callbacks. |
+| `LifetimeComponent` | Temporary objects such as effects, floating texts, and projectiles. |
+| `ActionInputComponent` | Reads actions from `ActionManager` within an entity. |
 
-## Exemplo
+## Example
 
 ```js
 import { GameObject } from "../Core2D/index.js";
@@ -51,16 +51,16 @@ player.OnUpdate = function OnUpdate(dt) {
 };
 ```
 
-## Direcao
+## Direction
 
-Este modelo ainda nao e um ECS puro. Ele e um meio-termo proposital:
+This model is not a pure ECS. It is an intentional middle ground:
 
-- `GameObject` continua simples.
-- Componentes carregam comportamento reutilizavel.
-- As demos podem migrar aos poucos.
-- O WorldEditor pode futuramente serializar entidades como uma lista de componentes.
+- `GameObject` stays simple.
+- Components carry reusable behavior.
+- Demos can migrate gradually.
+- WorldEditor may eventually serialize entities as a list of components.
 
-Um prefab data-driven poderia ficar assim:
+A data-driven prefab could look like this:
 
 ```json
 {
@@ -74,15 +74,15 @@ Um prefab data-driven poderia ficar assim:
 }
 ```
 
-## Exemplo Jogavel
+## Playable Example
 
-A demo `Demos/DemoAdventure2D` usa esse modelo de forma mais completa:
+The `Demos/DemoAdventure2D` demo uses this model more fully:
 
-- `AdventurePlayer` combina `TransformComponent`, `BoundsComponent`, `HealthComponent`, `ActionInputComponent`, movimento top-down, ataque melee e renderer.
-- `Slime` combina `TransformComponent`, `BoundsComponent`, `HealthComponent`, `WanderComponent` e renderer.
-- `CameraRig` usa `RoomCameraComponent` para fazer transicao suave entre salas.
+- `AdventurePlayer` combines `TransformComponent`, `BoundsComponent`, `HealthComponent`, `ActionInputComponent`, top-down movement, melee attack, and a renderer.
+- `Slime` combines `TransformComponent`, `BoundsComponent`, `HealthComponent`, `WanderComponent`, and a renderer.
+- `CameraRig` uses `RoomCameraComponent` to handle smooth transitions between rooms.
 
-Abra com:
+Open with:
 
 ```txt
 http://localhost:8080/Main.html?demo=adventure2d

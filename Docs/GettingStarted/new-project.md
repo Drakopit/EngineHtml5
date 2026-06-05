@@ -1,8 +1,8 @@
-# Novo Formato De Projeto GameForgeJS
+# New GameForgeJS Project Format
 
-Este formato mantem a engine sem dependencias externas. O projeto declara sua entrada, sua configuracao, seus manifests de assets e seus levels iniciais.
+This format keeps the engine free of external dependencies. A project declares its own entry point, configuration, asset manifests, and initial levels.
 
-## Estrutura Sugerida Dentro Do Repositorio
+## Suggested Structure Inside the Repository
 
 ```txt
 MyGame/
@@ -19,7 +19,7 @@ MyGame/
     FirstLevel.js
 ```
 
-## Entrada
+## Entry Point
 
 ```js
 import { BootstrapGame } from "../CoreCross/index.js";
@@ -34,11 +34,11 @@ BootstrapGame({
 });
 ```
 
-`gameforge.config.json` fica na raiz e contem defaults da engine. `MyGame/mygame.config.json` pertence ao jogo e deve conter titulo, tela, comandos e qualquer configuracao especifica.
+`gameforge.config.json` lives at the root and contains engine-level defaults. `MyGame/mygame.config.json` belongs to the game and should contain the title, screen, input, and any game-specific configuration.
 
-## Tela Responsiva
+## Responsive Screen
 
-Cada jogo pode fazer seu canvas ocupar toda a area disponivel da pagina:
+Each game can make its canvas fill the full available area of the page:
 
 ```json
 {
@@ -50,7 +50,7 @@ Cada jogo pode fazer seu canvas ocupar toda a area disponivel da pagina:
 }
 ```
 
-Com `screen.fullScreen: true`, o canvas continua usando sua resolucao logica (`width` e `height`) para entidades, colisao e UI, mas e exibido responsivamente em toda a janela. Isto funciona para telas 2D, 3D e overlays da engine, sem solicitar o fullscreen nativo do navegador.
+With `screen.fullScreen: true`, the canvas still uses its logical resolution (`width` and `height`) for entities, collision, and UI, but is displayed responsively across the full window. This works for 2D screens, 3D screens, and engine overlays, without requesting the browser's native fullscreen.
 
 ## resources.json
 
@@ -68,7 +68,7 @@ Com `screen.fullScreen: true`, o canvas continua usando sua resolucao logica (`w
 }
 ```
 
-## Config De Input
+## Input Config
 
 ```json
 {
@@ -91,13 +91,13 @@ Com `screen.fullScreen: true`, o canvas continua usando sua resolucao logica (`w
 
 ## Admin Mode
 
-Durante o desenvolvimento, `Main.html` sem query string abre o Admin Mode:
+During development, `Main.html` without a query string opens Admin Mode:
 
 ```txt
 http://localhost:8080/Main.html
 ```
 
-Para abrir direto:
+To open a demo directly:
 
 ```txt
 http://localhost:8080/Main.html?demo=advanced
@@ -105,10 +105,10 @@ http://localhost:8080/Main.html?demo=fighting2d
 http://localhost:8080/Main.html?demo=online
 ```
 
-## Servidor Local Opcional
+## Optional Local Server
 
 ```sh
 npm run start
 ```
 
-O comando usa apenas `Tools/server.js` para servir arquivos locais e evitar CORS. A engine em si continua independente de Node.js.
+This command uses only `Tools/server.js` to serve local files and avoid CORS. The engine itself remains independent of Node.js.

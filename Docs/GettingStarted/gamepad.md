@@ -1,16 +1,16 @@
-# Cola De Gamepad
+# Gamepad Cheat Sheet
 
-GameForgeJS aceita aliases legiveis em configs de gamepad. Tokens crus como `button_0` e `axis_0_positive` continuam funcionando, mas a recomendacao e usar aliases com `input.gamepadProfile`.
+GameForgeJS accepts human-readable aliases in gamepad configs. Raw tokens like `button_0` and `axis_0_positive` still work, but the recommended approach is to use aliases with `input.gamepadProfile`.
 
-## Perfis
+## Profiles
 
-| Perfil | Botao sul | Botao direito | Botao esquerdo | Botao norte |
+| Profile | South button | Right button | Left button | North button |
 | --- | --- | --- | --- | --- |
 | `xbox` | `A` | `B` | `X` | `Y` |
 | `playstation` | `X` / `CROSS` | `CIRCLE` | `SQUARE` | `TRIANGLE` |
 | `nintendo` | `B` | `A` | `Y` | `X` |
 
-Exemplo Xbox:
+Xbox example:
 
 ```json
 {
@@ -32,11 +32,11 @@ Exemplo Xbox:
 }
 ```
 
-## Aliases Explicitos
+## Explicit Aliases
 
-Use estes quando quiser remover ambiguidade entre marcas:
+Use these when you want to remove ambiguity between controller brands:
 
-| Alias | Equivalente |
+| Alias | Equivalent |
 | --- | --- |
 | `XBOX_A` | `button_0` |
 | `XBOX_B` | `button_1` |
@@ -51,26 +51,26 @@ Use estes quando quiser remover ambiguidade entre marcas:
 | `NINTENDO_Y` | `button_2` |
 | `NINTENDO_X` | `button_3` |
 
-## Aliases Comuns
+## Common Aliases
 
-| Alias | Equivalente | Uso comum |
+| Alias | Equivalent | Common use |
 | --- | --- | --- |
-| `LB` / `L1` | `button_4` | Ombro esquerdo |
-| `RB` / `R1` | `button_5` | Ombro direito |
-| `LT` / `L2` | `button_6` | Gatilho esquerdo |
-| `RT` / `R2` | `button_7` | Gatilho direito |
-| `BACK` / `SELECT` / `SHARE` | `button_8` | Voltar, menu secundario |
-| `START` / `MENU` / `OPTIONS` | `button_9` | Start, pause, confirmar em menu |
-| `L3` / `LEFT_STICK_BUTTON` | `button_10` | Clique do analogico esquerdo |
-| `R3` / `RIGHT_STICK_BUTTON` | `button_11` | Clique do analogico direito |
-| `DPAD_UP` | `button_12` | Cima |
-| `DPAD_DOWN` | `button_13` | Baixo |
-| `DPAD_LEFT` | `button_14` | Esquerda |
-| `DPAD_RIGHT` | `button_15` | Direita |
+| `LB` / `L1` | `button_4` | Left shoulder |
+| `RB` / `R1` | `button_5` | Right shoulder |
+| `LT` / `L2` | `button_6` | Left trigger |
+| `RT` / `R2` | `button_7` | Right trigger |
+| `BACK` / `SELECT` / `SHARE` | `button_8` | Back, secondary menu |
+| `START` / `MENU` / `OPTIONS` | `button_9` | Start, pause, confirm in menu |
+| `L3` / `LEFT_STICK_BUTTON` | `button_10` | Left analog stick click |
+| `R3` / `RIGHT_STICK_BUTTON` | `button_11` | Right analog stick click |
+| `DPAD_UP` | `button_12` | Up |
+| `DPAD_DOWN` | `button_13` | Down |
+| `DPAD_LEFT` | `button_14` | Left |
+| `DPAD_RIGHT` | `button_15` | Right |
 
-## Eixos
+## Axes
 
-| Alias | Equivalente |
+| Alias | Equivalent |
 | --- | --- |
 | `LEFT_STICK_LEFT` | `axis_0_negative` |
 | `LEFT_STICK_RIGHT` | `axis_0_positive` |
@@ -85,9 +85,9 @@ Use estes quando quiser remover ambiguidade entre marcas:
 | `RightX` / `RIGHT_X` | `axis_2` |
 | `RightY` / `RIGHT_Y` | `axis_3` |
 
-## API Direta Da Engine
+## Direct Engine API
 
-O `Input` faz polling do navegador a cada frame, inclusive para controles ligados antes do jogo iniciar. Alguns navegadores ocultam um controle ate o primeiro botao ser pressionado; isso ativa o controle sem desconectar cabos.
+`Input` polls the browser every frame, including controllers connected before the game starts. Some browsers hide a controller until the first button is pressed; pressing any button activates the controller without disconnecting any cables.
 
 ```js
 Input.IsGamepadConnected(0);
@@ -98,9 +98,9 @@ Input.GetGamepadAxis(0, "LeftX");
 Input.GetGamepadAxis(0, "LeftY");
 ```
 
-## Extend Por Jogo
+## Per-Game Extension
 
-Crie nomes do proprio jogo em `input.gamepadAliases`:
+Define your own game-specific names in `input.gamepadAliases`:
 
 ```json
 {
@@ -120,11 +120,11 @@ Crie nomes do proprio jogo em `input.gamepadAliases`:
 }
 ```
 
-Nesse exemplo, `LIGHT_ATTACK` resolve para `X`, e `X` resolve para `button_2` no perfil Xbox.
+In this example, `LIGHT_ATTACK` resolves to `X`, and `X` resolves to `button_2` under the Xbox profile.
 
-## Tokens Crus
+## Raw Tokens
 
-Ainda e valido usar o padrao do navegador diretamente:
+Using the browser's native format directly is still valid:
 
 | Token | Xbox | PlayStation | Nintendo |
 | --- | --- | --- | --- |
