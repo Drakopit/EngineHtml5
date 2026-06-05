@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "kind": "GameForgeJS.Workspace",
+  "id": "example_topdown",
+  "name": "Top-Down Example",
+  "resources": "resources.json",
+  "resourcePrefix": "Examples/TopDown/",
+  "levels2D": [
+    {
+      "id": "village",
+      "label": "Starting Village",
+      "levelType": "topdown",
+      "resources": "resources.json",
+      "resourcePrefix": "Examples/TopDown/",
+      "documents": {
+        "map": "Assets/Manifests/village/map.json",
+        "player": "Assets/Manifests/village/player.json",
+        "npcs": "Assets/Manifests/village/npcs.json",
+        "collisions": "Assets/Manifests/village/collisions.json"
+      }
+    }
+  ],
+  "scenes3D": []
+}

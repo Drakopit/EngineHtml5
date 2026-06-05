@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "kind": "GameForgeJS.Workspace",
+  "id": "example_platformer",
+  "name": "Platformer Example",
+  "resources": "resources.json",
+  "resourcePrefix": "Examples/Platformer/",
+  "levels2D": [
+    {
+      "id": "level_1",
+      "label": "Level 1 - Forest",
+      "levelType": "platformer",
+      "resources": "resources.json",
+      "resourcePrefix": "Examples/Platformer/",
+      "documents": {
+        "stage": "Assets/Manifests/level1/stage.json",
+        "player": "Assets/Manifests/level1/player.json",
+        "enemies": "Assets/Manifests/level1/enemies.json"
+      }
+    }
+  ],
+  "scenes3D": []
+}

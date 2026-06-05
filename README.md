@@ -252,8 +252,21 @@ O editor desktop pode migrar pastas antigas ao salvar ou criar uma estrutura nov
 
 O caminho mais forte agora e:
 
-- consolidar `GameObject + Component`
+- consolidar `GameObject + Component` com **lifecycle padronizado**
 - criar sistemas reutilizaveis para render, fisica, input e animacao
 - transformar entidades em dados serializaveis
-- manter ferramentas de autoria separadas do runtime
+- manter ferramentas de autoria separadas do runtime (**GameForgeJSEditorsV2** em C# + Avalonia)
 - finalizar um jogo pequeno usando a engine como validacao real
+
+### Nova Estrutura Recomendada
+
+Prefira importar via a nova estrutura de pacotes:
+
+```js
+import { Component, TransformComponent } from "../packages/core/index.js";
+import { GameObject } from "../packages/2d/index.js";
+```
+
+Veja `templates/basic/` como exemplo mínimo.
+
+Para exemplos reais de estrutura por gênero de jogo (Platformer, Top-Down, Isometric, Tactical etc), acesse a pasta `templates/2d/`. Cada subpasta mostra como organizar o `game.workspace.json`, o `levelType` e os documentos para aquele estilo de jogo.

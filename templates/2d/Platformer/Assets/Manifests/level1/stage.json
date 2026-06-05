@@ -1,0 +1,11 @@
+{
+  "stage": {
+    "world": { "cols": 30, "rows": 12, "cell": 64 },
+    "platforms": [
+      { "id": "ground", "x": 0, "y": 600, "width": 1920, "height": 64, "solid": true }
+    ],
+    "parallax": {
+      "layers": []
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "map": {
+    "width": 50,
+    "height": 50,
+    "tileSize": 32,
+    "tileset": "village_tiles",
+    "layers": [
+      { "name": "ground", "data": [] },
+      { "name": "objects", "data": [] }
+    ]
+  }
+}

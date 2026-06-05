@@ -41,7 +41,7 @@
     },
     "debug": {
         "showFPS": true,
-        "showHitboxes": false,
+        "showHitboxes": true,
         "admin": true,
         "logLevel": "info"
     }

@@ -79,28 +79,21 @@ export class GameObject extends Base {
     }
 
     OnStart() {
-        this.components.forEach(component => {
-            if (component.enabled !== false && typeof component.OnStart === "function") component.OnStart();
-        });
+        super.OnStart(); // Call standardized Base lifecycle
+        this.components.forEach(c => { if (c.enabled !== false) c.OnStart?.(); });
     }
 
     OnUpdate(deltaTime) {
         this.isMoving ? this.sprite.Update(deltaTime) : this.sprite.Reset();
-        this.components.forEach(component => {
-            if (component.enabled !== false && typeof component.OnUpdate === "function") component.OnUpdate(deltaTime);
-        });
+        this.components.forEach(c => { if (c.enabled !== false) c.OnUpdate?.(deltaTime); });
     }
 
     OnFixedUpdate(deltaTime) {
-        this.components.forEach(component => {
-            if (component.enabled !== false && typeof component.OnFixedUpdate === "function") component.OnFixedUpdate(deltaTime);
-        });
+        this.components.forEach(c => { if (c.enabled !== false) c.OnFixedUpdate?.(deltaTime); });
     }
 
     OnDrawn() {
-        this.components.forEach(component => {
-            if (component.enabled !== false && typeof component.OnDrawn === "function") component.OnDrawn();
-        });
+        this.components.forEach(c => { if (c.enabled !== false) c.OnDrawn?.(); });
     }
 
     OnCollision(other, callback) {

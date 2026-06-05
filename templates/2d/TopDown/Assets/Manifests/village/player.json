@@ -1,0 +1,12 @@
+{
+  "player": {
+    "asset": "player_down",
+    "spawn": { "x": 400, "y": 300 },
+    "scale": 1.0,
+    "bodySize": { "width": 24, "height": 32 },
+    "movement": {
+      "speed": 120,
+      "eightDirection": true
+    }
+  }
+}

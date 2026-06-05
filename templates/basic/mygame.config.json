@@ -1,0 +1,30 @@
+{
+  "project": {
+    "name": "My GameForgeJS Game",
+    "version": "0.1.0"
+  },
+  "window": {
+    "title": "My Game",
+    "width": 1280,
+    "height": 720,
+    "fullScreen": false,
+    "backgroundColor": "#111111"
+  },
+  "screen": {
+    "width": 1280,
+    "height": 720
+  },
+  "input": {
+    "gamepadProfile": "xbox",
+    "actionMappings": {
+      "JUMP": [
+        { "device": "keyboard", "input": "Space" },
+        { "device": "gamepad", "input": "A" }
+      ],
+      "ATTACK": [
+        { "device": "keyboard", "input": "KeyZ" },
+        { "device": "gamepad", "input": "X" }
+      ]
+    }
+  }
+}

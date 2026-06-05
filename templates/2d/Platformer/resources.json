@@ -1,0 +1,8 @@
+{
+  "images": [],
+  "audios": [],
+  "jsons": [
+    { "name": "level1_stage", "path": "Examples/Platformer/Assets/Manifests/level1/stage.json" },
+    { "name": "level1_player", "path": "Examples/Platformer/Assets/Manifests/level1/player.json" }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "enemyDefaults": {
+    "asset": "enemy_idle",
+    "bodySize": { "width": 32, "height": 32 }
+  },
+  "enemies": []
+}

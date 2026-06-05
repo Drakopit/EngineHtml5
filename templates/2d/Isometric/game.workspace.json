@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "kind": "GameForgeJS.Workspace",
+  "id": "example_isometric",
+  "name": "Isometric Example",
+  "resources": "resources.json",
+  "resourcePrefix": "Examples/Isometric/",
+  "levels2D": [
+    {
+      "id": "town",
+      "label": "Isometric Town",
+      "levelType": "isometric",
+      "documents": {
+        "map": "Assets/Manifests/town/map.json",
+        "player": "Assets/Manifests/town/player.json",
+        "objects": "Assets/Manifests/town/objects.json",
+        "height": "Assets/Manifests/town/height.json"
+      }
+    }
+  ],
+  "scenes3D": []
+}

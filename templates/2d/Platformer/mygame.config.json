@@ -1,0 +1,24 @@
+{
+  "project": {
+    "name": "Platformer Example",
+    "version": "0.1.0"
+  },
+  "window": {
+    "title": "Platformer Example",
+    "width": 1280,
+    "height": 720
+  },
+  "input": {
+    "actionMappings": {
+      "JUMP": [
+        { "device": "keyboard", "input": "Space" }
+      ],
+      "LEFT": [
+        { "device": "keyboard", "input": "ArrowLeft" }
+      ],
+      "RIGHT": [
+        { "device": "keyboard", "input": "ArrowRight" }
+      ]
+    }
+  }
+}

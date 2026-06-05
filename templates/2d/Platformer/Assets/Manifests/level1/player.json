@@ -1,0 +1,13 @@
+{
+  "player": {
+    "asset": "player_idle",
+    "spawn": { "x": 200, "y": 400 },
+    "scale": 1.5,
+    "bodySize": { "width": 32, "height": 48 },
+    "movement": {
+      "speed": 180,
+      "jumpForce": -420,
+      "gravity": 980
+    }
+  }
+}

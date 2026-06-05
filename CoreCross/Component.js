@@ -1,10 +1,8 @@
 import { ActionManager } from "./Input/ActionManager.js";
 
 /**
- * Base attachable behavior unit for composing lightweight game entities.
- *
- * @param {Object} [options] - Component settings.
- * @param {boolean} [options.enabled=true] - Whether the owner should update this component.
+ * Base class for all Components in GameForgeJS.
+ * Follows the standardized lifecycle defined in Base.js.
  */
 export class Component {
     constructor({ enabled = true } = {}) {
@@ -12,15 +10,41 @@ export class Component {
         this.enabled = enabled;
     }
 
-    Attach(owner) {
+    // === STANDARDIZED COMPONENT LIFECYCLE ===
+
+    /**
+     * Called when this component is attached to a GameObject.
+     * Override this instead of putting attach logic in the constructor.
+     * @param {object} owner
+     */
+    OnAttach(owner) {
         this.owner = owner;
-        if (typeof this.OnAttach === "function") this.OnAttach(owner);
+    }
+
+    /**
+     * Called when this component is removed from its owner.
+     */
+    OnDetach() {
+        this.owner = null;
+    }
+
+    // === STANDARD LIFECYCLE (inherited from Base contract) ===
+
+    OnStart() {}
+    OnUpdate(deltaTime) {}
+    OnFixedUpdate(fixedDeltaTime) {}
+    OnDrawn() {}
+    OnDestroy() {}
+
+    // === ATTACH / DETACH WRAPPERS (kept for backward compatibility) ===
+
+    Attach(owner) {
+        this.OnAttach(owner);
         return this;
     }
 
     Detach() {
-        if (typeof this.OnDetach === "function") this.OnDetach(this.owner);
-        this.owner = null;
+        this.OnDetach();
     }
 }
 

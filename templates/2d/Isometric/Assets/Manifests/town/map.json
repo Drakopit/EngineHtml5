@@ -1,0 +1,8 @@
+{
+  "map": {
+    "type": "isometric",
+    "tileWidth": 64,
+    "tileHeight": 32,
+    "layers": []
+  }
+}

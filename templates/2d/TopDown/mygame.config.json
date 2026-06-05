@@ -1,0 +1,16 @@
+{
+  "project": {
+    "name": "Top-Down Example",
+    "version": "0.1.0"
+  },
+  "window": {
+    "title": "Top-Down Example"
+  },
+  "input": {
+    "actionMappings": {
+      "INTERACT": [
+        { "device": "keyboard", "input": "KeyE" }
+      ]
+    }
+  }
+}

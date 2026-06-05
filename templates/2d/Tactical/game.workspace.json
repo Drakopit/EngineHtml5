@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "kind": "GameForgeJS.Workspace",
+  "id": "example_tactical",
+  "name": "Tactical Example",
+  "resources": "resources.json",
+  "resourcePrefix": "Examples/Tactical/",
+  "levels2D": [
+    {
+      "id": "battle_1",
+      "label": "Battle Map 1",
+      "levelType": "tactical",
+      "documents": {
+        "grid": "Assets/Manifests/battle1/grid.json",
+        "units": "Assets/Manifests/battle1/units.json",
+        "terrain": "Assets/Manifests/battle1/terrain.json"
+      }
+    }
+  ]
+}
